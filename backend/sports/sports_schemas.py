@@ -3,9 +3,9 @@
 from datetime import datetime
 from uuid import UUID
 
-from pydantic import ConfigDict, BaseModel
+from pydantic import BaseModel, ConfigDict
 
-from backend.utils import generate_uuid, datetime_now
+from backend.utils import datetime_now, generate_uuid
 from testing.helpers.fake_data import fake_sport_name
 
 

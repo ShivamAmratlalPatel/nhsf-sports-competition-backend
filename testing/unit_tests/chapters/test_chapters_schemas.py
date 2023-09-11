@@ -2,14 +2,15 @@
 from datetime import datetime
 from uuid import UUID
 
+import pytest
 import pytz
 from pydantic import ValidationError
-import pytest
+
 from backend.chapters.chapters_schemas import (
     ChapterBase,
     ChapterCreate,
-    ChapterUpdate,
     ChapterRead,
+    ChapterUpdate,
     ZoneEnum,
 )
 

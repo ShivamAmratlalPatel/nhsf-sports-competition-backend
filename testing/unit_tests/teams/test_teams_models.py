@@ -4,9 +4,8 @@ from sqlalchemy.orm import Session
 from backend.chapters.chapters_models import Chapter
 from backend.sports.sports_models import Sport
 from backend.teams.teams_models import Team
-from backend.teams.teams_models import Team
 from testing.fixtures.database import session, session_factory  # noqa: F401
-from testing.helpers.fake_data import fake_team, fake_team, fake_chapter, fake_sport
+from testing.helpers.fake_data import fake_chapter, fake_sport, fake_team
 
 
 class TestTeam:

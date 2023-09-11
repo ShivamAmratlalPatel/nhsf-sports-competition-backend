@@ -1,10 +1,10 @@
 """Tests for stage schemas"""
+import pytest
 from sqlalchemy.orm import Session
 
 from backend.stages.stages_models import Stage
 from backend.stages.stages_schemas import StagesEnum
 from testing.fixtures.database import session, session_factory  # noqa: F401
-import pytest
 
 
 class TestStagesEnum:

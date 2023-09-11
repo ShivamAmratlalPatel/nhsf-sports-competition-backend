@@ -1,8 +1,8 @@
 """Stages Database Models"""
+from sqlalchemy import Boolean, Column, DateTime, Integer, String, func
 from sqlalchemy.orm import relationship
-from backend.database import Base
-from sqlalchemy import Column, func, String, DateTime, Boolean, Integer
 
+from backend.database import Base
 from backend.utils import datetime_now
 
 

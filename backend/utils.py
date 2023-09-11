@@ -1,12 +1,12 @@
 """Utility functions."""
 from datetime import date, datetime
 from enum import Enum
+from typing import Annotated
 from uuid import UUID, uuid4
 
 import pytz
 from _decimal import Decimal
 from pydantic import BaseModel, StringConstraints
-from typing import Annotated
 
 
 def generate_uuid() -> UUID:

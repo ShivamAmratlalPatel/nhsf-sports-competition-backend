@@ -7,9 +7,9 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from starlette import status
 
+from backend.helpers import get_db
 from backend.teams.teams_models import Team
 from backend.teams.teams_schemas import TeamCreate, TeamRead, TeamUpdate
-from backend.helpers import get_db
 from backend.utils import object_to_dict
 
 teams_router = APIRouter()

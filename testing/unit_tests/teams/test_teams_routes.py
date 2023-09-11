@@ -7,21 +7,15 @@ This module contains unit tests for the FastAPI routes related to team creation 
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
+from starlette import status
 
 from backend.chapters.chapters_models import Chapter
 from backend.helpers import get_db
 from backend.main import app
 from backend.sports.sports_models import Sport
 from backend.utils import generate_uuid, object_to_dict
-
 from testing.fixtures.database import session, session_factory  # noqa: F401
-from testing.helpers.fake_data import (
-    fake_team,
-    fake_name,
-    fake_chapter,
-    fake_sport,
-)
-from starlette import status
+from testing.helpers.fake_data import fake_chapter, fake_name, fake_sport, fake_team
 
 
 @pytest.fixture()

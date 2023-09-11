@@ -1,11 +1,10 @@
 """Matches Database Models"""
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, func
+from sqlalchemy.dialects import postgresql as pg
 from sqlalchemy.orm import relationship
 
 from backend.database import Base
-from sqlalchemy import Column, func, DateTime, Boolean, ForeignKey, Integer
-from sqlalchemy.dialects import postgresql as pg
-
-from backend.utils import generate_uuid, datetime_now
+from backend.utils import datetime_now, generate_uuid
 
 
 class Match(Base):

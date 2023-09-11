@@ -7,9 +7,9 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from starlette import status
 
+from backend.helpers import get_db
 from backend.sports.sports_models import Sport
 from backend.sports.sports_schemas import SportCreate, SportRead, SportUpdate
-from backend.helpers import get_db
 from backend.utils import object_to_dict
 
 sports_router = APIRouter()

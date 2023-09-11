@@ -7,6 +7,7 @@ This module contains unit tests for the FastAPI routes related to match creation
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
+from starlette import status
 
 from backend.chapters.chapters_models import Chapter
 from backend.helpers import get_db
@@ -16,17 +17,15 @@ from backend.sports.sports_models import Sport
 from backend.stages.stages_schemas import StagesEnum
 from backend.teams.teams_models import Team
 from backend.utils import generate_uuid, object_to_dict
-
 from testing.fixtures.database import session, session_factory  # noqa: F401
 from testing.helpers.fake_data import (
+    fake_chapter,
     fake_match,
     fake_name,
-    fake_chapter,
+    fake_pitch,
     fake_sport,
     fake_team,
-    fake_pitch,
 )
-from starlette import status
 
 
 @pytest.fixture()

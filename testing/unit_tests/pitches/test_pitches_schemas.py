@@ -7,8 +7,8 @@ import pytz
 from backend.pitches.pitches_schemas import (
     PitchBase,
     PitchCreate,
-    PitchUpdate,
     PitchRead,
+    PitchUpdate,
 )
 
 

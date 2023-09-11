@@ -4,10 +4,10 @@ from datetime import datetime
 from enum import Enum
 from uuid import UUID
 
-from pydantic import ConfigDict, BaseModel, EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr
 
-from backend.utils import generate_uuid, datetime_now
-from testing.helpers.fake_data import fake_name, fake_email, fake_zone
+from backend.utils import datetime_now, generate_uuid
+from testing.helpers.fake_data import fake_email, fake_name, fake_zone
 
 
 class ZoneEnum(str, Enum):

@@ -5,7 +5,7 @@ from backend.matches.matches_schemas import (
     MatchRead,
     MatchUpdate,
 )
-from backend.utils import generate_uuid, datetime_now
+from backend.utils import datetime_now, generate_uuid
 
 
 class TestMatchBase:

@@ -17,7 +17,6 @@ from backend.pitches.pitches_routes import pitches_router
 from backend.sports.sports_routes import sports_router
 from backend.teams.teams_routes import teams_router
 
-
 from .config import CORS_ORIGINS
 from .middleware import ContentSizeLimitMiddleware
 

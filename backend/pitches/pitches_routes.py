@@ -7,9 +7,9 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from starlette import status
 
+from backend.helpers import get_db
 from backend.pitches.pitches_models import Pitch
 from backend.pitches.pitches_schemas import PitchCreate, PitchRead, PitchUpdate
-from backend.helpers import get_db
 from backend.utils import object_to_dict
 
 pitches_router = APIRouter()

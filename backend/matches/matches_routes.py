@@ -7,9 +7,9 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from starlette import status
 
+from backend.helpers import get_db
 from backend.matches.matches_models import Match
 from backend.matches.matches_schemas import MatchCreate, MatchRead, MatchUpdate
-from backend.helpers import get_db
 from backend.utils import object_to_dict
 
 matches_router = APIRouter()

@@ -4,12 +4,7 @@ from uuid import UUID
 
 import pytz
 
-from backend.teams.teams_schemas import (
-    TeamBase,
-    TeamCreate,
-    TeamUpdate,
-    TeamRead,
-)
+from backend.teams.teams_schemas import TeamBase, TeamCreate, TeamRead, TeamUpdate
 
 
 def test_valid_team_base_schema() -> None:

@@ -1,8 +1,8 @@
 """Schemas for the backend."""
 import re
-
-from pydantic import field_validator, StringConstraints, ConfigDict, BaseModel
 from typing import Annotated
+
+from pydantic import BaseModel, ConfigDict, StringConstraints, field_validator
 
 
 class Message(BaseModel):

@@ -4,12 +4,7 @@ from uuid import UUID
 
 import pytz
 
-from backend.sports.sports_schemas import (
-    SportBase,
-    SportCreate,
-    SportUpdate,
-    SportRead,
-)
+from backend.sports.sports_schemas import SportBase, SportCreate, SportRead, SportUpdate
 
 
 def test_valid_sport_base_schema() -> None:
