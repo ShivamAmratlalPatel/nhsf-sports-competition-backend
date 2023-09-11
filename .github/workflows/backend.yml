@@ -32,7 +32,6 @@ jobs:
 
     - name: Build, Run Docker Compose and Run tests
       run: |
-        cd nhsf-backend
         docker-compose build
         docker-compose up -d
         docker exec nhsf-backend isort --profile black .
