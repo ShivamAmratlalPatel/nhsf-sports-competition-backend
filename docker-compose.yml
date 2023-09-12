@@ -23,12 +23,12 @@ services:
       POSTGRES_USER: rc
       POSTGRES_PASSWORD: ""
       POSTGRES_HOST_AUTH_METHOD: trust
-  pg_admin:
-    image: dpage/pgadmin4
-    container_name: rc_pgadmin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: a@b.com
-      PGADMIN_DEFAULT_PASSWORD: dev
-      PGADMIN_LISTEN_PORT: 4000
-    ports:
-      - "4001:4000"
+#  pg_admin:
+#    image: dpage/pgadmin4
+#    container_name: rc_pgadmin
+#    environment:
+#      PGADMIN_DEFAULT_EMAIL: a@b.com
+#      PGADMIN_DEFAULT_PASSWORD: dev
+#      PGADMIN_LISTEN_PORT: 4000
+#    ports:
+#      - "4001:4000"
