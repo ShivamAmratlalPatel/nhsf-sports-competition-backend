@@ -23,6 +23,7 @@ class TestMatchBase:
             "away_score": 0.0,
             "home_penalties": 0.0,
             "away_penalties": 0.0,
+            "time": None,
         }
         match = MatchBase(**data)
         assert match.model_dump() == data
@@ -43,6 +44,7 @@ class TestMatchCreate:
             "away_score": 0.0,
             "home_penalties": 0.0,
             "away_penalties": 0.0,
+            "time": None,
         }
         match = MatchCreate(**data)
         assert match.model_dump() == data
@@ -63,6 +65,7 @@ class TestMatchUpdate:
             "away_score": 0.0,
             "home_penalties": 0.0,
             "away_penalties": 0.0,
+            "time": None,
         }
         match = MatchUpdate(**data)
         assert match.model_dump() == data
@@ -87,6 +90,7 @@ class TestMatchRead:
             "away_score": 0.0,
             "home_penalties": 0.0,
             "away_penalties": 0.0,
+            "time": None,
         }
         match = MatchRead(**data)
         assert match.model_dump() == data

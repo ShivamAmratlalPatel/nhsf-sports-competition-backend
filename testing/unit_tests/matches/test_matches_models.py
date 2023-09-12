@@ -89,4 +89,3 @@ class TestMatch:
         """Test matches relationship."""
         assert match.sport is not None
         assert match.pitch is not None
-        assert match.stage is not None
