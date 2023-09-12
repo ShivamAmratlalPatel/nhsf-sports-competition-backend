@@ -214,3 +214,53 @@ def delete_match(
     db.commit()
 
     return JSONResponse(status_code=status.HTTP_204_NO_CONTENT, content={})
+
+
+@matches_router.get(
+    "/schedule/{sport_id}",
+    tags=["matches"],
+    description="Get schedule.",
+    responses={
+        status.HTTP_200_OK: {
+            "model": list[MatchRead],
+            "description": "Successful response: schedule found",
+            "title": "Schedule details",
+        },
+    },
+)
+def get_schedule(
+    sport_id: UUID,
+    db: Session = db_session,
+) -> JSONResponse:
+    """Get schedule."""
+
+    played_matches: list[Match] = (
+        db.query(Match)
+        .filter(Match.sport_id == sport_id)
+        .filter(Match.is_deleted.is_(False))
+        .filter(Match.home_score.is_not(None))
+        .order_by(Match.time)
+        .all()
+    )
+
+    if played_matches is None:
+        played_matches = []
+
+    unplayed_matches: list[Match] = (
+        db.query(Match)
+        .filter(Match.sport_id == sport_id)
+        .filter(Match.is_deleted.is_(True))
+        .filter(Match.home_score.is_(None))
+        .order_by(Match.time)
+        .all()
+    )
+
+    if unplayed_matches is None:
+        unplayed_matches = []
+
+    matches = played_matches + unplayed_matches
+
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content=[object_to_dict(MatchRead.model_validate(match)) for match in matches],
+    )

@@ -345,3 +345,54 @@ class TestDeleteMatch:
         response = client.delete(f"/match/{generate_uuid()}")
         assert response.status_code == status.HTTP_404_NOT_FOUND
         assert response.json()["detail"] == "Match not found"
+
+
+class TestGetSchedule:
+    """
+    Test Class: TestGetSchedule
+
+    This class contains unit tests for the GET /schedule route.
+    """
+
+    def test_get_schedule(
+        self: "TestGetSchedule",
+        client: TestClient,
+        match_data: dict,
+    ) -> None:
+        """
+        Test Method: test_get_schedule
+
+        Test the GET /schedule route for successful match retrieval.
+
+        Args:
+           client (TestClient): A FastAPI test client.
+           match_data (dict): A dictionary of match data.
+
+        Returns:
+           None
+        """
+        response = client.post("/match", json=object_to_dict(match_data))
+        assert response.status_code == status.HTTP_201_CREATED
+
+        response = client.get(f"/schedule/{match_data['sport_id']}")
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.json()) == 1
+
+    def test_get_schedule_empty(
+        self: "TestGetSchedule",
+        client: TestClient,
+    ) -> None:
+        """
+        Test Method: test_get_schedule_empty
+
+        Test the GET /schedule route for a match that does not exist.
+
+        Args:
+           client (TestClient): A FastAPI test client.
+
+        Returns:
+           None
+        """
+        response = client.get(f"/schedule/{generate_uuid()}")
+        assert response.status_code == status.HTTP_200_OK
+        assert response.json() == []
