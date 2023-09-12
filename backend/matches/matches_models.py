@@ -66,6 +66,6 @@ class Match(Base):
     away_score = Column(pg.NUMERIC(precision=12, scale=2))
     home_penalties = Column(pg.NUMERIC(precision=12, scale=2))
     away_penalties = Column(pg.NUMERIC(precision=12, scale=2))
+    time = Column(DateTime(timezone=True))
     sport = relationship("Sport", back_populates="matches")
     pitch = relationship("Pitch", back_populates="matches")
-    stage = relationship("Stage", back_populates="matches")
