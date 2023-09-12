@@ -32,7 +32,7 @@ To start the FastAPI application, follow these steps:
 2. Migrate the database:
 
     ```bash
-    docker exec -it nhsf_backend-local sh ./scripts/migrate.sh
+    docker exec -it nhsf-backend sh ./scripts/migrate.sh
     ```
    
 3. Navigate to the application's Swagger documentation at [http://localhost:8001/docs](http://localhost:8001/docs).
@@ -46,7 +46,7 @@ If you have made changes to the database models, you will need to generate a new
 3. Run the following command:
 
 ```bash
-docker exec -it nhsf_backend-local sh ./scripts/generate_migration.sh
+docker exec -it nhsf-backend sh ./scripts/generate_migration.sh
 ```
 
 ## Testing
