@@ -1,6 +1,5 @@
 """Stages Database Models"""
 from sqlalchemy import Boolean, Column, DateTime, Integer, String, func
-from sqlalchemy.orm import relationship
 
 from backend.database import Base
 from backend.utils import datetime_now
@@ -31,4 +30,3 @@ class Stage(Base):
             func.timezone("Europe/London", func.current_timestamp()),
         ),
     )
-    matches = relationship("Match", back_populates="stage")

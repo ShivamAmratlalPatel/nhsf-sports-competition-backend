@@ -20,6 +20,7 @@ class MatchBase(BaseModel):
     away_score: float | None = None
     home_penalties: float | None = None
     away_penalties: float | None = None
+    time: datetime | None = None
     model_config = ConfigDict(
         json_schema_extra={
             "example": {
@@ -32,6 +33,7 @@ class MatchBase(BaseModel):
                 "away_score": 0,
                 "home_penalties": 0,
                 "away_penalties": 0,
+                "time": datetime_now(),
             },
         },
     )
