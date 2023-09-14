@@ -20,6 +20,9 @@ boto3 = "^1.28.3"
 rsa = "^4.9"
 requests = "^2.31.0"
 pem = "^23.1.0"
+python-multipart = "^0.0.6"
+python-jose = "^3.3.0"
+passlib = "^1.7.4"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7"
