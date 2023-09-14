@@ -72,6 +72,7 @@ class ChapterRead(ChapterBase):
     created_date: datetime
     last_modified_date: datetime | None = None
     is_deleted: bool
+    email: str
     model_config = ConfigDict(
         from_attributes=True,
         json_schema_extra={
