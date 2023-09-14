@@ -233,7 +233,6 @@ def get_schedule(
     db: Session = db_session,
 ) -> JSONResponse:
     """Get schedule."""
-
     played_matches: list[Match] = (
         db.query(Match)
         .filter(Match.sport_id == sport_id)
