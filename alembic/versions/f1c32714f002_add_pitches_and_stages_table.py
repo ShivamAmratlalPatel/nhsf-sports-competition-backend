@@ -37,7 +37,7 @@ def upgrade() -> None:
             ),
             nullable=False,
         ),
-        sa.Column("is_deleted", sa.Boolean(), nullable=False),
+        sa.Column("is_deleted", sa.Boolean(), nullable=False, default=False, server_default=sa.text("false")),
         sa.Column("last_modified_date", sa.DateTime(timezone=True), nullable=True),
         sa.PrimaryKeyConstraint("id"),
     )
@@ -54,7 +54,7 @@ def upgrade() -> None:
             ),
             nullable=False,
         ),
-        sa.Column("is_deleted", sa.Boolean(), nullable=False),
+        sa.Column("is_deleted", sa.Boolean(), nullable=False, default=False, server_default=sa.text("false")),
         sa.Column("last_modified_date", sa.DateTime(timezone=True), nullable=True),
         sa.PrimaryKeyConstraint("id"),
     )
@@ -62,10 +62,10 @@ def upgrade() -> None:
     op.bulk_insert(
         stages,
         [
-            {"id": 0, "name": "Group Stage", "is_deleted": False},
-            {"id": 1, "name": "Quarter Final", "is_deleted": False},
-            {"id": 2, "name": "Semi Final", "is_deleted": False},
-            {"id": 3, "name": "Final", "is_deleted": False},
+            {"id": 0, "name": "Group Stage"},
+            {"id": 1, "name": "Quarter Final"},
+            {"id": 2, "name": "Semi Final"},
+            {"id": 3, "name": "Final"},
         ],
     )
     # ### end Alembic commands ###

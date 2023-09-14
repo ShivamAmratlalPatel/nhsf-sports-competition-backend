@@ -37,7 +37,7 @@ def upgrade() -> None:
             ),
             nullable=False,
         ),
-        sa.Column("is_deleted", sa.Boolean(), nullable=False, default=False),
+                sa.Column("is_deleted", sa.Boolean(), nullable=False, default=False, server_default=sa.text("false")),
         sa.Column("last_modified_date", sa.DateTime(timezone=True), nullable=True),
         sa.Column("chapter_id", sa.UUID(), nullable=False),
         sa.Column("sport_id", sa.UUID(), nullable=False),

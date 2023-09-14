@@ -29,7 +29,7 @@ class Team(Base):
             func.timezone("Europe/London", func.current_timestamp()),
         ),
     )
-    is_deleted = Column(Boolean, nullable=False, default=False)
+    is_deleted = Column(Boolean, nullable=False, default=False, server_default="false")
     last_modified_date = Column(
         DateTime(timezone=True),
         onupdate=datetime_now(),
