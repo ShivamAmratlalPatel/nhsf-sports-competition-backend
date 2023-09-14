@@ -37,7 +37,13 @@ def upgrade() -> None:
             ),
             nullable=False,
         ),
-        sa.Column("is_deleted", sa.Boolean(), nullable=False, default=False, server_default=sa.text("false")),
+        sa.Column(
+            "is_deleted",
+            sa.Boolean(),
+            nullable=False,
+            default=False,
+            server_default=sa.text("false"),
+        ),
         sa.Column("last_modified_date", sa.DateTime(timezone=True), nullable=True),
         sa.PrimaryKeyConstraint("id"),
     )
@@ -54,7 +60,13 @@ def upgrade() -> None:
             ),
             nullable=False,
         ),
-        sa.Column("is_deleted", sa.Boolean(), nullable=False, default=False, server_default=sa.text("false")),
+        sa.Column(
+            "is_deleted",
+            sa.Boolean(),
+            nullable=False,
+            default=False,
+            server_default=sa.text("false"),
+        ),
         sa.Column("last_modified_date", sa.DateTime(timezone=True), nullable=True),
         sa.PrimaryKeyConstraint("id"),
     )
