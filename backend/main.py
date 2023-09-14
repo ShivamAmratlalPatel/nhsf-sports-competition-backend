@@ -14,11 +14,13 @@ from fastapi.responses import JSONResponse, PlainTextResponse
 from backend.chapters.chapters_routes import chapters_router
 from backend.matches.matches_routes import matches_router
 from backend.pitches.pitches_routes import pitches_router
+from backend.players.players_routes import players_router
 from backend.sports.sports_routes import sports_router
 from backend.teams.teams_routes import teams_router
 
 from .config import CORS_ORIGINS
 from .middleware import ContentSizeLimitMiddleware
+from .users.users_routes import users_router
 
 LOGLEVEL = os.environ.get("LOGLEVEL", "WARNING").upper()
 logging.basicConfig(level=LOGLEVEL)
@@ -66,8 +68,10 @@ app.add_middleware(ContentSizeLimitMiddleware, max_content_size=10_000_000)
 app.include_router(chapters_router)
 app.include_router(matches_router)
 app.include_router(pitches_router)
+app.include_router(players_router)
 app.include_router(sports_router)
 app.include_router(teams_router)
+app.include_router(users_router)
 
 
 @app.get(
