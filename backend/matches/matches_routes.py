@@ -249,7 +249,7 @@ def get_schedule(
     unplayed_matches: list[Match] = (
         db.query(Match)
         .filter(Match.sport_id == sport_id)
-        .filter(Match.is_deleted.is_(True))
+        .filter(Match.is_deleted.is_(False))
         .filter(Match.home_score.is_(None))
         .order_by(Match.time)
         .all()
