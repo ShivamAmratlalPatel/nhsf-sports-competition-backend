@@ -1,8 +1,140 @@
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, last_modified_date) VALUES ('15ecd3e8-5489-4056-b474-4495a0b1e3ef', 'Imperial', 'London', 'a@b.com', '2023-09-13 00:09:50.564341 +00:00', false, null);
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, last_modified_date) VALUES ('e846aa5a-7a7f-46c1-934d-032140116141', 'UCLAN', 'North', 'a@b,com', '2023-09-13 00:09:50.564341 +00:00', false, null);
-INSERT INTO public.teams (id, name, created_date, is_deleted, last_modified_date, chapter_id, sport_id) VALUES ('7dc264e3-db16-47c7-bd46-ad766c05a42d', 'Imperial Football Team', '2023-09-13 00:11:24.107033 +00:00', false, null, '15ecd3e8-5489-4056-b474-4495a0b1e3ef', '7dac42d7-e397-4efa-b70a-0232cacd4c4f');
-INSERT INTO public.teams (id, name, created_date, is_deleted, last_modified_date, chapter_id, sport_id) VALUES ('35569907-cf47-4fc9-80db-0fc5762e7e5e', 'UCLAN Football Team', '2023-09-13 00:11:24.107033 +00:00', false, null, 'e846aa5a-7a7f-46c1-934d-032140116141', '7dac42d7-e397-4efa-b70a-0232cacd4c4f');
-INSERT INTO public.matches (id, created_date, is_deleted, last_modified_date, home_team_id, away_team_id, sport_id, pitch_id, stage_id, home_score, away_score, home_penalties, away_penalties, time) VALUES ('3a51516c-6df0-47c7-a756-a768a12a0f79', '2023-09-13 00:13:09.945014 +00:00', false, null, '7dc264e3-db16-47c7-bd46-ad766c05a42d', '35569907-cf47-4fc9-80db-0fc5762e7e5e', '7dac42d7-e397-4efa-b70a-0232cacd4c4f', '2cc6a2e3-cdbb-40de-9fc1-145a1854491f', 0, 0.00, 1.00, null, null, '2023-09-13 01:13:04.684000 +00:00');
-INSERT INTO public.matches (id, created_date, is_deleted, last_modified_date, home_team_id, away_team_id, sport_id, pitch_id, stage_id, home_score, away_score, home_penalties, away_penalties, time) VALUES ('7e21854c-9ba4-4102-8b8f-38ce673ddf78', '2023-09-13 00:13:09.945014 +00:00', false, null, '7dc264e3-db16-47c7-bd46-ad766c05a42d', '35569907-cf47-4fc9-80db-0fc5762e7e5e', '7dac42d7-e397-4efa-b70a-0232cacd4c4f', '2cc6a2e3-cdbb-40de-9fc1-145a1854491f', 0, null, null, null, null, '2023-09-13 02:13:04.684000 +00:00');
-INSERT INTO public.matches (id, created_date, is_deleted, last_modified_date, home_team_id, away_team_id, sport_id, pitch_id, stage_id, home_score, away_score, home_penalties, away_penalties, time) VALUES ('76d3db77-e7a3-43d5-a54b-4585670fe402', '2023-09-13 00:13:09.945014 +00:00', false, null, '35569907-cf47-4fc9-80db-0fc5762e7e5e', '7dc264e3-db16-47c7-bd46-ad766c05a42d', '7dac42d7-e397-4efa-b70a-0232cacd4c4f', '2cc6a2e3-cdbb-40de-9fc1-145a1854491f', 0, 3.00, 2.00, null, null, '2023-09-13 00:13:04.684000 +00:00');
-INSERT INTO public.matches (id, created_date, is_deleted, last_modified_date, home_team_id, away_team_id, sport_id, pitch_id, stage_id, home_score, away_score, home_penalties, away_penalties, time) VALUES ('569f8bda-8224-4f51-8b46-87354270c823', '2023-09-13 00:13:09.945014 +00:00', false, null, '35569907-cf47-4fc9-80db-0fc5762e7e5e', '7dc264e3-db16-47c7-bd46-ad766c05a42d', '7dac42d7-e397-4efa-b70a-0232cacd4c4f', '2cc6a2e3-cdbb-40de-9fc1-145a1854491f', 0, null, null, null, null, '2023-09-13 04:13:04.684000 +00:00');
+DROP TABLE IF EXISTS temp_ids;
+-- Create a temporary table to store the IDs
+CREATE TEMP TABLE temp_ids
+(
+    id uuid
+);
+
+DELETE
+FROM chapters;
+-- Insert into chapters table and store the ID in the temporary table
+INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted,
+                             last_modified_date)
+VALUES ('15ecd3e8-5489-4056-b474-4495a0b1e3ef',
+        'Imperial',
+        'London',
+        'a@ba.com',
+        '2023-09-13 00:09:50.564341 +00:00',
+        FALSE,
+        NULL);
+
+-- Insert the ID into the temporary table
+INSERT INTO temp_ids (id)
+SELECT '15ecd3e8-5489-4056-b474-4495a0b1e3ef'
+WHERE NOT EXISTS (SELECT 1
+                  FROM temp_ids
+                  WHERE id = '15ecd3e8-5489-4056-b474-4495a0b1e3ef');
+
+DELETE
+FROM sports;
+
+INSERT INTO sports (id, name, created_date, is_deleted, last_modified_date)
+VALUES ('7dac42d7-e397-4efa-b70a-0232cacd4c4f',
+        'Football',
+        '2023-09-13 00:09:50.564341 +00:00',
+        FALSE,
+        NULL);
+
+DELETE
+FROM teams;
+-- Insert into teams table using the ID from the temporary table
+INSERT INTO public.teams (id, name, created_date, is_deleted, last_modified_date,
+                          chapter_id, sport_id)
+VALUES ('7dc264e3-db16-47c7-bd46-ad766c05a42d',
+        'Imperial Football Team',
+        NOW(),
+        FALSE,
+        NULL,
+        (SELECT id FROM temp_ids WHERE id = '15ecd3e8-5489-4056-b474-4495a0b1e3ef'),
+        '7dac42d7-e397-4efa-b70a-0232cacd4c4f');
+
+-- Insert into chapters table and store the ID in the temporary table
+INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted,
+                             last_modified_date)
+VALUES ('e846aa5a-7a7f-46c1-934d-032140116141',
+        'UCLAN',
+        'North',
+        'a@b.com',
+        '2023-09-13 00:09:50.564341 +00:00',
+        FALSE,
+        NULL);
+
+-- Insert the ID into the temporary table
+INSERT INTO temp_ids (id)
+SELECT 'e846aa5a-7a7f-46c1-934d-032140116141'
+WHERE NOT EXISTS (SELECT 1
+                  FROM temp_ids
+                  WHERE id = 'e846aa5a-7a7f-46c1-934d-032140116141');
+
+-- Insert into teams table using the ID from the temporary table
+INSERT INTO public.teams (id, name, created_date, is_deleted, last_modified_date,
+                          chapter_id, sport_id)
+VALUES ('35569907-cf47-4fc9-80db-0fc5762e7e5e',
+        'UCLAN Football Team',
+        '2023-09-13 00:11:24.107033 +00:00',
+        FALSE,
+        NULL,
+        (SELECT id FROM temp_ids WHERE id = 'e846aa5a-7a7f-46c1-934d-032140116141'),
+        '7dac42d7-e397-4efa-b70a-0232cacd4c4f');
+
+
+-- Insert the ID into the temporary table
+INSERT INTO temp_ids (id)
+SELECT '61dafaac-ad51-4754-944f-f85487666df0'
+WHERE NOT EXISTS (SELECT 1
+                  FROM temp_ids
+                  WHERE id = '61dafaac-ad51-4754-944f-f85487666df0');
+
+
+DELETE
+FROM pitches;
+-- Insert into pitches table and store the ID in the temporary table
+INSERT INTO public.pitches (id, name, created_date, is_deleted, last_modified_date)
+VALUES ('b6faa095-b64f-4bca-a9e3-d9795b530f21',
+        'Football Pitch 1',
+        '2023-09-14 23:26:38.610667 +00:00',
+        FALSE,
+        NULL);
+
+-- Insert the ID into the temporary table
+INSERT INTO temp_ids (id)
+SELECT 'b6faa095-b64f-4bca-a9e3-d9795b530f21'
+WHERE NOT EXISTS (SELECT 1
+                  FROM temp_ids
+                  WHERE id = 'b6faa095-b64f-4bca-a9e3-d9795b530f21');
+
+DELETE
+FROM matches;
+-- Insert into matches table using the IDs from the temporary table
+INSERT INTO public.matches (id, created_date, is_deleted, last_modified_date,
+                            home_team_id, away_team_id, sport_id, pitch_id, stage_id,
+                            home_score, away_score, home_penalties, away_penalties,
+                            time)
+VALUES ('3a51516c-6df0-47c7-a756-a768a12a0f79',
+        '2023-09-13 00:13:09.945014 +00:00',
+        FALSE, NULL,
+        '7dc264e3-db16-47c7-bd46-ad766c05a42d',
+        '35569907-cf47-4fc9-80db-0fc5762e7e5e',
+        '7dac42d7-e397-4efa-b70a-0232cacd4c4f',
+        'b6faa095-b64f-4bca-a9e3-d9795b530f21',
+        1,
+        0, 0, 0, 0,
+        '2023-09-13 00:13:09.945014 +00:00');
+
+INSERT INTO public.matches (id, created_date, is_deleted, last_modified_date,
+                            home_team_id, away_team_id, sport_id, pitch_id, stage_id,
+                            home_score, away_score, home_penalties, away_penalties,
+                            time)
+VALUES (uuid_generate_v4(),
+        '2023-09-13 00:13:09.945014 +00:00',
+        FALSE, NULL,
+        '35569907-cf47-4fc9-80db-0fc5762e7e5e',
+        '7dc264e3-db16-47c7-bd46-ad766c05a42d',
+        '7dac42d7-e397-4efa-b70a-0232cacd4c4f',
+        'b6faa095-b64f-4bca-a9e3-d9795b530f21',
+        1,
+        NULL, NULL, NULL, NULL,
+        '2023-09-13 00:13:09.945014 +00:00');
+
+
+DROP TABLE IF EXISTS temp_ids;

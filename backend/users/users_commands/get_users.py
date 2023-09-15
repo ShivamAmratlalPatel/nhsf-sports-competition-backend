@@ -3,13 +3,14 @@ import jwt
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError
+from jwt import ExpiredSignatureError
 from sqlalchemy.orm import Session
 from starlette import status
 
 from backend.config import ALGORITHM, SECRET_KEY
 from backend.helpers import get_db
 from backend.users.users_models import User
-from backend.users.users_schemas import TokenData, UserBase, UserInDB
+from backend.users.users_schemas import TokenData, UserBase
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -32,20 +33,16 @@ def get_current_user(
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     except JWTError:
         raise credentials_exception
+    except ExpiredSignatureError:
+        raise credentials_exception
     username: str = payload.get("sub")
     if username is None:
         raise credentials_exception
     token_data = TokenData(username=username)
-    user: UserInDB | None = get_user(db, username=token_data.username)
+    user: User | None = get_user(db, username=token_data.username)
     if user is None:
         raise credentials_exception
-    return UserBase(
-        username=user.username,
-        email=user.email,
-        full_name=user.full_name,
-        disabled=user.disabled,
-        user_type_name=user.user_type_name,
-    )
+    return UserBase.model_validate(user)
 
 
 current_user_depends = Depends(get_current_user)
@@ -55,25 +52,16 @@ def get_current_active_user(
     current_user: UserBase = current_user_depends,
 ) -> UserBase:
     """Get current active user."""
-    if current_user.disabled:
+    if current_user.is_deleted:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Inactive user",
+            detail="Deleted user",
         )
     return current_user
 
 
-def get_user(db: Session, username: str) -> UserInDB | None:
+def get_user(db: Session, username: str) -> User | None:
     """Get user."""
     user = db.query(User).filter(User.username == username).first()
 
-    if user is not None:
-        return UserInDB(
-            username=user.username,
-            email=user.email,
-            full_name=user.full_name,
-            disabled=user.is_deleted,
-            hashed_password=user.hashed_password,
-            user_type_name=user.user_type_name,
-        )
-    return None
+    return user

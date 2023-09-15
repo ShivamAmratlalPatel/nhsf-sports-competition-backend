@@ -9,6 +9,7 @@ from backend.chapters.chapters_models import *
 from backend.database import Base
 from backend.matches.matches_models import *
 from backend.pitches.pitches_models import *
+from backend.players.players_models import *
 from backend.sports.sports_models import *
 from backend.stages.stages_models import *
 from backend.teams.teams_models import *

@@ -1,5 +1,7 @@
 """User schemas"""
-from pydantic import BaseModel, ConfigDict, EmailStr
+from uuid import UUID
+
+from pydantic import BaseModel, EmailStr, ConfigDict
 
 
 class UserBase(BaseModel):
@@ -8,14 +10,9 @@ class UserBase(BaseModel):
     username: str
     email: str | None = None
     full_name: str | None = None
-    disabled: bool | None = None
+    is_deleted: bool | None = None
     user_type_name: str | None = None
-
-
-class UserInDB(UserBase):
-    """User in database."""
-
-    hashed_password: str
+    chapter_id: UUID | None = None
 
     model_config = ConfigDict(
         from_attributes=True,
