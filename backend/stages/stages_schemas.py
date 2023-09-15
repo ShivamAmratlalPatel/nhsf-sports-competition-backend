@@ -11,3 +11,4 @@ class StagesEnum(str, Enum):
     quarter_final = 1
     semi_final = 2
     final = 3
+    __slots__ = ()

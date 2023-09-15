@@ -5,14 +5,15 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config, pool
 
 from alembic import context
-
 from backend.chapters.chapters_models import *
+from backend.database import Base
 from backend.matches.matches_models import *
 from backend.pitches.pitches_models import *
+from backend.players.players_models import *
 from backend.sports.sports_models import *
 from backend.stages.stages_models import *
 from backend.teams.teams_models import *
-from backend.database import Base
+from backend.users.users_models import *
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
