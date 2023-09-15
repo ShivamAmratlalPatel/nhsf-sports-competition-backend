@@ -1,3 +1,4 @@
+"""Verify that the user is part of the chapter."""
 from uuid import UUID
 
 

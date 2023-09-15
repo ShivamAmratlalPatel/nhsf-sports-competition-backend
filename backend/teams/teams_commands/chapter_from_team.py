@@ -1,3 +1,4 @@
+"""Get the chapter from the team ID."""
 from uuid import UUID
 
 from sqlalchemy.orm import Session

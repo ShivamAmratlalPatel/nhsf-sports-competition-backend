@@ -1,5 +1,7 @@
 """Ednpoints for players"""
 
+from typing import TYPE_CHECKING
+
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
@@ -12,8 +14,6 @@ from backend.teams.teams_commands.chapter_from_team import chapter_id_from_team
 from backend.users.users_commands.chapter_user import verify_chapter_user
 from backend.users.users_commands.get_users import get_current_active_user
 from backend.users.users_schemas import UserBase
-from typing import TYPE_CHECKING
-
 from backend.utils import object_to_dict
 
 if TYPE_CHECKING:
@@ -43,20 +43,20 @@ def create_player(
     """Create a player."""
     try:
         chapter_id: UUID = chapter_id_from_team(db, player_create.team_id)
-    except ValueError:
+    except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Team not found",
-        )
+        ) from e
 
     if current_user.user_type_name == "chapter":
         try:
             verify_chapter_user(current_user.chapter_id, chapter_id)
-        except ValueError:
+        except ValueError as e:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="User not part of chapter",
-            )
+            ) from e
 
     player = Player(
         name=player_create.name,
