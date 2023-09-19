@@ -28,12 +28,13 @@ WHERE NOT EXISTS (SELECT 1
 DELETE
 FROM sports;
 
-INSERT INTO sports (id, name, created_date, is_deleted, last_modified_date)
-VALUES ('7dac42d7-e397-4efa-b70a-0232cacd4c4f',
-        'Football',
-        '2023-09-13 00:09:50.564341 +00:00',
-        FALSE,
-        NULL);
+INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date) VALUES ('7dac42d7-e397-4efa-b70a-0232cacd4c4f', 'Football', '2023-09-13 00:09:50.564341 +00:00', false, null);
+INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date) VALUES ('189772ac-8d6d-4662-b5aa-000fa4271138', 'Badminton', '2023-09-19 19:39:43.167812 +00:00', false, null);
+INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date) VALUES ('7e90575b-5b04-4a12-9279-f7124a5f737c', 'Netball', '2023-09-19 19:39:43.167812 +00:00', false, null);
+INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date) VALUES ('de115edc-f2ee-4a60-818c-677afd028e8e', 'Cricket', '2023-09-19 19:39:43.167812 +00:00', false, null);
+INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date) VALUES ('5d231a25-d15a-4881-a004-9b9ddfa4b988', 'Kho', '2023-09-19 19:39:43.167812 +00:00', false, null);
+INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date) VALUES ('29fc8489-95ee-4dd5-bf21-0703f4df41c6', 'Kabaddi', '2023-09-19 19:39:43.167812 +00:00', false, null);
+
 
 DELETE
 FROM teams;
