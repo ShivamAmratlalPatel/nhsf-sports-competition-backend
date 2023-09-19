@@ -4,6 +4,8 @@ services:
   backend:
     build: .
     container_name: nhsf-backend
+    networks:
+      - nhsf_postgres_network
     env_file:
       - $PWD/.env.local
     depends_on:
@@ -17,18 +19,16 @@ services:
   postgres:
     image: postgres:11-alpine
     container_name: nhsf-db
+    networks:
+      - nhsf_postgres_network
     hostname: nhsf-db
     environment:
       POSTGRES_DB: nhsf_backend
       POSTGRES_USER: rc
       POSTGRES_PASSWORD: ""
       POSTGRES_HOST_AUTH_METHOD: trust
-#  pg_admin:
-#    image: dpage/pgadmin4
-#    container_name: rc_pgadmin
-#    environment:
-#      PGADMIN_DEFAULT_EMAIL: a@b.com
-#      PGADMIN_DEFAULT_PASSWORD: dev
-#      PGADMIN_LISTEN_PORT: 4000
-#    ports:
-#      - "4001:4000"
+    ports:
+      - "5432:5432"
+
+networks:
+    nhsf_postgres_network:

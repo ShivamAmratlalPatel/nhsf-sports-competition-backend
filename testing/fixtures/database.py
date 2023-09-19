@@ -37,6 +37,7 @@ def session(session_factory: session_local_factory) -> session_local_factory:
         if table.name in [
             "alembic_version",
             "stages",
+            "user_types",
         ]:
             continue
         conn.execute(text(f"TRUNCATE {table.name} CASCADE"))
