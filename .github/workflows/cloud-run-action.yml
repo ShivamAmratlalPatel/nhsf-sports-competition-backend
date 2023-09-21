@@ -1,44 +1,35 @@
-name: Docker
+name: Docker Build and Deploy to Google Cloud Run
 
 on:
   push:
     branches:
-      - development
+      - main # Change this to your main branch name
 
 jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
 
-    deploy:
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-        name: Setup Gcloud Account
-        runs-on: ubuntu-latest
-        env:
-          IMAGE_NAME: gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_APP_NAME }}
-        steps:
+    - name: Set up Google Cloud CLI
+      uses: google-github-actions/setup-gcloud@master
+      with:
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+        export_default_credentials: true
 
-        - name: Checkout
-          uses: actions/checkout@v3
+    - name: Build Docker image
+      run: |
+        docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/your-app-name:${{ github.sha }} .
+        docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/your-app-name:${{ github.sha }}
 
-        - id: 'auth'
-          name: 'Authenticate to Google Cloud'
-          uses: 'google-github-actions/auth@v1'
-          with:
-            credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
-    
-        - name: Set up Cloud SDK
-          uses: google-github-actions/setup-gcloud@v1
-    
-        - name: Use gcloud CLI
-          run: gcloud info
-          
-        - name: Configure Docker
-          run: gcloud auth configure-docker --quiet
+    - name: Deploy to Google Cloud Run
+      run: |
+        gcloud run deploy your-app-name \
+          --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/your-app-name:${{ github.sha }} \
+          --platform managed \
+          --region us-central1 # Change this to your desired region
+          --allow-unauthenticated # Remove this if you want authentication
 
-
-        - name: Build Docker image
-          run: docker build . -t $IMAGE_NAME
-
-        - name: Push Docker image
-          run: docker push $IMAGE_NAME
-
-        - name: Deploy Docker image
-          run: gcloud run deploy ${{ secrets.GCP_APP_NAME }} --quiet --image $IMAGE_NAME --platform managed --project ${{ secrets.GCP_PROJECT_ID }} --memory 256Mi --timeout 300 --concurrency 100 --max-instances 1000 --cpu 1 --clear-env-vars --clear-cloudsql-instances --client-name "Github Actions" --region europe-west1 --allow-unauthenticated --clear-vpc-connector
