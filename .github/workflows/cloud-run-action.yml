@@ -3,7 +3,7 @@ name: Docker Build and Deploy to Google Cloud Run
 on:
   push:
     branches:
-      - main # Change this to your main branch name
+      - development
 
 jobs:
   build-and-deploy:
