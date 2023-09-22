@@ -25,14 +25,14 @@ ENV PYTHONFAULTHANDLER=1 \
     POETRY_VERSION=1.4.2 \
     PYTHONPATH=.
 RUN curl -sSL https://install.python-poetry.org | python3 -
-RUN adduser -D app  # Changed to create a system user
-USER app
 WORKDIR /app
 COPY pyproject.toml poetry.lock /app/
 RUN poetry config virtualenvs.create false --local
 RUN poetry run python -m pip install -U pip
 RUN pip install --upgrade pip
 RUN poetry install
+RUN adduser -D app  # Changed to create a system user
+USER app
 USER root  # Switch back to root temporarily to copy files with proper permissions
 COPY --chown=app:wheel . /app/
 USER app  # Switch back to the app user
