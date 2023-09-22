@@ -29,7 +29,8 @@ WORKDIR /app
 COPY pyproject.toml poetry.lock /app/
 RUN poetry config virtualenvs.create false --local
 RUN poetry run python -m pip install -U pip
-RUN pip install --upgrade pip
+RUN poetry install
+RUN poetry run python -m pip install pydantic[email]
 RUN poetry install
 RUN adduser -D app  # Changed to create a system user
 USER app
