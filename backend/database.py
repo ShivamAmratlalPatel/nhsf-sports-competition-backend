@@ -4,26 +4,29 @@ import os
 
 from google.cloud.sql.connector import Connector
 from sqlalchemy import Engine, create_engine
-from sqlalchemy import engine as sqlalchemy_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy.pool import NullPool
 
-from backend.config import DB_HOST, DB_NAME, DB_PASS, DB_PORT, DB_USER, ENVIRONMENT
+from backend.config import DB_HOST, DB_NAME, DB_PASS, DB_USER, ENVIRONMENT
 
 
 def connect_tcp_socket() -> Engine:
     """Initialize a TCP connection pool for a Cloud SQL instance of Postgres."""
+    connector = Connector()
+
+    conn = connector.connect(
+        instance_connection_string=DB_HOST,
+        driver="pg8000",
+        user=DB_USER,
+        password=DB_PASS,
+        db=DB_NAME,
+    )
+
     return create_engine(
         # Equivalent URL:
         # postgresql+pg8000://<db_user>:<db_pass>@<db_host>:<db_port>/<db_name>
-        sqlalchemy_engine.url.URL.create(
-            drivername="postgresql+pg8000",
-            username=DB_USER,
-            password=DB_PASS,
-            host=DB_HOST,
-            port=DB_PORT,
-            database=DB_NAME,
-        ),
+        "postgresql+pg8000://",
+        creator=conn,
     )
 
 
