@@ -1,28 +1,19 @@
 """Database module."""
 import logging
 import os
-from typing import TYPE_CHECKING
 
-from sqlalchemy import create_engine
+from google.cloud.sql.connector import Connector
+from sqlalchemy import Engine, create_engine
 from sqlalchemy import engine as sqlalchemy_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy.pool import NullPool
-from google.cloud.sql.connector import Connector, IPTypes
 
-from backend.config import (
-    ENVIRONMENT,
-    DB_PASS,
-    DB_NAME, DB_USER, DB_HOST, DB_PORT,
-)
-
-if TYPE_CHECKING:
-    from sqlalchemy import Engine
+from backend.config import DB_HOST, DB_NAME, DB_PASS, DB_PORT, DB_USER, ENVIRONMENT
 
 
 def connect_tcp_socket() -> Engine:
-    """Initializes a TCP connection pool for a Cloud SQL instance of Postgres."""
-
-    pool = create_engine(
+    """Initialize a TCP connection pool for a Cloud SQL instance of Postgres."""
+    return create_engine(
         # Equivalent URL:
         # postgresql+pg8000://<db_user>:<db_pass>@<db_host>:<db_port>/<db_name>
         sqlalchemy_engine.url.URL.create(
@@ -34,7 +25,6 @@ def connect_tcp_socket() -> Engine:
             database=DB_NAME,
         ),
     )
-    return pool
 
 
 def session_local_factory(database_url: str | None = None) -> sessionmaker:
