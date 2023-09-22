@@ -4,11 +4,37 @@ import os
 from typing import TYPE_CHECKING
 
 from sqlalchemy import create_engine
+from sqlalchemy import engine as sqlalchemy_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy.pool import NullPool
+from google.cloud.sql.connector import Connector, IPTypes
+
+from backend.config import (
+    ENVIRONMENT,
+    DB_PASS,
+    DB_NAME, DB_USER, DB_HOST, DB_PORT,
+)
 
 if TYPE_CHECKING:
     from sqlalchemy import Engine
+
+
+def connect_tcp_socket() -> Engine:
+    """Initializes a TCP connection pool for a Cloud SQL instance of Postgres."""
+
+    pool = create_engine(
+        # Equivalent URL:
+        # postgresql+pg8000://<db_user>:<db_pass>@<db_host>:<db_port>/<db_name>
+        sqlalchemy_engine.url.URL.create(
+            drivername="postgresql+pg8000",
+            username=DB_USER,
+            password=DB_PASS,
+            host=DB_HOST,
+            port=DB_PORT,
+            database=DB_NAME,
+        ),
+    )
+    return pool
 
 
 def session_local_factory(database_url: str | None = None) -> sessionmaker:
@@ -24,7 +50,11 @@ def session_local_factory(database_url: str | None = None) -> sessionmaker:
     """
     if database_url is None:  # pragma: no cover
         database_url = os.environ["DATABASE_URL"]
-    engine: Engine = create_engine(database_url, poolclass=NullPool)
+    if ENVIRONMENT == "local":
+        engine: Engine = create_engine(database_url, poolclass=NullPool)
+    else:
+        connector = Connector()
+        engine = connect_tcp_socket(connector)
     session_factory: sessionmaker = sessionmaker(
         bind=engine,
         future=True,

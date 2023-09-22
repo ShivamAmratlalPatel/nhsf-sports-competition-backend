@@ -33,10 +33,8 @@ RUN poetry install
 RUN poetry run python -m pip install pydantic[email]
 RUN poetry install
 RUN adduser -D app  # Changed to create a system user
-USER app
-USER root  # Switch back to root temporarily to copy files with proper permissions
+USER root
 COPY --chown=app:wheel . /app/
-USER app  # Switch back to the app user
 EXPOSE 9000
 HEALTHCHECK CMD curl --fail http://localhost:9000/health || exit 1
 CMD ["./scripts/run.sh"]
