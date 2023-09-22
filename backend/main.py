@@ -131,3 +131,19 @@ def trace(n: int = 10, filter_: str = ".*", v: bool = False) -> str:
                 lines.append(line)
             lines.append("")
         return "\n".join(lines)
+
+
+@app.get("/migrate_db", response_class=PlainTextResponse)
+def migrate_db() -> str:
+    """
+    Migrate the database.
+
+    Returns
+        str: migration output
+    """
+    from alembic import command
+    from alembic.config import Config
+
+    alembic_cfg = Config("alembic.ini")
+    command.upgrade(alembic_cfg, "head")
+    return "Database migrated!"
