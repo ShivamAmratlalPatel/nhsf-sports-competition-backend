@@ -3,7 +3,6 @@ import jwt
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError
-from jwt import ExpiredSignatureError
 from sqlalchemy.orm import Session
 from starlette import status
 
@@ -32,8 +31,6 @@ def get_current_user(
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     except JWTError:
-        raise credentials_exception
-    except ExpiredSignatureError:
         raise credentials_exception
     username: str = payload.get("sub")
     if username is None:
