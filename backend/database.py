@@ -18,7 +18,7 @@ def connect_tcp_socket() -> Engine:
 
     conn = connector.connect(
         DB_CONN,
-        driver="pg8000",
+        "pg8000",
         user=DB_USER,
         password=DB_PASS,
         db=DB_NAME,
