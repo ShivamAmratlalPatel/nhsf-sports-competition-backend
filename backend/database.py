@@ -2,20 +2,22 @@
 import logging
 import os
 
-from google.cloud.sql.connector import Connector
 from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy.pool import NullPool
 
-from backend.config import DB_HOST, DB_NAME, DB_PASS, DB_USER, ENVIRONMENT
+from backend.config import DB_HOST, DB_NAME, DB_CONN, DB_USER, ENVIRONMENT, DB_PASS, \
+    DATABASE_URL
+from google.cloud.sql.connector import Connector
+import sqlalchemy
 
-
+# initialize Connector object
 def connect_tcp_socket() -> Engine:
     """Initialize a TCP connection pool for a Cloud SQL instance of Postgres."""
     connector = Connector()
 
     conn = connector.connect(
-        instance_connection_string=DB_HOST,
+        DB_CONN,
         driver="pg8000",
         user=DB_USER,
         password=DB_PASS,
@@ -41,12 +43,13 @@ def session_local_factory(database_url: str | None = None) -> sessionmaker:
         sessionmaker: session factory
 
     """
-    if database_url is None:  # pragma: no cover
-        database_url = os.environ["DATABASE_URL"]
+
     if ENVIRONMENT == "local":
+        if database_url is None:
+            database_url = DATABASE_URL
         engine: Engine = create_engine(database_url, poolclass=NullPool)
     else:
-        engine = connect_tcp_socket()
+        engine: Engine = connect_tcp_socket()
     session_factory: sessionmaker = sessionmaker(
         bind=engine,
         future=True,
