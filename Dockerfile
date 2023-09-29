@@ -35,6 +35,6 @@ RUN poetry install
 RUN adduser -D app  # Changed to create a system user
 USER root
 COPY --chown=app:wheel . /app/
-EXPOSE 9000
-HEALTHCHECK CMD curl --fail http://localhost:9000/health || exit 1
+EXPOSE 8080
+HEALTHCHECK CMD curl --fail http://localhost:8080/health || exit 1
 CMD ["./scripts/run.sh"]
