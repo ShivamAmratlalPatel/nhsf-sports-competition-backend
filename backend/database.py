@@ -6,10 +6,15 @@ from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy.pool import NullPool
 
-from backend.config import DB_HOST, DB_NAME, DB_CONN, DB_USER, ENVIRONMENT, DB_PASS, \
-    DATABASE_URL
+from backend.config import (
+    DB_HOST,
+    DB_NAME,
+    DB_CONN,
+    ENVIRONMENT,
+    DATABASE_URL,
+)
 from google.cloud.sql.connector import Connector
-import sqlalchemy
+
 
 # initialize Connector object
 def connect_tcp_socket() -> Engine:
@@ -19,9 +24,8 @@ def connect_tcp_socket() -> Engine:
     conn = connector.connect(
         DB_CONN,
         "pg8000",
-        user=DB_USER,
-        password=DB_PASS,
         db=DB_NAME,
+        host=DB_HOST,
     )
 
     return create_engine(
