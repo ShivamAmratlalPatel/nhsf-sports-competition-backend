@@ -6,34 +6,7 @@ from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy.pool import NullPool
 
-from backend.config import (
-    DB_HOST,
-    DB_NAME,
-    DB_CONN,
-    ENVIRONMENT,
-    DATABASE_URL,
-)
-from google.cloud.sql.connector import Connector
-
-
-# initialize Connector object
-def connect_tcp_socket() -> Engine:
-    """Initialize a TCP connection pool for a Cloud SQL instance of Postgres."""
-    connector = Connector()
-
-    conn = connector.connect(
-        DB_CONN,
-        "pg8000",
-        db=DB_NAME,
-        host=DB_HOST,
-    )
-
-    return create_engine(
-        # Equivalent URL:
-        # postgresql+pg8000://<db_user>:<db_pass>@<db_host>:<db_port>/<db_name>
-        "postgresql+pg8000://",
-        creator=conn,
-    )
+from backend.config import DATABASE_URL
 
 
 def session_local_factory(database_url: str | None = None) -> sessionmaker:
@@ -47,7 +20,6 @@ def session_local_factory(database_url: str | None = None) -> sessionmaker:
         sessionmaker: session factory
 
     """
-
     if database_url is None:
         database_url = DATABASE_URL
     engine: Engine = create_engine(database_url, poolclass=NullPool)
