@@ -48,12 +48,10 @@ def session_local_factory(database_url: str | None = None) -> sessionmaker:
 
     """
 
-    if ENVIRONMENT == "local":
-        if database_url is None:
-            database_url = DATABASE_URL
-        engine: Engine = create_engine(database_url, poolclass=NullPool)
-    else:
-        engine: Engine = connect_tcp_socket()
+    if database_url is None:
+        database_url = DATABASE_URL
+    engine: Engine = create_engine(database_url, poolclass=NullPool)
+
     session_factory: sessionmaker = sessionmaker(
         bind=engine,
         future=True,
