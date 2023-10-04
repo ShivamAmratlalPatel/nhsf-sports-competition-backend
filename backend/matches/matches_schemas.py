@@ -6,6 +6,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict
 
 from backend.utils import datetime_now, generate_uuid
+from testing.helpers.fake_data import fake_penalties, fake_score
 
 
 class MatchBase(BaseModel):
@@ -79,6 +80,24 @@ class MatchRead(MatchBase):
                 "created_date": datetime_now(),
                 "last_modified_date": datetime_now(),
                 "is_deleted": False,
+            },
+        },
+    )
+
+
+class ScoreDetails(BaseModel):
+    home_score: float
+    away_score: float
+    home_penalties: float | None = None
+    away_penalties: float | None = None
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "home_score": fake_score(),
+                "away_score": fake_score(),
+                "home_penalties": fake_penalties(),
+                "away_penalties": fake_penalties(),
             },
         },
     )

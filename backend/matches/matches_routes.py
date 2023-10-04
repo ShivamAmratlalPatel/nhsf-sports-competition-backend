@@ -9,12 +9,21 @@ from starlette import status
 
 from backend.helpers import get_db
 from backend.matches.matches_models import Match
-from backend.matches.matches_schemas import MatchCreate, MatchRead, MatchUpdate
+from backend.matches.matches_schemas import (
+    MatchCreate,
+    MatchRead,
+    MatchUpdate,
+    ScoreDetails,
+)
+from backend.users.users_commands.check_admin import check_admin
+from backend.users.users_commands.get_users import get_current_active_user
+from backend.users.users_schemas import UserBase
 from backend.utils import object_to_dict
 
 matches_router = APIRouter()
 
 db_session = Depends(get_db)
+current_user_instance = Depends(get_current_active_user)
 
 
 @matches_router.post(
@@ -262,4 +271,35 @@ def get_schedule(
     return JSONResponse(
         status_code=status.HTTP_200_OK,
         content=[object_to_dict(MatchRead.model_validate(match)) for match in matches],
+    )
+
+
+@matches_router.put(
+    "/match/{match_id}/log_score",
+    tags=["matches"],
+)
+def log_score(
+    match_id: UUID,
+    score_details: ScoreDetails,
+    db: Session = db_session,
+    current_user: UserBase = current_user_instance,
+) -> JSONResponse:
+    check_admin(current_user)
+
+    match: Match | None = db.get(Match, match_id)
+
+    if match is None:
+        raise HTTPException(status_code=404, detail="Match not found")
+
+    match.home_score = score_details.home_score
+    match.away_score = score_details.away_score
+    match.home_penalties = score_details.home_penalties
+    match.away_penalties = score_details.away_penalties
+
+    db.add(match)
+    db.commit()
+
+    return JSONResponse(
+        status_code=200,
+        content=object_to_dict(MatchRead.model_validate(match), format_date=True),
     )

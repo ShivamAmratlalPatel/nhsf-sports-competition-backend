@@ -5,7 +5,6 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict
 
-from backend.utils import datetime_now, generate_uuid
 from testing.helpers.fake_data import fake_name
 
 
@@ -52,15 +51,3 @@ class PitchRead(PitchBase):
     created_date: datetime
     last_modified_date: datetime | None = None
     is_deleted: bool
-    model_config = ConfigDict(
-        from_attributes=True,
-        json_schema_extra={
-            "example": {
-                **PitchBase.model_config["json_schema_extra"]["example"],
-                "id": generate_uuid(),
-                "created_date": datetime_now(),
-                "last_modified_date": datetime_now(),
-                "is_deleted": False,
-            },
-        },
-    )

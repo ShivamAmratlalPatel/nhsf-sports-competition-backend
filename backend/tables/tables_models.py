@@ -1,0 +1,80 @@
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, func
+from sqlalchemy.dialects import postgresql as pg
+from sqlalchemy.orm import relationship
+
+from backend.database import Base
+from backend.utils import datetime_now, generate_uuid
+
+
+class LeagueTable(Base):
+    """LeagueTable model."""
+
+    __tablename__ = "league_tables"
+
+    id = Column(
+        pg.UUID(as_uuid=True),
+        primary_key=True,
+        index=True,
+        default=generate_uuid(),
+        server_default=func.uuid_generate_v4(),
+    )
+    team_id = Column(
+        pg.UUID(as_uuid=True),
+        ForeignKey("teams.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    team = relationship("Team")
+    sport_id = Column(
+        pg.UUID(as_uuid=True),
+        ForeignKey("sports.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    won = Column(Integer, default=0, server_default="0")
+    drawn = Column(Integer, default=0, server_default="0")
+    lost = Column(Integer, default=0, server_default="0")
+    score_difference = Column(
+        pg.NUMERIC(precision=12, scale=2),
+        default=0,
+        server_default="0",
+    )
+    played = Column(Integer, default=0, server_default="0")
+    created_date = Column(
+        DateTime(timezone=True),
+        nullable=False,
+        default=datetime_now(),
+        server_default=func.timezone(
+            "Europe/London",
+            func.timezone("Europe/London", func.current_timestamp()),
+        ),
+    )
+    is_deleted = Column(Boolean, nullable=False, default=False, server_default="false")
+    last_modified_date = Column(
+        DateTime(timezone=True),
+        onupdate=datetime_now(),
+        server_onupdate=func.timezone(
+            "Europe/London",
+            func.timezone("Europe/London", func.current_timestamp()),
+        ),
+    )
+
+    @property
+    def points(self):
+        return self.won * 3 + self.drawn
+
+    @property
+    def points_per_game(self):
+        try:
+            return self.points / self.played
+        except ZeroDivisionError:
+            return 0
+
+    @property
+    def score_difference_per_game(self):
+        try:
+            return self.score_difference / self.played
+        except ZeroDivisionError:
+            return 0
+
+    @property
+    def team_name(self):
+        return self.team.name

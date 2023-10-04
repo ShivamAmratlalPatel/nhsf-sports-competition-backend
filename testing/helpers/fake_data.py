@@ -161,3 +161,23 @@ def fake_match(
         "pitch_id": pitch_id,
         "stage_id": stage.value,
     }
+
+
+def fake_score() -> float:
+    return float(
+        fake.pydecimal(
+            left_digits=1,
+            right_digits=0,
+            positive=True,
+        ),
+    )
+
+
+def fake_penalties() -> float:
+    return float(
+        fake.pydecimal(
+            left_digits=1,
+            right_digits=0,
+            positive=True,
+        ),
+    )

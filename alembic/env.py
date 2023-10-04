@@ -12,6 +12,7 @@ from backend.pitches.pitches_models import *
 from backend.players.players_models import *
 from backend.sports.sports_models import *
 from backend.stages.stages_models import *
+from backend.tables.tables_models import *
 from backend.teams.teams_models import *
 from backend.users.users_models import *
 
