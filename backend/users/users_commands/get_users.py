@@ -59,4 +59,4 @@ def get_current_active_user(
 
 def get_user(db: Session, username: str) -> User | None:
     """Get user."""
-    return db.query(User).filter(User.username == username).first()
+    return db.query(User).filter(User.email == username).first()
