@@ -1,8 +1,7 @@
 """Get user commands."""
-import jwt
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
-from jose import JWTError
+from jose import JWTError, jwt
 from sqlalchemy.orm import Session
 from starlette import status
 
@@ -27,7 +26,7 @@ def get_current_user(
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
-
+    print(f"token: {token}")
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     except JWTError:
@@ -36,7 +35,7 @@ def get_current_user(
     if username is None:
         raise credentials_exception
     token_data = TokenData(username=username)
-    user: User | None = get_user(db, username=token_data.username)
+    user: User | None = get_user_by_username(db, username=token_data.username)
     if user is None:
         raise credentials_exception
     return UserBase.model_validate(user)
@@ -57,6 +56,11 @@ def get_current_active_user(
     return current_user
 
 
-def get_user(db: Session, username: str) -> User | None:
+def get_user_by_username(db: Session, username: str) -> User | None:
+    """Get user by username."""
+    return db.query(User).filter(User.username == username).first()
+
+
+def get_user_by_email(db: Session, email: str) -> User | None:
     """Get user."""
-    return db.query(User).filter(User.email == username).first()
+    return db.query(User).filter(User.email == email).first()

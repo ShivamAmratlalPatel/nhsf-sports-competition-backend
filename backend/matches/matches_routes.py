@@ -170,14 +170,15 @@ def update_match(
     db: Session = db_session,
 ) -> JSONResponse:
     """Update a match."""
-    match = db.query(Match).filter(Match.id == match_id).first()
+    match: Match = db.query(Match).filter(Match.id == match_id).first()
     if not match:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Match not found",
         )
-    for field, value in match_details:
-        setattr(match, field, value)
+    for field, value in match_details.__dict__.items():
+        if field != "id":
+            setattr(match, field, value)
     db.add(match)
     db.commit()
     db.refresh(match)

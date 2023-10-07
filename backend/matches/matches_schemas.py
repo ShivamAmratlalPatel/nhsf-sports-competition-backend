@@ -29,7 +29,7 @@ class MatchBase(BaseModel):
                 "away_team_id": generate_uuid(),
                 "sport_id": generate_uuid(),
                 "pitch_id": generate_uuid(),
-                "stage_id": 1,
+                "stage_id": generate_uuid(),
                 "home_score": 0,
                 "away_score": 0,
                 "home_penalties": 0,

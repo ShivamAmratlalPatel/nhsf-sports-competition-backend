@@ -1,10 +1,12 @@
 """Matches Database Models"""
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, func
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, func, Integer
 from sqlalchemy.dialects import postgresql as pg
 from sqlalchemy.orm import relationship
 
 from backend.database import Base
 from backend.utils import datetime_now, generate_uuid
+
+from backend.stages.stages_models import Stage # noqa: F401
 
 
 class Match(Base):
@@ -69,3 +71,4 @@ class Match(Base):
     time = Column(DateTime(timezone=True))
     sport = relationship("Sport", back_populates="matches")
     pitch = relationship("Pitch", back_populates="matches")
+    stage = relationship("Stage")
