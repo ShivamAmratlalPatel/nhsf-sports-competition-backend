@@ -32,7 +32,7 @@ def upgrade() -> None:
             "created_date",
             sa.DateTime(timezone=True),
             server_default=sa.text(
-                "timezone('Europe/London', timezone('Europe/London', CURRENT_TIMESTAMP))",
+                "timezone('Europe/London', CURRENT_TIMESTAMP)",
             ),
             nullable=False,
         ),

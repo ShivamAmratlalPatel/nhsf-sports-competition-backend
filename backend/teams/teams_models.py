@@ -24,19 +24,13 @@ class Team(Base):
         DateTime(timezone=True),
         nullable=False,
         default=datetime_now(),
-        server_default=func.timezone(
-            "Europe/London",
-            func.timezone("Europe/London", func.current_timestamp()),
-        ),
+        server_default=func.timezone("Europe/London", func.current_timestamp()),
     )
     is_deleted = Column(Boolean, nullable=False, default=False, server_default="false")
     last_modified_date = Column(
         DateTime(timezone=True),
         onupdate=datetime_now(),
-        server_onupdate=func.timezone(
-            "Europe/London",
-            func.timezone("Europe/London", func.current_timestamp()),
-        ),
+        server_onupdate=func.timezone("Europe/London", func.current_timestamp()),
     )
     chapter_id = Column(
         pg.UUID(as_uuid=True),

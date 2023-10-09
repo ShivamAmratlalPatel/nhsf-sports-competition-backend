@@ -86,6 +86,8 @@ class MatchRead(MatchBase):
 
 
 class ScoreDetails(BaseModel):
+    """Score details schema."""
+
     home_score: float
     away_score: float
     home_penalties: float | None = None

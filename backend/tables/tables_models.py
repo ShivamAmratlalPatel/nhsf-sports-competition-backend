@@ -1,3 +1,4 @@
+"""Table Models"""
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, func
 from sqlalchemy.dialects import postgresql as pg
 from sqlalchemy.orm import relationship
@@ -42,39 +43,37 @@ class LeagueTable(Base):
         DateTime(timezone=True),
         nullable=False,
         default=datetime_now(),
-        server_default=func.timezone(
-            "Europe/London",
-            func.timezone("Europe/London", func.current_timestamp()),
-        ),
+        server_default=func.timezone("Europe/London", func.current_timestamp()),
     )
     is_deleted = Column(Boolean, nullable=False, default=False, server_default="false")
     last_modified_date = Column(
         DateTime(timezone=True),
         onupdate=datetime_now(),
-        server_onupdate=func.timezone(
-            "Europe/London",
-            func.timezone("Europe/London", func.current_timestamp()),
-        ),
+        server_onupdate=func.timezone("Europe/London", func.current_timestamp()),
     )
 
     @property
-    def points(self):
+    def points(self: "LeagueTable") -> int:
+        """Calculate the points for the team."""
         return self.won * 3 + self.drawn
 
     @property
-    def points_per_game(self):
+    def points_per_game(self: "LeagueTable") -> float:
+        """Calculate the points per game for the team."""
         try:
             return self.points / self.played
         except ZeroDivisionError:
             return 0
 
     @property
-    def score_difference_per_game(self):
+    def score_difference_per_game(self: "LeagueTable") -> float:
+        """Calculate the score difference per game for the team."""
         try:
             return self.score_difference / self.played
         except ZeroDivisionError:
             return 0
 
     @property
-    def team_name(self):
+    def team_name(self: "LeagueTable") -> str:
+        """Get the team name."""
         return self.team.name

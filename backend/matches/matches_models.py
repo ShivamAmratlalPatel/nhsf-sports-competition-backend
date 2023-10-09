@@ -1,12 +1,11 @@
 """Matches Database Models"""
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, func, Integer
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, func
 from sqlalchemy.dialects import postgresql as pg
 from sqlalchemy.orm import relationship
 
 from backend.database import Base
+from backend.stages.stages_models import Stage  # noqa: F401
 from backend.utils import datetime_now, generate_uuid
-
-from backend.stages.stages_models import Stage # noqa: F401
 
 
 class Match(Base):
@@ -25,19 +24,13 @@ class Match(Base):
         DateTime(timezone=True),
         nullable=False,
         default=datetime_now(),
-        server_default=func.timezone(
-            "Europe/London",
-            func.timezone("Europe/London", func.current_timestamp()),
-        ),
+        server_default=func.timezone("Europe/London", func.current_timestamp()),
     )
     is_deleted = Column(Boolean, nullable=False, default=False, server_default="false")
     last_modified_date = Column(
         DateTime(timezone=True),
         onupdate=datetime_now(),
-        server_onupdate=func.timezone(
-            "Europe/London",
-            func.timezone("Europe/London", func.current_timestamp()),
-        ),
+        server_onupdate=func.timezone("Europe/London", func.current_timestamp()),
     )
     home_team_id = Column(
         pg.UUID(as_uuid=True),

@@ -285,6 +285,7 @@ def log_score(
     db: Session = db_session,
     current_user: UserBase = current_user_instance,
 ) -> JSONResponse:
+    """Log score for a match."""
     check_admin(current_user)
 
     match: Match | None = db.get(Match, match_id)

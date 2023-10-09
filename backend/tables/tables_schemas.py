@@ -1,9 +1,12 @@
+"""Pydantic schemas for the tables module."""
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict
 
 
 class TableRead(BaseModel):
+    """Table read schema."""
+
     id: UUID
     team_name: str
     points: float

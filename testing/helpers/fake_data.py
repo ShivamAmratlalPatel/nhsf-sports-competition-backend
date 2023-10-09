@@ -164,6 +164,7 @@ def fake_match(
 
 
 def fake_score() -> float:
+    """Return a fake score."""
     return float(
         fake.pydecimal(
             left_digits=1,
@@ -174,6 +175,7 @@ def fake_score() -> float:
 
 
 def fake_penalties() -> float:
+    """Return a fake penalties."""
     return float(
         fake.pydecimal(
             left_digits=1,
