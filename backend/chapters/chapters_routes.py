@@ -1,4 +1,5 @@
 """Ednpoints for chapters"""
+import logging
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -10,7 +11,7 @@ from starlette import status
 from backend.chapters.chapters_models import Chapter
 from backend.chapters.chapters_schemas import ChapterCreate, ChapterRead, ChapterUpdate
 from backend.helpers import get_db
-from backend.utils import object_to_dict
+from backend.utils import generate_uuid, object_to_dict
 
 chapters_router = APIRouter()
 
@@ -45,10 +46,11 @@ def create_chapter(
     """Create a chapter."""
     try:
         chapter = Chapter(**chapter_details.model_dump())
+        chapter.id = generate_uuid()
         db.add(chapter)
         db.commit()
-        db.refresh(chapter)
     except IntegrityError as e:
+        logging.exception(e)
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="Chapter already exists",

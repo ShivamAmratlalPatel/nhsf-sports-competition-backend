@@ -33,7 +33,13 @@ def upgrade() -> None:
     )
     op.create_index(op.f("ix_user_types_id"), "user_types", ["id"], unique=False)
 
-    op.bulk_insert(user_types, [{"name": "admin"}, {"name": "chapter"}])
+    op.bulk_insert(
+        user_types,
+        [
+            {"id": "87545bbb-9750-4e4f-bdfa-790f3994cd19", "name": "admin"},
+            {"id": "6b7815b7-5563-445e-b400-48e81d1dbce6", "name": "chapter"},
+        ],
+    )
 
     op.create_table(
         "users",

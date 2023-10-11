@@ -119,15 +119,14 @@ def get_team(
     },
 )
 def get_teams(
+        chapter_id: UUID| None = None,
     db: Session = db_session,
 ) -> JSONResponse:
     """Get all teams."""
-    teams = db.query(Team).all()
-    if not teams:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Teams not found",
-        )
+    if chapter_id:
+        teams = db.query(Team).filter(Team.chapter_id == chapter_id).all()
+    else:
+        teams = db.query(Team).all()
     return JSONResponse(
         status_code=status.HTTP_200_OK,
         content=[object_to_dict(TeamRead.model_validate(team)) for team in teams],
