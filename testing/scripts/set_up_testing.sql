@@ -139,3 +139,8 @@ VALUES (uuid_generate_v4(),
 
 
 DROP TABLE IF EXISTS temp_ids;
+
+
+DELETE FROM users;
+
+INSERT INTO public.users (id, username, email, hashed_password, created_date, is_deleted, last_modified_date, chapter_id, user_type_id, full_name) VALUES ('4ff8ce59-e42a-4c55-afa5-f5c9d4c914d9', 'example', 'user@example.com', '$2b$12$Y2XRv9k6qq3m85rzo23j3.ZpNoYeKQRsBVgc28/Q1/Enagq62.f1C', '2023-10-10 16:01:04.838062 +00:00', false, null, null, '87545bbb-9750-4e4f-bdfa-790f3994cd19', 'Shivam Patel');
