@@ -15,6 +15,7 @@ from backend.matches.matches_schemas import (
     MatchUpdate,
     ScoreDetails,
 )
+from backend.tables.tables_commands.update_table import update_table_for_match
 from backend.users.users_commands.check_admin import check_admin
 from backend.users.users_commands.get_users import get_current_active_user
 from backend.users.users_schemas import UserBase
@@ -170,8 +171,8 @@ def update_match(
     db: Session = db_session,
 ) -> JSONResponse:
     """Update a match."""
-    match: Match = db.query(Match).filter(Match.id == match_id).first()
-    if not match:
+    match: Match | None = db.query(Match).filter(Match.id == match_id).first()
+    if match is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Match not found",
@@ -181,7 +182,7 @@ def update_match(
             setattr(match, field, value)
     db.add(match)
     db.commit()
-    db.refresh(match)
+    update_table_for_match(match, db)
     return JSONResponse(
         status_code=status.HTTP_200_OK,
         content=object_to_dict(MatchRead.model_validate(match)),
@@ -300,6 +301,7 @@ def log_score(
 
     db.add(match)
     db.commit()
+    update_table_for_match(match, db)
 
     return JSONResponse(
         status_code=200,

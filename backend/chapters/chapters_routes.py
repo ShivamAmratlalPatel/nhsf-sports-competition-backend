@@ -50,7 +50,7 @@ def create_chapter(
         db.add(chapter)
         db.commit()
     except IntegrityError as e:
-        logging.exception(e)
+        logging.exception("Chapter already exists")
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="Chapter already exists",

@@ -5,13 +5,23 @@ from sqlalchemy import and_, or_
 from sqlalchemy.orm import Session
 
 from backend.matches.matches_models import Match
+from backend.tables.tables_models import LeagueTable
+from backend.teams.teams_models import Team
+from backend.utils import generate_uuid
 
 
 def update_table_for_team(team_id: UUID, db: Session) -> None:
     """Update the table for a team."""
+    team: Team | None = db.get(Team, team_id)
+
+    if team is None:
+        msg = f"Team with id {team_id} does not exist."
+        raise ValueError(msg)
+
     played = (
         db.query(Match)
         .filter(or_(Match.home_team_id == team_id, Match.away_team_id == team_id))
+        .filter(Match.home_score.is_not(None))
         .count()
     )
     won = (
@@ -55,8 +65,55 @@ def update_table_for_team(team_id: UUID, db: Session) -> None:
         .count()
     )
 
-    _lost = played - won - drawn
+    lost = played - won - drawn
+
+    print(db.query(Match.home_score).filter(Match.home_team_id == team_id).all())
+
+    score_difference = sum(
+        [
+            float(row[0])
+            for row in db.query(Match.home_score)
+            .filter(Match.home_team_id == team_id)
+            .all()
+            if row[0] is not None
+        ],
+    ) + sum(
+        [
+            float(row[0])
+            for row in db.query(Match.away_score)
+            .filter(Match.away_team_id == team_id)
+            .all()
+            if row[0] is not None
+        ],
+    )
+
+    table_entry: LeagueTable | None = (
+        db.query(LeagueTable).filter(LeagueTable.team_id == team_id).first()
+    )
+
+    if table_entry:
+        table_entry.played = played
+        table_entry.won = won
+        table_entry.drawn = drawn
+        table_entry.lost = lost
+        table_entry.score_difference = score_difference
+    else:
+        table_entry = LeagueTable(
+            team_id=team_id,
+            sport_id=team.sport_id,
+            played=played,
+            won=won,
+            drawn=drawn,
+            lost=lost,
+            score_difference=score_difference,
+        )
+        table_entry.id = generate_uuid()
+
+    db.add(table_entry)
+    db.commit()
 
 
-def update_table_for_match(match: Match, db: Session) -> None:  # noqa: ARG001
+def update_table_for_match(match: Match, db: Session) -> None:
     """Update the table for a match."""
+    update_table_for_team(match.home_team_id, db)
+    update_table_for_team(match.away_team_id, db)

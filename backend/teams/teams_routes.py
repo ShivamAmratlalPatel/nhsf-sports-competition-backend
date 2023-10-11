@@ -119,7 +119,7 @@ def get_team(
     },
 )
 def get_teams(
-        chapter_id: UUID| None = None,
+    chapter_id: UUID | None = None,
     db: Session = db_session,
 ) -> JSONResponse:
     """Get all teams."""

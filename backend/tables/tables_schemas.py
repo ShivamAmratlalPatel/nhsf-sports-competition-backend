@@ -9,8 +9,9 @@ class TableRead(BaseModel):
 
     id: UUID
     team_name: str
-    points: float
-    score_difference: float
+    won: int
+    drawn: int
+    lost: int
     played: int
     points_per_game: float
     score_difference_per_game: float

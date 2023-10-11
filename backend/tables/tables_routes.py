@@ -21,6 +21,13 @@ def get_table_for_sport(sport_id: UUID, db: Session = db_session) -> JSONRespons
     """Get table for sport"""
     table_rows = db.query(LeagueTable).filter(LeagueTable.sport_id == sport_id).all()
 
+    print(table_rows)
+
+    # Sort by points_per_game, then score_difference_per_game
+    table_rows.sort(
+        key=lambda x: (x.points_per_game, x.score_difference_per_game), reverse=True,
+    )
+
     return JSONResponse(
         status_code=status.HTTP_200_OK,
         content=[
