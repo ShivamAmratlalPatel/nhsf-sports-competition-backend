@@ -107,35 +107,11 @@ WHERE NOT EXISTS (SELECT 1
 DELETE
 FROM matches;
 -- Insert into matches table using the IDs from the temporary table
-INSERT INTO public.matches (id, created_date, is_deleted, last_modified_date,
-                            home_team_id, away_team_id, sport_id, pitch_id, stage_id,
-                            home_score, away_score, home_penalties, away_penalties,
-                            time)
-VALUES ('3a51516c-6df0-47c7-a756-a768a12a0f79',
-        '2023-09-13 00:13:09.945014 +00:00',
-        FALSE, NULL,
-        '7dc264e3-db16-47c7-bd46-ad766c05a42d',
-        '35569907-cf47-4fc9-80db-0fc5762e7e5e',
-        '7dac42d7-e397-4efa-b70a-0232cacd4c4f',
-        'b6faa095-b64f-4bca-a9e3-d9795b530f21',
-        1,
-        0, 0, 0, 0,
-        '2023-09-13 00:13:09.945014 +00:00');
+INSERT INTO public.matches (id, created_date, is_deleted, last_modified_date, home_team_id, away_team_id, sport_id, pitch_id, stage_id, home_score, away_score, home_penalties, away_penalties, time) VALUES ('3a51516c-6df0-47c7-a756-a768a12a0f79', '2023-09-13 02:13:09.945014 +00:00', false, null, '7dc264e3-db16-47c7-bd46-ad766c05a42d', '35569907-cf47-4fc9-80db-0fc5762e7e5e', '7dac42d7-e397-4efa-b70a-0232cacd4c4f', 'b6faa095-b64f-4bca-a9e3-d9795b530f21', 0, null, null, 0.00, 0.00, '2023-09-13 01:13:09.945014 +00:00');
+INSERT INTO public.matches (id, created_date, is_deleted, last_modified_date, home_team_id, away_team_id, sport_id, pitch_id, stage_id, home_score, away_score, home_penalties, away_penalties, time) VALUES ('4dd77f40-644f-49ea-8fea-436c5cdb8453', '2023-09-13 00:13:09.945014 +00:00', false, null, '35569907-cf47-4fc9-80db-0fc5762e7e5e', '7dc264e3-db16-47c7-bd46-ad766c05a42d', '7dac42d7-e397-4efa-b70a-0232cacd4c4f', 'b6faa095-b64f-4bca-a9e3-d9795b530f21', 0, null, null, null, null, '2023-09-13 00:13:09.945014 +00:00');
+INSERT INTO public.matches (id, created_date, is_deleted, last_modified_date, home_team_id, away_team_id, sport_id, pitch_id, stage_id, home_score, away_score, home_penalties, away_penalties, time) VALUES ('3a51516c-6df0-47c7-a756-a768a12a0f78', '2023-09-13 02:13:09.945014 +00:00', false, null, '7dc264e3-db16-47c7-bd46-ad766c05a42d', '35569907-cf47-4fc9-80db-0fc5762e7e5e', '7dac42d7-e397-4efa-b70a-0232cacd4c4f', 'b6faa095-b64f-4bca-a9e3-d9795b530f21', 1, null, null, 0.00, 0.00, '2023-09-13 01:13:09.945014 +00:00');
+INSERT INTO public.matches (id, created_date, is_deleted, last_modified_date, home_team_id, away_team_id, sport_id, pitch_id, stage_id, home_score, away_score, home_penalties, away_penalties, time) VALUES ('4dd77f40-644f-49ea-8fea-436c5cdb8454', '2023-09-13 00:13:09.945014 +00:00', false, null, '35569907-cf47-4fc9-80db-0fc5762e7e5e', '7dc264e3-db16-47c7-bd46-ad766c05a42d', '7dac42d7-e397-4efa-b70a-0232cacd4c4f', 'b6faa095-b64f-4bca-a9e3-d9795b530f21', 2, null, null, null, null, '2023-09-13 00:13:09.945014 +00:00');
 
-INSERT INTO public.matches (id, created_date, is_deleted, last_modified_date,
-                            home_team_id, away_team_id, sport_id, pitch_id, stage_id,
-                            home_score, away_score, home_penalties, away_penalties,
-                            time)
-VALUES (uuid_generate_v4(),
-        '2023-09-13 00:13:09.945014 +00:00',
-        FALSE, NULL,
-        '35569907-cf47-4fc9-80db-0fc5762e7e5e',
-        '7dc264e3-db16-47c7-bd46-ad766c05a42d',
-        '7dac42d7-e397-4efa-b70a-0232cacd4c4f',
-        'b6faa095-b64f-4bca-a9e3-d9795b530f21',
-        1,
-        NULL, NULL, NULL, NULL,
-        '2023-09-13 00:13:09.945014 +00:00');
 
 
 DROP TABLE IF EXISTS temp_ids;

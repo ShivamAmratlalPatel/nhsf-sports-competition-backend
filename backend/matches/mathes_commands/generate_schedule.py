@@ -1,0 +1,94 @@
+from random import shuffle
+
+from fastapi import HTTPException
+
+from backend.matches.matches_models import Match
+from backend.teams.teams_models import Team
+from backend.utils import generate_uuid, random_datetime
+
+
+def generate_schedule_for_group(db, number_of_groups, sport_id):
+    # region generate schedule for each group
+    for group in range(number_of_groups):
+        # region get teams in group
+        group_teams: list[Team] = (
+            db.query(Team)
+            .filter(Team.sport_id == sport_id)
+            .filter(Team.is_deleted.is_(False))
+            .filter(Team.group == group)
+            .all()
+        )
+        # endregion
+
+        # region check there are teams in group
+
+        if not group_teams:
+            # continue to next iteration of loop
+            continue
+
+        # endregion
+
+        # region generate schedule for group
+        for i, home_team in enumerate(group_teams[:-1]):
+            for away_team in group_teams[i + 1]:
+                if home_team.id != away_team.id:
+                    match = Match(
+                        id=generate_uuid(),
+                        sport_id=sport_id,
+                        stage_id=0,
+                        home_team_id=home_team.id,
+                        away_team_id=away_team.id,
+                        time=random_datetime(),
+                    )
+                    db.add(match)
+        # endregion
+        db.commit()
+    # endregion
+
+
+def randomly_assign_groups(db, number_of_groups, teams):
+    # region randomly assign groups
+    shuffle(teams)
+    for position, team in enumerate(teams):
+        team.group = position % number_of_groups
+        db.add(team)
+    db.commit()
+    # endregion
+
+
+def check_teams(teams):
+    # region check there are teams
+    if not teams:
+        raise HTTPException(
+            status_code=400,
+            detail="There are no teams for this sport",
+        )
+    # endregion
+
+
+def get_list_of_teams_for_sport(db, sport_id):
+    # region get list of teams for sport
+    teams: list[Team] = (
+        db.query(Team)
+        .filter(Team.sport_id == sport_id)
+        .filter(Team.is_deleted.is_(False))
+        .all()
+    )
+    # endregion
+    return teams
+
+
+def check_matches_have_not_been_generated(db, sport_id):
+    # region check matches have not already been generated
+    existing_matches = (
+        db.query(Match)
+        .filter(Match.sport_id == sport_id)
+        .filter(Match.is_deleted.is_(False))
+        .all()
+    )
+    if existing_matches:
+        raise HTTPException(
+            status_code=400,
+            detail="Matches have already been generated",
+        )
+    # endregion

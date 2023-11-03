@@ -15,6 +15,8 @@ class TableRead(BaseModel):
     played: int
     points_per_game: float
     score_difference_per_game: float
+    scores_for_per_game: float
+    scores_against_per_game: float
 
     model_config = ConfigDict(
         from_attributes=True,

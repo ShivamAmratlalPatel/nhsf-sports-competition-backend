@@ -1,5 +1,5 @@
 """Teams Database Models"""
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, String, func
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, String, func, Integer
 from sqlalchemy.dialects import postgresql as pg
 from sqlalchemy.orm import relationship
 
@@ -42,5 +42,6 @@ class Team(Base):
         ForeignKey("sports.id", ondelete="CASCADE"),
         nullable=False,
     )
+    group = Column(Integer)
     chapter = relationship("Chapter", back_populates="teams")
     sport = relationship("Sport", back_populates="teams")

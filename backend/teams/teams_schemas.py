@@ -15,12 +15,14 @@ class TeamBase(BaseModel):
     name: str
     chapter_id: UUID
     sport_id: UUID
+    group: int | None = None
     model_config = ConfigDict(
         json_schema_extra={
             "example": {
                 "name": fake_name(),
                 "chapter_id": generate_uuid(),
                 "sport_id": generate_uuid(),
+                "group": 0,
             },
         },
     )
@@ -44,12 +46,14 @@ class TeamUpdate(BaseModel):
     name: str
     chapter_id: UUID
     sport_id: UUID
+    group: int | None = None
     model_config = ConfigDict(
         json_schema_extra={
             "example": {
                 "name": fake_name(),
                 "chapter_id": generate_uuid(),
                 "sport_id": generate_uuid(),
+                "group": 0,
             },
         },
     )

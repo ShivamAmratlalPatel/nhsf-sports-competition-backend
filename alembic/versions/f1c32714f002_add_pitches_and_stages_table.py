@@ -75,9 +75,13 @@ def upgrade() -> None:
         stages,
         [
             {"id": 0, "name": "Group Stage"},
-            {"id": 1, "name": "Quarter Final"},
-            {"id": 2, "name": "Semi Final"},
-            {"id": 3, "name": "Final"},
+            {"id": 1, "name": "Quarter Final 1"},
+            {"id": 2, "name": "Quarter Final 2"},
+            {"id": 3, "name": "Quarter Final 3"},
+            {"id": 4, "name": "Quarter Final 4"},
+            {"id": 5, "name": "Semi Final 1"},
+            {"id": 6, "name": "Semi Final 2"},
+            {"id": 7, "name": "Final"},
         ],
     )
     # ### end Alembic commands ###

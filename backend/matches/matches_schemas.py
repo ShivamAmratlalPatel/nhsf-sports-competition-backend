@@ -1,10 +1,12 @@
 """Matches Schemas"""
 
 from datetime import datetime
+from typing import Any
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict
 
+from backend.stages.stages_models import Stage
 from backend.utils import datetime_now, generate_uuid
 from testing.helpers.fake_data import fake_penalties, fake_score
 
@@ -68,6 +70,28 @@ class MatchRead(MatchBase):
     """Match read schema."""
 
     id: UUID
+    created_date: datetime
+    last_modified_date: datetime | None = None
+    is_deleted: bool
+    model_config = ConfigDict(
+        from_attributes=True,
+        json_schema_extra={
+            "example": {
+                **MatchBase.model_config["json_schema_extra"]["example"],
+                "id": generate_uuid(),
+                "created_date": datetime_now(),
+                "last_modified_date": datetime_now(),
+                "is_deleted": False,
+            },
+        },
+    )
+
+
+class KnockoutRead(MatchBase):
+    """Match read schema."""
+
+    id: UUID
+    stage: Any
     created_date: datetime
     last_modified_date: datetime | None = None
     is_deleted: bool

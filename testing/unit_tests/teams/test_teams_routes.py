@@ -250,8 +250,8 @@ class TestGetTeamList:
            None
         """
         response = client.get("/teams")
-        assert response.status_code == status.HTTP_404_NOT_FOUND
-        assert response.json()["detail"] == "Teams not found"
+        assert response.status_code == status.HTTP_200_OK
+        assert response.json() == []
 
 
 class TestPutTeam:

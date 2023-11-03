@@ -33,7 +33,12 @@ class LeagueTable(Base):
     won = Column(Integer, default=0, server_default="0")
     drawn = Column(Integer, default=0, server_default="0")
     lost = Column(Integer, default=0, server_default="0")
-    score_difference = Column(
+    scores_for = Column(
+        pg.NUMERIC(precision=12, scale=2),
+        default=0,
+        server_default="0",
+    )
+    scores_against = Column(
         pg.NUMERIC(precision=12, scale=2),
         default=0,
         server_default="0",
@@ -64,6 +69,27 @@ class LeagueTable(Base):
             return self.points / self.played
         except ZeroDivisionError:
             return 0
+
+    @property
+    def scores_for_per_game(self: "LeagueTable") -> float:
+        """Calculate the scores for per game for the team."""
+        try:
+            return self.scores_for / self.played
+        except ZeroDivisionError:
+            return 0
+
+    @property
+    def scores_against_per_game(self: "LeagueTable") -> float:
+        """Calculate the scores against per game for the team."""
+        try:
+            return self.scores_against / self.played
+        except ZeroDivisionError:
+            return 0
+
+    @property
+    def score_difference(self: "LeagueTable") -> float:
+        """Calculate the score difference for the team."""
+        return self.scores_for - self.scores_against
 
     @property
     def score_difference_per_game(self: "LeagueTable") -> float:

@@ -67,9 +67,7 @@ def update_table_for_team(team_id: UUID, db: Session) -> None:
 
     lost = played - won - drawn
 
-    print(db.query(Match.home_score).filter(Match.home_team_id == team_id).all())
-
-    score_difference = sum(
+    scores_for = sum(
         [
             float(row[0])
             for row in db.query(Match.home_score)
@@ -87,6 +85,24 @@ def update_table_for_team(team_id: UUID, db: Session) -> None:
         ],
     )
 
+    scores_against = sum(
+        [
+            float(row[0])
+            for row in db.query(Match.home_score)
+            .filter(Match.away_team_id == team_id)
+            .all()
+            if row[0] is not None
+        ],
+    ) + sum(
+        [
+            float(row[0])
+            for row in db.query(Match.away_score)
+            .filter(Match.home_team_id == team_id)
+            .all()
+            if row[0] is not None
+        ],
+    )
+
     table_entry: LeagueTable | None = (
         db.query(LeagueTable).filter(LeagueTable.team_id == team_id).first()
     )
@@ -96,7 +112,8 @@ def update_table_for_team(team_id: UUID, db: Session) -> None:
         table_entry.won = won
         table_entry.drawn = drawn
         table_entry.lost = lost
-        table_entry.score_difference = score_difference
+        table_entry.scores_for = scores_for
+        table_entry.scores_against = scores_against
     else:
         table_entry = LeagueTable(
             team_id=team_id,
@@ -105,7 +122,8 @@ def update_table_for_team(team_id: UUID, db: Session) -> None:
             won=won,
             drawn=drawn,
             lost=lost,
-            score_difference=score_difference,
+            scores_for=scores_for,
+            scores_against=scores_against,
         )
         table_entry.id = generate_uuid()
 

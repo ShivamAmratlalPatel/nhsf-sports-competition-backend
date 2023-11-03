@@ -51,3 +51,7 @@ class PitchRead(PitchBase):
     created_date: datetime
     last_modified_date: datetime | None = None
     is_deleted: bool
+
+    model_config = ConfigDict(
+        from_attributes=True,
+    )

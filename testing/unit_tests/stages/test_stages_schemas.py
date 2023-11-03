@@ -43,4 +43,4 @@ class TestStages:
     def test_stages(self: "TestStages", session: Session) -> None:
         """Test that the stages are created."""
         stages = session.query(Stage).order_by(Stage.id).all()
-        assert len(stages) == 4  # noqa: PLR2004
+        assert len(stages) == 8  # noqa: PLR2004

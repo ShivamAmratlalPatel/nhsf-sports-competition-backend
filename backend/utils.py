@@ -8,6 +8,9 @@ import pytz
 from _decimal import Decimal
 from pydantic import BaseModel, StringConstraints
 
+from backend.database import Base
+from faker import Faker
+
 
 def generate_uuid() -> UUID:
     """
@@ -33,6 +36,20 @@ def datetime_now() -> datetime:
     """
     uk_tz = pytz.timezone("Europe/London")
     return datetime.now(tz=uk_tz)
+
+
+def random_datetime() -> datetime:
+    """
+    Get a random datetime for London.
+
+    Returns
+        datetime: random datetime
+
+    """
+    uk_tz = pytz.timezone("Europe/London")
+    fake = Faker(locale="en_GB")
+
+    return fake.date_time(tzinfo=uk_tz)
 
 
 def full_name_as_string(
@@ -101,6 +118,9 @@ def convert_list_to_list(data: list, format_date: bool) -> list:
     return result
 
 
+row2dict = lambda r: {c.name: str(getattr(r, c.name)) for c in r.__table__.columns}
+
+
 def convert_dict_to_dict(data: dict, format_date: bool) -> dict:
     """
     Recursively converts a dictionary to a dictionary, handling enum values and datetime fields.
@@ -128,6 +148,10 @@ def convert_dict_to_dict(data: dict, format_date: bool) -> dict:
             result[key] = float(value)
         elif isinstance(value, list):
             result[key] = convert_list_to_list(value, format_date)
+        elif isinstance(value, BaseModel):
+            result[key] = object_to_dict(value, format_date)
+        elif isinstance(value, Base):
+            result[key] = row2dict(value)
         else:
             result[key] = value
     return result
