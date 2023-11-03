@@ -23,9 +23,14 @@ from backend.matches.mathes_commands.generate_schedule import (
     get_list_of_teams_for_sport,
     check_matches_have_not_been_generated,
 )
+from backend.matches.mathes_commands.get_team_from_match import (
+    get_away_team_from_match,
+    get_home_team_from_match,
+)
 from backend.tables.tables_commands.update_knockout import update_knockout_for_match
 from backend.tables.tables_commands.update_table import update_table_for_match
 from backend.tables.tables_models import LeagueTable
+from backend.teams.teams_models import Team
 from backend.users.users_commands.check_admin import check_admin
 from backend.users.users_commands.get_users import get_current_active_user
 from backend.users.users_schemas import UserBase
@@ -333,21 +338,122 @@ def get_knockout_matches(
     db: Session = db_session,
 ) -> JSONResponse:
     """Get knockout matches."""
-    matches = (
+    qf1 = (
         db.query(Match)
         .filter(Match.sport_id == sport_id)
+        .filter(Match.stage_id == 1)
         .filter(Match.is_deleted.is_(False))
-        .filter(Match.stage_id != 0)
-        .order_by(Match.stage_id)
-        .order_by(Match.time)
-        .all()
+        .first()
+    )
+    qf2 = (
+        db.query(Match)
+        .filter(Match.sport_id == sport_id)
+        .filter(Match.stage_id == 2)
+        .filter(Match.is_deleted.is_(False))
+        .first()
+    )
+    qf3 = (
+        db.query(Match)
+        .filter(Match.sport_id == sport_id)
+        .filter(Match.stage_id == 3)
+        .filter(Match.is_deleted.is_(False))
+        .first()
+    )
+    qf4 = (
+        db.query(Match)
+        .filter(Match.sport_id == sport_id)
+        .filter(Match.stage_id == 4)
+        .filter(Match.is_deleted.is_(False))
+        .first()
+    )
+    sf1 = (
+        db.query(Match)
+        .filter(Match.sport_id == sport_id)
+        .filter(Match.stage_id == 5)
+        .filter(Match.is_deleted.is_(False))
+        .first()
+    )
+    sf2 = (
+        db.query(Match)
+        .filter(Match.sport_id == sport_id)
+        .filter(Match.stage_id == 6)
+        .filter(Match.is_deleted.is_(False))
+        .first()
+    )
+    final = (
+        db.query(Match)
+        .filter(Match.sport_id == sport_id)
+        .filter(Match.stage_id == 7)
+        .filter(Match.is_deleted.is_(False))
+        .first()
     )
 
+    matches = [qf1, qf2, qf3, qf4, sf1, sf2, final]
+
+    resp = []
+
+    for i, match in enumerate(matches):
+        if match is not None:
+            home_team: Team = get_home_team_from_match(db, match)
+            away_team: Team = get_away_team_from_match(db, match)
+            resp.append(
+                object_to_dict(
+                    KnockoutRead(
+                        id=match.id,
+                        stage=match.stage_id,
+                        home_team=home_team.name,
+                        away_team=away_team.name,
+                        home_team_score=float(match.home_score)
+                        if match.home_score
+                        else None,
+                        away_team_score=float(match.away_score)
+                        if match.away_score
+                        else None,
+                        home_team_penalties=float(match.home_penalties)
+                        if match.home_penalties
+                        else None,
+                        away_team_penalties=float(match.away_penalties)
+                        if match.away_penalties
+                        else None,
+                    )
+                )
+            )
+        else:
+            if i == 0:
+                home_team = "1st in Group Stage"
+                away_team = "8th in Group Stage"
+            elif i == 1:
+                home_team = "5th in Group Stage"
+                away_team = "6th in Group Stage"
+            elif i == 2:
+                home_team = "4th in Group Stage"
+                away_team = "5th in Group Stage"
+            elif i == 3:
+                home_team = "2nd in Group Stage"
+                away_team = "3rd in Group Stage"
+            elif i == 4:
+                home_team = "Winner of QF1"
+                away_team = "Winner of QF2"
+            elif i == 5:
+                home_team = "Winner of QF3"
+                away_team = "Winner of QF4"
+            elif i == 6:
+                home_team = "Winner of SF1"
+                away_team = "Winner of SF2"
+            else:
+                home_team = ""
+                away_team = ""
+
+            resp.append(
+                object_to_dict(
+                    KnockoutRead(
+                        id=None, stage=i + 1, home_team=home_team, away_team=away_team
+                    )
+                )
+            )
     return JSONResponse(
         status_code=200,
-        content=[
-            object_to_dict(KnockoutRead.model_validate(match)) for match in matches
-        ],
+        content=resp,
     )
 
 
@@ -383,7 +489,7 @@ def generate_knockout(
         qf1 = Match(
             id=generate_uuid(),
             sport_id=sport_id,
-            stage_id=3,
+            stage_id=1,
             home_team_id=table_rows[0].team_id,
             away_team_id=table_rows[7].team_id,
         )
@@ -404,7 +510,7 @@ def generate_knockout(
         qf4 = Match(
             id=generate_uuid(),
             sport_id=sport_id,
-            stage_id=3,
+            stage_id=4,
             home_team_id=table_rows[3].team_id,
             away_team_id=table_rows[4].team_id,
         )
@@ -423,7 +529,7 @@ def generate_knockout(
         sf2 = Match(
             id=generate_uuid(),
             sport_id=sport_id,
-            stage_id=5,
+            stage_id=6,
             home_team_id=table_rows[1].team_id,
             away_team_id=table_rows[2].team_id,
         )

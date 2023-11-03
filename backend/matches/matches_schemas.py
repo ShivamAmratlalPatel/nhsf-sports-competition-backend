@@ -87,25 +87,19 @@ class MatchRead(MatchBase):
     )
 
 
-class KnockoutRead(MatchBase):
+class KnockoutRead(BaseModel):
     """Match read schema."""
 
-    id: UUID
+    id: UUID | None = None
     stage: Any
-    created_date: datetime
-    last_modified_date: datetime | None = None
-    is_deleted: bool
+    home_team: str
+    away_team: str
+    home_team_score: float | None = None
+    away_team_score: float | None = None
+    home_team_penalties: float | None = None
+    away_team_penalties: float | None = None
     model_config = ConfigDict(
         from_attributes=True,
-        json_schema_extra={
-            "example": {
-                **MatchBase.model_config["json_schema_extra"]["example"],
-                "id": generate_uuid(),
-                "created_date": datetime_now(),
-                "last_modified_date": datetime_now(),
-                "is_deleted": False,
-            },
-        },
     )
 
 
