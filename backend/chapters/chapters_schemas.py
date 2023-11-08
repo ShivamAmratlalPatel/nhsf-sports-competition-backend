@@ -25,8 +25,8 @@ class ChapterBase(BaseModel):
     """Chapter base schema."""
 
     name: str
-    email: EmailStr
-    zone: ZoneEnum
+    email: EmailStr | None = None
+    zone: ZoneEnum | None = None
     model_config = ConfigDict(
         json_schema_extra={
             "example": {
@@ -74,7 +74,6 @@ class ChapterRead(ChapterBase):
     created_date: datetime
     last_modified_date: datetime | None = None
     is_deleted: bool
-    email: str
     model_config = ConfigDict(
         from_attributes=True,
         json_schema_extra={
