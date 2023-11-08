@@ -49,7 +49,7 @@ def upgrade() -> None:
     )
     op.create_index(op.f("ix_sports_id"), "sports", ["id"], unique=False)
 
-    # add netball, badminton, football, cricket, kho, kabaddi
+    # add netball, badminton, football, kho, kabaddi
     op.bulk_insert(
         sports,
         [
@@ -63,13 +63,13 @@ def upgrade() -> None:
                 "name": "Football",
             },
             {
-                "name": "Cricket",
-            },
-            {
                 "name": "Kho",
             },
             {
-                "name": "Kabaddi",
+                "name": "Kabaddi (Mens)",
+            },
+            {
+                "name": "Kabaddi (Womens)",
             },
         ],
     )

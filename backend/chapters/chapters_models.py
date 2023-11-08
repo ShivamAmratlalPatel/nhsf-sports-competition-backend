@@ -20,8 +20,8 @@ class Chapter(Base):
         server_default=func.uuid_generate_v4(),
     )
     name = Column(String, nullable=False)
-    zone = Column(String, nullable=False)
-    email = Column(String, nullable=False, unique=True)
+    zone = Column(String, nullable=True)
+    email = Column(String, nullable=True)
     created_date = Column(
         DateTime(timezone=True),
         nullable=False,

@@ -17,7 +17,7 @@ class MatchBase(BaseModel):
     home_team_id: UUID
     away_team_id: UUID
     sport_id: UUID
-    pitch_id: UUID
+    pitch_id: UUID | None = None
     stage_id: int
     home_score: float | None = None
     away_score: float | None = None

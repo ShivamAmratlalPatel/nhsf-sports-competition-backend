@@ -1,5 +1,5 @@
 """Pitches Database Models"""
-from sqlalchemy import Boolean, Column, DateTime, String, func
+from sqlalchemy import Boolean, Column, DateTime, String, func, ForeignKey
 from sqlalchemy.dialects import postgresql as pg
 from sqlalchemy.orm import relationship
 
@@ -30,5 +30,9 @@ class Pitch(Base):
         DateTime(timezone=True),
         onupdate=datetime_now(),
         server_onupdate=func.timezone("Europe/London", func.current_timestamp()),
+    )
+    sport_id = Column(
+        pg.UUID(as_uuid=True),
+        ForeignKey("sports.id", ondelete="CASCADE"),
     )
     matches = relationship("Match", back_populates="pitch")

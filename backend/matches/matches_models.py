@@ -50,7 +50,6 @@ class Match(Base):
     pitch_id = Column(
         pg.UUID(as_uuid=True),
         ForeignKey("pitches.id", ondelete="CASCADE"),
-        nullable=False,
     )
     stage_id = Column(
         Integer,

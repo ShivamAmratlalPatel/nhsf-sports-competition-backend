@@ -27,13 +27,12 @@ WHERE NOT EXISTS (SELECT 1
 
 DELETE
 FROM sports;
-
-INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date) VALUES ('7dac42d7-e397-4efa-b70a-0232cacd4c4f', 'Football', '2023-09-13 00:09:50.564341 +00:00', false, null);
-INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date) VALUES ('189772ac-8d6d-4662-b5aa-000fa4271138', 'Badminton', '2023-09-19 19:39:43.167812 +00:00', false, null);
-INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date) VALUES ('7e90575b-5b04-4a12-9279-f7124a5f737c', 'Netball', '2023-09-19 19:39:43.167812 +00:00', false, null);
-INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date) VALUES ('de115edc-f2ee-4a60-818c-677afd028e8e', 'Cricket', '2023-09-19 19:39:43.167812 +00:00', false, null);
-INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date) VALUES ('5d231a25-d15a-4881-a004-9b9ddfa4b988', 'Kho', '2023-09-19 19:39:43.167812 +00:00', false, null);
-INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date) VALUES ('29fc8489-95ee-4dd5-bf21-0703f4df41c6', 'Kabaddi', '2023-09-19 19:39:43.167812 +00:00', false, null);
+INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date, quarter_finals, semi_finals) VALUES ('7e90575b-5b04-4a12-9279-f7124a5f737c', 'Netball', '2023-09-19 19:39:43.167812 +00:00', false, null, false, true);
+INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date, quarter_finals, semi_finals) VALUES ('189772ac-8d6d-4662-b5aa-000fa4271138', 'Badminton', '2023-09-19 19:39:43.167812 +00:00', false, null, false, true);
+INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date, quarter_finals, semi_finals) VALUES ('5d231a25-d15a-4881-a004-9b9ddfa4b988', 'Kho', '2023-09-19 19:39:43.167812 +00:00', false, null, false, true);
+INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date, quarter_finals, semi_finals) VALUES ('7dac42d7-e397-4efa-b70a-0232cacd4c4f', 'Football', '2023-09-13 00:09:50.564341 +00:00', false, null, false, true);
+INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date, quarter_finals, semi_finals) VALUES ('29fc8489-95ee-4dd5-bf21-0703f4df41c6', 'KabaddiM', '2023-09-19 19:39:43.167812 +00:00', false, null, false, false);
+INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date, quarter_finals, semi_finals) VALUES ('3429e138-0e55-4096-b30d-6b2f789365b4', 'KabaddiW', '2023-11-07 17:27:37.122753 +00:00', false, null, false, true);
 
 
 DELETE
@@ -90,12 +89,8 @@ WHERE NOT EXISTS (SELECT 1
 DELETE
 FROM pitches;
 -- Insert into pitches table and store the ID in the temporary table
-INSERT INTO public.pitches (id, name, created_date, is_deleted, last_modified_date)
-VALUES ('b6faa095-b64f-4bca-a9e3-d9795b530f21',
-        'Football Pitch 1',
-        '2023-09-14 23:26:38.610667 +00:00',
-        FALSE,
-        NULL);
+INSERT INTO public.pitches (id, name, created_date, is_deleted, last_modified_date, sport_id) VALUES ('b6faa095-b64f-4bca-a9e3-d9795b530f21', 'Football Pitch 1', '2023-09-14 23:26:38.610667 +00:00', false, null, '7dac42d7-e397-4efa-b70a-0232cacd4c4f');
+
 
 -- Insert the ID into the temporary table
 INSERT INTO temp_ids (id)
@@ -119,4 +114,4 @@ DROP TABLE IF EXISTS temp_ids;
 
 DELETE FROM users;
 
-INSERT INTO public.users (id, username, email, hashed_password, created_date, is_deleted, last_modified_date, chapter_id, user_type_id, full_name) VALUES ('4ff8ce59-e42a-4c55-afa5-f5c9d4c914d9', 'example', 'user@example.com', '$2b$12$Y2XRv9k6qq3m85rzo23j3.ZpNoYeKQRsBVgc28/Q1/Enagq62.f1C', '2023-10-10 16:01:04.838062 +00:00', false, null, null, '87545bbb-9750-4e4f-bdfa-790f3994cd19', 'Shivam Patel');
+INSERT INTO public.users (id, username, email, hashed_password, created_date, is_deleted, last_modified_date, chapter_id, user_type_id, full_name) VALUES ('22e49def-7eb1-452a-aea5-723b886434aa', 'string', 'user@example.com', '$2b$12$w46.KJhlC5nnKq6UR7LO4OkWksNJOZQ7.vsE8cGLE13Ou39KB0FFa', '2023-11-05 12:15:01.397891 +00:00', false, null, null, '87545bbb-9750-4e4f-bdfa-790f3994cd19', 'string');

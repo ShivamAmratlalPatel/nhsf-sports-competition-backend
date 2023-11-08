@@ -27,6 +27,7 @@ from backend.matches.mathes_commands.get_team_from_match import (
     get_away_team_from_match,
     get_home_team_from_match,
 )
+from backend.sports.sports_models import Sport
 from backend.tables.tables_commands.update_knockout import update_knockout_for_match
 from backend.tables.tables_commands.update_table import update_table_for_match
 from backend.tables.tables_models import LeagueTable
@@ -256,15 +257,21 @@ def delete_match(
 )
 def get_schedule(
     sport_id: UUID,
+    pitch_id: UUID | None = None,
     db: Session = db_session,
 ) -> JSONResponse:
     """Get schedule."""
+    if pitch_id:
+        pitch_filter = [Match.pitch_id == pitch_id]
+    else:
+        pitch_filter = [Match.pitch_id.is_(None)]
     played_matches: list[Match] = (
         db.query(Match)
         .filter(Match.sport_id == sport_id)
         .filter(Match.is_deleted.is_(False))
         .filter(Match.stage_id == 0)
         .filter(Match.home_score.is_not(None))
+        .filter(*pitch_filter)
         .order_by(Match.time)
         .all()
     )
@@ -278,6 +285,7 @@ def get_schedule(
         .filter(Match.is_deleted.is_(False))
         .filter(Match.stage_id == 0)
         .filter(Match.home_score.is_(None))
+        .filter(*pitch_filter)
         .order_by(Match.time)
         .all()
     )
@@ -338,6 +346,9 @@ def get_knockout_matches(
     db: Session = db_session,
 ) -> JSONResponse:
     """Get knockout matches."""
+
+    sport: Sport = db.get(Sport, sport_id)
+
     qf1 = (
         db.query(Match)
         .filter(Match.sport_id == sport_id)
@@ -420,26 +431,60 @@ def get_knockout_matches(
             )
         else:
             if i == 0:
-                home_team = "1st in Group Stage"
-                away_team = "8th in Group Stage"
+                if sport.quarter_finals:
+                    home_team = "1st in Group Stage"
+                    away_team = "8th in Group Stage"
+                else:
+                    home_team = ""
+                    away_team = ""
             elif i == 1:
-                home_team = "5th in Group Stage"
-                away_team = "6th in Group Stage"
+                if sport.quarter_finals:
+                    home_team = "5th in Group Stage"
+                    away_team = "6th in Group Stage"
+                else:
+                    home_team = ""
+                    away_team = ""
             elif i == 2:
-                home_team = "4th in Group Stage"
-                away_team = "5th in Group Stage"
+                if sport.quarter_finals:
+                    home_team = "4th in Group Stage"
+                    away_team = "5th in Group Stage"
+                else:
+                    home_team = ""
+                    away_team = ""
             elif i == 3:
-                home_team = "2nd in Group Stage"
-                away_team = "3rd in Group Stage"
+                if sport.quarter_finals:
+                    home_team = "2nd in Group Stage"
+                    away_team = "3rd in Group Stage"
+                else:
+                    home_team = ""
+                    away_team = ""
             elif i == 4:
-                home_team = "Winner of QF1"
-                away_team = "Winner of QF2"
+                if sport.quarter_finals and sport.semi_finals:
+                    home_team = "Winner of QF1"
+                    away_team = "Winner of QF2"
+                elif sport.semi_finals:
+                    home_team = "1st in Group Table"
+                    away_team = "4th in Group Table"
+                else:
+                    home_team = ""
+                    away_team = ""
             elif i == 5:
-                home_team = "Winner of QF3"
-                away_team = "Winner of QF4"
+                if sport.quarter_finals and sport.semi_finals:
+                    home_team = "Winner of QF1"
+                    away_team = "Winner of QF2"
+                elif sport.semi_finals:
+                    home_team = "2nd in Group Table"
+                    away_team = "3rd in Group Table"
+                else:
+                    home_team = ""
+                    away_team = ""
             elif i == 6:
-                home_team = "Winner of SF1"
-                away_team = "Winner of SF2"
+                if sport.semi_finals:
+                    home_team = "Winner of SF1"
+                    away_team = "Winner of SF2"
+                else:
+                    home_team = "1st in Group Table"
+                    away_team = "2nd in Group Table"
             else:
                 home_team = ""
                 away_team = ""
@@ -463,7 +508,6 @@ def get_knockout_matches(
 )
 def generate_knockout(
     sport_id: UUID,
-    quarter_finals: bool,
     db: Session = db_session,
     current_user: UserBase = current_user_instance,
 ):
@@ -485,7 +529,9 @@ def generate_knockout(
         reverse=True,
     )
 
-    if quarter_finals:
+    sport = db.get(Sport, sport_id)
+
+    if sport.quarter_finals:
         qf1 = Match(
             id=generate_uuid(),
             sport_id=sport_id,
@@ -518,7 +564,7 @@ def generate_knockout(
         db.add(qf2)
         db.add(qf3)
         db.add(qf4)
-    else:
+    elif sport.semi_finals:
         sf1 = Match(
             id=generate_uuid(),
             sport_id=sport_id,
@@ -535,6 +581,15 @@ def generate_knockout(
         )
         db.add(sf1)
         db.add(sf2)
+    else:
+        final = Match(
+            id=generate_uuid(),
+            sport_id=sport_id,
+            stage_id=7,
+            home_team_id=table_rows[0].team_id,
+            away_team_id=table_rows[1].team_id,
+        )
+        db.add(final)
     db.commit()
     return JSONResponse(status_code=200, content={})
 
@@ -560,3 +615,19 @@ def generate_schedule(
     randomly_assign_groups(db, number_of_groups, teams)
 
     generate_schedule_for_group(db, number_of_groups, sport_id)
+
+
+@matches_router.get("/unassigned_matches/{sport_id}", tags=["matches"])
+def any_unassigned_matches(sport_id: UUID, db: Session = db_session):
+    games = (
+        db.query(Match)
+        .filter(Match.sport_id == sport_id)
+        .filter(Match.is_deleted.is_(False))
+        .filter(Match.pitch_id.is_(None))
+        .all()
+    )
+
+    if games:
+        return True
+    else:
+        return False

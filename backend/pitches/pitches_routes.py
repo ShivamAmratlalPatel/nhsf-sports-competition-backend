@@ -1,4 +1,4 @@
-"""Ednpoints for pitches"""
+"""Endpoints for pitches"""
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -98,7 +98,7 @@ def get_pitch(
 
 
 @pitches_router.get(
-    "/pitches",
+    "/pitches/{sport_id}",
     tags=["pitches"],
     description="Get pitches.",
     responses={
@@ -119,10 +119,11 @@ def get_pitch(
     },
 )
 def get_pitches(
+    sport_id: UUID,
     db: Session = db_session,
 ) -> JSONResponse:
     """Get all pitches."""
-    pitches = db.query(Pitch).all()
+    pitches = db.query(Pitch).filter(Pitch.sport_id == sport_id).all()
     if not pitches:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

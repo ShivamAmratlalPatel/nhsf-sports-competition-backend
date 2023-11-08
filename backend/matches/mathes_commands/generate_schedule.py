@@ -1,14 +1,17 @@
-from random import shuffle
+from random import shuffle, randint
 
 from fastapi import HTTPException
 
 from backend.matches.matches_models import Match
+from backend.pitches.pitches_models import Pitch
 from backend.teams.teams_models import Team
 from backend.utils import generate_uuid, random_datetime
 
 
 def generate_schedule_for_group(db, number_of_groups, sport_id):
     # region generate schedule for each group
+    pitches: list[Pitch] = db.query(Pitch).filter(Pitch.sport_id == sport_id).all()
+    number_of_pitches = len(pitches)
     for group in range(number_of_groups):
         # region get teams in group
         group_teams: list[Team] = (
@@ -30,7 +33,11 @@ def generate_schedule_for_group(db, number_of_groups, sport_id):
 
         # region generate schedule for group
         for i, home_team in enumerate(group_teams[:-1]):
-            for away_team in group_teams[i + 1]:
+            if i >= number_of_pitches:
+                pitch_no = randint(0, number_of_pitches - 1)
+            else:
+                pitch_no = i
+            for away_team in group_teams[i + 1 :]:
                 if home_team.id != away_team.id:
                     match = Match(
                         id=generate_uuid(),
@@ -39,6 +46,7 @@ def generate_schedule_for_group(db, number_of_groups, sport_id):
                         home_team_id=home_team.id,
                         away_team_id=away_team.id,
                         time=random_datetime(),
+                        pitch_id=pitches[pitch_no].id,
                     )
                     db.add(match)
         # endregion
