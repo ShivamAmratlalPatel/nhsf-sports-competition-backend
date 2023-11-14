@@ -31,11 +31,14 @@ from backend.sports.sports_models import Sport
 from backend.tables.tables_commands.update_knockout import update_knockout_for_match
 from backend.tables.tables_commands.update_table import update_table_for_match
 from backend.tables.tables_models import LeagueTable
-from backend.teams.teams_models import Team
 from backend.users.users_commands.check_admin import check_admin
 from backend.users.users_commands.get_users import get_current_active_user
 from backend.users.users_schemas import UserBase
 from backend.utils import object_to_dict, generate_uuid
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from backend.teams.teams_models import Team
 
 matches_router = APIRouter()
 
@@ -257,21 +260,20 @@ def delete_match(
 )
 def get_schedule(
     sport_id: UUID,
-    pitch_id: UUID | None = None,
+    team_id: UUID | None = None,
     db: Session = db_session,
 ) -> JSONResponse:
     """Get schedule."""
-    if pitch_id:
-        pitch_filter = [Match.pitch_id == pitch_id]
-    else:
-        pitch_filter = [Match.pitch_id.is_(None)]
+    filters = [
+        Match.sport_id == sport_id,
+        Match.is_deleted.is_(False),
+        Match.stage_id == 0,
+    ]
+
     played_matches: list[Match] = (
         db.query(Match)
-        .filter(Match.sport_id == sport_id)
-        .filter(Match.is_deleted.is_(False))
-        .filter(Match.stage_id == 0)
+        .filter(*filters)
         .filter(Match.home_score.is_not(None))
-        .filter(*pitch_filter)
         .order_by(Match.time)
         .all()
     )
@@ -281,11 +283,8 @@ def get_schedule(
 
     unplayed_matches: list[Match] = (
         db.query(Match)
-        .filter(Match.sport_id == sport_id)
-        .filter(Match.is_deleted.is_(False))
-        .filter(Match.stage_id == 0)
+        .filter(*filters)
         .filter(Match.home_score.is_(None))
-        .filter(*pitch_filter)
         .order_by(Match.time)
         .all()
     )
@@ -346,7 +345,6 @@ def get_knockout_matches(
     db: Session = db_session,
 ) -> JSONResponse:
     """Get knockout matches."""
-
     sport: Sport = db.get(Sport, sport_id)
 
     qf1 = (
@@ -426,8 +424,8 @@ def get_knockout_matches(
                         away_team_penalties=float(match.away_penalties)
                         if match.away_penalties
                         else None,
-                    )
-                )
+                    ),
+                ),
             )
         else:
             if i == 0:
@@ -492,9 +490,12 @@ def get_knockout_matches(
             resp.append(
                 object_to_dict(
                     KnockoutRead(
-                        id=None, stage=i + 1, home_team=home_team, away_team=away_team
-                    )
-                )
+                        id=None,
+                        stage=i + 1,
+                        home_team=home_team,
+                        away_team=away_team,
+                    ),
+                ),
             )
     return JSONResponse(
         status_code=200,
@@ -510,7 +511,8 @@ def generate_knockout(
     sport_id: UUID,
     db: Session = db_session,
     current_user: UserBase = current_user_instance,
-):
+) -> JSONResponse:
+    """Generate knockout matches."""
     check_admin(current_user)
     table_rows = (
         db.query(LeagueTable)
@@ -603,7 +605,8 @@ def generate_schedule(
     number_of_groups: int,
     db: Session = db_session,
     current_user: UserBase = current_user_instance,
-):
+) -> None:
+    """Generate schedule for a sport."""
     check_admin(current_user)
 
     check_matches_have_not_been_generated(db, sport_id)
@@ -618,7 +621,8 @@ def generate_schedule(
 
 
 @matches_router.get("/unassigned_matches/{sport_id}", tags=["matches"])
-def any_unassigned_matches(sport_id: UUID, db: Session = db_session):
+def any_unassigned_matches(sport_id: UUID, db: Session = db_session) -> bool:
+    """Check if there are any unassigned matches."""
     games = (
         db.query(Match)
         .filter(Match.sport_id == sport_id)
@@ -627,7 +631,24 @@ def any_unassigned_matches(sport_id: UUID, db: Session = db_session):
         .all()
     )
 
-    if games:
-        return True
+    return bool(games)
+
+
+@matches_router.put("/match/{match_id}/pitch_edit/{pitch_id}", tags=["matches"])
+def edit_pitch(
+    match_id: UUID,
+    pitch_id: UUID,
+    db: Session = db_session,
+    current_user: UserBase = current_user_instance,
+) -> JSONResponse:
+    check_admin(current_user)
+
+    match: Match = db.get(Match, match_id)
+
+    if match is None:
+        raise HTTPException(status_code=404, detail="Match not found")
     else:
-        return False
+        match.pitch_id = pitch_id
+        db.add(match)
+        db.commit()
+        return JSONResponse(status_code=200, content="Match pitch updated")

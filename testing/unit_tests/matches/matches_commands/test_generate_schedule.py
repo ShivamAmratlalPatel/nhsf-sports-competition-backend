@@ -1,3 +1,4 @@
+"""Test generate_schedule function."""
 import pytest
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
@@ -15,8 +16,10 @@ from testing.fixtures.database import session, session_factory  # noqa: F401
 
 
 class TestCheckMatchesHaveNotBeenGenerated:
+    """Test the check_matches_have_not_been_generated function."""
+
     def test_matches_generated(
-        self: "TestCheckMatchesHaveNotBeenGenerated", session: Session
+        self: "TestCheckMatchesHaveNotBeenGenerated", session: Session,
     ) -> None:
         """Test that an error is raised if matches have already been generated."""
         # Arrange
@@ -26,7 +29,7 @@ class TestCheckMatchesHaveNotBeenGenerated:
         session.commit()
 
         chapter = Chapter(
-            id=generate_uuid(), name="Chapter", zone="North", email="a@b.com"
+            id=generate_uuid(), name="Chapter", zone="North", email="a@b.com",
         )
         session.add(chapter)
         session.commit()
@@ -70,7 +73,7 @@ class TestCheckMatchesHaveNotBeenGenerated:
             check_matches_have_not_been_generated(session, sport_id)
 
     def test_matches_not_generated(
-        self: "TestCheckMatchesHaveNotBeenGenerated", session: Session
+        self: "TestCheckMatchesHaveNotBeenGenerated", session: Session,
     ) -> None:
         """Test that no error is raised if matches have not been generated."""
         # Arrange
@@ -80,7 +83,7 @@ class TestCheckMatchesHaveNotBeenGenerated:
         session.commit()
 
         chapter = Chapter(
-            id=generate_uuid(), name="Chapter", zone="North", email="a@b.com"
+            id=generate_uuid(), name="Chapter", zone="North", email="a@b.com",
         )
         session.add(chapter)
         session.commit()

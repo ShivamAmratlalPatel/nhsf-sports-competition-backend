@@ -121,7 +121,7 @@ def fake_chapter() -> dict:
 def fake_sport_name() -> str:
     """Return a fake sport."""
     return choice(
-        ["Football", "Netball", "Kabaddi (Womens)", "Kho Kho", "Kabaddi (Mens)"]
+        ["Football", "Netball", "Kabaddi (Womens)", "Kho Kho", "Kabaddi (Mens)"],
     )
 
 

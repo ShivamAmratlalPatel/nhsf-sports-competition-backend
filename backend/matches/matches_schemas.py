@@ -6,7 +6,6 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict
 
-from backend.stages.stages_models import Stage
 from backend.utils import datetime_now, generate_uuid
 from testing.helpers.fake_data import fake_penalties, fake_score
 
@@ -73,6 +72,7 @@ class MatchRead(MatchBase):
     created_date: datetime
     last_modified_date: datetime | None = None
     is_deleted: bool
+    pitch: Any | None = None
     model_config = ConfigDict(
         from_attributes=True,
         json_schema_extra={

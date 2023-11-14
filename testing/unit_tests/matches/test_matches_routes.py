@@ -12,7 +12,6 @@ from starlette import status
 from backend.chapters.chapters_models import Chapter
 from backend.helpers import get_db
 from backend.main import app
-from backend.matches.matches_models import Match
 from backend.pitches.pitches_models import Pitch
 from backend.sports.sports_models import Sport
 from backend.stages.stages_schemas import StagesEnum
@@ -356,7 +355,7 @@ class TestGetSchedule:
     """
 
     def test_get_schedule(
-        self: "TestGetSchedule", client: TestClient, match_data: dict, session: Session
+        self: "TestGetSchedule", client: TestClient, match_data: dict,
     ) -> None:
         """
         Test Method: test_get_schedule

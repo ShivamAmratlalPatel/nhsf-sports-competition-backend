@@ -95,6 +95,8 @@ max-complexity = 10
 [tool.ruff.per-file-ignores]
 "__init__.py" = ["F401"]
 "alembic/env.py" = ["F403"]
+"backend/matches/matches_routes.py" = ["PLR2004"]
+"backend/tables/tables_commands/update_knockout.py" = ["PLR2004"]
 "alembic/versions/*.py" = ["D103"]
 "backend/middleware.py" = ["ANN"]
 "backend/utils.py" = ["B008"]

@@ -118,7 +118,9 @@ def convert_list_to_list(data: list, format_date: bool) -> list:
     return result
 
 
-row2dict = lambda r: {c.name: str(getattr(r, c.name)) for c in r.__table__.columns}
+def row2dict(r: Base) -> dict:
+    """Convert a SQLAlchemy model instance to a dictionary recursively, providing a JSON-like representation."""
+    return {c.name: str(getattr(r, c.name)) for c in r.__table__.columns}
 
 
 def convert_dict_to_dict(data: dict, format_date: bool) -> dict:

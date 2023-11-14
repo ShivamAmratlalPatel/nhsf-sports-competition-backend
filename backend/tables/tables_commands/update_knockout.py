@@ -1,3 +1,4 @@
+"""Functions to update the knockout stage of a sport."""
 from uuid import UUID
 
 from backend.matches.matches_models import Match
@@ -8,10 +9,12 @@ from backend.utils import generate_uuid
 
 
 def is_match_played(match: Match) -> bool:
+    """Check if a match has been played."""
     return match.home_score is not None
 
 
 def find_winner(match: Match) -> UUID:
+    """Find the winner of a match."""
     if match.home_score > match.away_score:
         return match.home_team_id
     elif match.away_score > match.home_score:
@@ -26,6 +29,7 @@ def find_winner(match: Match) -> UUID:
 
 
 def update_knockout_for_match(match: Match, db: Session) -> None:
+    """Update the knockout stage for a match."""
     if match.stage_id == 1 or match.stage_id == 3:
         other_match = (
             db.query(Match)

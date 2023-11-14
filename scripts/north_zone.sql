@@ -25,8 +25,8 @@ INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_dat
 INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date, quarter_finals, semi_finals) VALUES ('189772ac-8d6d-4662-b5aa-000fa4271138', 'Badminton', '2023-09-19 19:39:43.167812 +00:00', false, null, false, true);
 INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date, quarter_finals, semi_finals) VALUES ('5d231a25-d15a-4881-a004-9b9ddfa4b988', 'Kho', '2023-09-19 19:39:43.167812 +00:00', false, null, false, true);
 INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date, quarter_finals, semi_finals) VALUES ('7dac42d7-e397-4efa-b70a-0232cacd4c4f', 'Football', '2023-09-13 00:09:50.564341 +00:00', false, null, false, true);
-INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date, quarter_finals, semi_finals) VALUES ('29fc8489-95ee-4dd5-bf21-0703f4df41c6', 'KabaddiM', '2023-09-19 19:39:43.167812 +00:00', false, null, false, false);
-INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date, quarter_finals, semi_finals) VALUES ('3429e138-0e55-4096-b30d-6b2f789365b4', 'KabaddiW', '2023-11-07 17:27:37.122753 +00:00', false, null, false, true);
+INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date, quarter_finals, semi_finals) VALUES ('29fc8489-95ee-4dd5-bf21-0703f4df41c6', 'KabaddiM', '2023-09-19 19:39:43.167812 +00:00', false, null, false, true);
+INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date, quarter_finals, semi_finals) VALUES ('3429e138-0e55-4096-b30d-6b2f789365b4', 'KabaddiW', '2023-11-07 17:27:37.122753 +00:00', false, null, false, false);
 
 DELETE FROM teams;
 INSERT INTO public.teams (id, name, created_date, is_deleted, last_modified_date, chapter_id, sport_id, "group") VALUES ('16d286e9-65e2-4344-898b-74815041eb16', 'Sheffield', '2023-11-07 17:31:05.921358 +00:00', false, null, 'be4053de-031d-414a-8293-60597184e7b2', '189772ac-8d6d-4662-b5aa-000fa4271138', null);

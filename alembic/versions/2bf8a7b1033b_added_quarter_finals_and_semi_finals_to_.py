@@ -23,7 +23,7 @@ def upgrade() -> None:
     op.add_column(
         "sports",
         sa.Column(
-            "quarter_finals", sa.Boolean(), server_default="false", nullable=False
+            "quarter_finals", sa.Boolean(), server_default="false", nullable=False,
         ),
     )
     op.add_column(
@@ -43,9 +43,7 @@ def downgrade() -> None:
 
 def merge_upgrade_ops() -> None:
     """Merge upgrade operations from multiple branches."""
-    pass
 
 
 def merge_downgrade_ops() -> None:
     """Merge downgrade operations from multiple branches."""
-    pass
