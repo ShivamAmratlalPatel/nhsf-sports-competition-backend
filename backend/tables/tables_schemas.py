@@ -1,4 +1,5 @@
 """Pydantic schemas for the tables module."""
+from typing import Any
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict
@@ -17,6 +18,7 @@ class TableRead(BaseModel):
     score_difference_per_game: float
     scores_for_per_game: float
     scores_against_per_game: float
+    team: Any
 
     model_config = ConfigDict(
         from_attributes=True,

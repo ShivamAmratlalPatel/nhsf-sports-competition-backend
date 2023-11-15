@@ -37,8 +37,8 @@ from backend.users.users_schemas import UserBase
 from backend.utils import object_to_dict, generate_uuid
 from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from backend.teams.teams_models import Team
+
+from backend.teams.teams_models import Team
 
 matches_router = APIRouter()
 
@@ -246,6 +246,12 @@ def delete_match(
     return JSONResponse(status_code=status.HTTP_204_NO_CONTENT, content={})
 
 
+def get_group_from_match(db: Session, match: Match) -> int:
+    home_team = get_home_team_from_match(db=db, match=match)
+
+    return home_team.group
+
+
 @matches_router.get(
     "/schedule/{sport_id}",
     tags=["matches"],
@@ -294,9 +300,32 @@ def get_schedule(
 
     matches = played_matches + unplayed_matches
 
+    # TODO optimise this query and make it a function to be used elsewhere
+    teams = (
+        db.query(Team)
+        .filter(Team.sport_id == sport_id)
+        .filter(Team.is_deleted.is_(False))
+        .all()
+    )
+
+    if not teams or teams == []:
+        return JSONResponse(status_code=200, content=[])
+
+    max_groups = max([team.group for team in teams])
+
+    output = []
+    for i in range(max_groups):
+        output.append(
+            [
+                object_to_dict(MatchRead.model_validate(match))
+                for match in matches
+                if get_group_from_match(db, match) == i + 1
+            ]
+        )
+
     return JSONResponse(
         status_code=status.HTTP_200_OK,
-        content=[object_to_dict(MatchRead.model_validate(match)) for match in matches],
+        content=output,
     )
 
 
@@ -430,29 +459,29 @@ def get_knockout_matches(
         else:
             if i == 0:
                 if sport.quarter_finals:
-                    home_team = "1st in Group Stage"
-                    away_team = "8th in Group Stage"
+                    home_team = "Quarter Final 1"
+                    away_team = ""
                 else:
                     home_team = ""
                     away_team = ""
             elif i == 1:
                 if sport.quarter_finals:
-                    home_team = "5th in Group Stage"
-                    away_team = "6th in Group Stage"
+                    home_team = "Quarter Final 2"
+                    away_team = ""
                 else:
                     home_team = ""
                     away_team = ""
             elif i == 2:
                 if sport.quarter_finals:
-                    home_team = "4th in Group Stage"
-                    away_team = "5th in Group Stage"
+                    home_team = "Quarter Final 3"
+                    away_team = ""
                 else:
                     home_team = ""
                     away_team = ""
             elif i == 3:
                 if sport.quarter_finals:
-                    home_team = "2nd in Group Stage"
-                    away_team = "3rd in Group Stage"
+                    home_team = "Quarter Final 4"
+                    away_team = ""
                 else:
                     home_team = ""
                     away_team = ""
@@ -461,18 +490,18 @@ def get_knockout_matches(
                     home_team = "Winner of QF1"
                     away_team = "Winner of QF2"
                 elif sport.semi_finals:
-                    home_team = "1st in Group Table"
-                    away_team = "4th in Group Table"
+                    home_team = "Semi Final 1"
+                    away_team = ""
                 else:
                     home_team = ""
                     away_team = ""
             elif i == 5:
                 if sport.quarter_finals and sport.semi_finals:
-                    home_team = "Winner of QF1"
-                    away_team = "Winner of QF2"
+                    home_team = "Winner of QF3"
+                    away_team = "Winner of QF4"
                 elif sport.semi_finals:
-                    home_team = "2nd in Group Table"
-                    away_team = "3rd in Group Table"
+                    home_team = "Semi Final 2"
+                    away_team = ""
                 else:
                     home_team = ""
                     away_team = ""
@@ -481,8 +510,8 @@ def get_knockout_matches(
                     home_team = "Winner of SF1"
                     away_team = "Winner of SF2"
                 else:
-                    home_team = "1st in Group Table"
-                    away_team = "2nd in Group Table"
+                    home_team = ""
+                    away_team = ""
             else:
                 home_team = ""
                 away_team = ""
