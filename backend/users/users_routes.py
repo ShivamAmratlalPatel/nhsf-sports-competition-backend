@@ -15,6 +15,7 @@ from backend.users.users_commands.password_token_commands import get_password_ha
 from backend.users.users_commands.tokens import create_access_token
 from backend.users.users_models import User, UserType
 from backend.users.users_schemas import UserBase, UserCreate
+from backend.utils import generate_uuid
 
 db_session = Depends(get_db)
 current_user_instance = Depends(get_current_active_user)
@@ -60,6 +61,7 @@ def post_user(user_create: UserCreate, db: Session = db_session) -> JSONResponse
     """Create user."""
     admin_user_id = db.query(UserType).filter(UserType.name == "admin").first().id
     user = User(
+        id=generate_uuid(),
         username=user_create.username,
         email=user_create.email,
         full_name=user_create.full_name,
