@@ -280,7 +280,9 @@ def get_schedule(
         db.query(Match)
         .filter(*filters)
         .filter(Match.home_score.is_not(None))
+        .order_by(Match.pitch_id)
         .order_by(Match.time)
+        .order_by(Match.id)
         .all()
     )
 
@@ -291,7 +293,9 @@ def get_schedule(
         db.query(Match)
         .filter(*filters)
         .filter(Match.home_score.is_(None))
+        .order_by(Match.pitch_id)
         .order_by(Match.time)
+        .order_by(Match.id)
         .all()
     )
 
