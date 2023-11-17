@@ -66,7 +66,7 @@ class LeagueTable(Base):
     def points_per_game(self: "LeagueTable") -> float:
         """Calculate the points per game for the team."""
         try:
-            return self.points / self.played
+            return float(self.points) / float(self.played)
         except ZeroDivisionError:
             return 0
 
@@ -74,7 +74,7 @@ class LeagueTable(Base):
     def scores_for_per_game(self: "LeagueTable") -> float:
         """Calculate the scores for per game for the team."""
         try:
-            return self.scores_for / self.played
+            return float(self.scores_for) / float(self.played)
         except ZeroDivisionError:
             return 0
 
@@ -82,7 +82,7 @@ class LeagueTable(Base):
     def scores_against_per_game(self: "LeagueTable") -> float:
         """Calculate the scores against per game for the team."""
         try:
-            return self.scores_against / self.played
+            return float(self.scores_against) / float(self.played)
         except ZeroDivisionError:
             return 0
 
@@ -95,7 +95,7 @@ class LeagueTable(Base):
     def score_difference_per_game(self: "LeagueTable") -> float:
         """Calculate the score difference per game for the team."""
         try:
-            return self.score_difference / self.played
+            return float(self.score_difference) / float(self.played)
         except ZeroDivisionError:
             return 0
 
