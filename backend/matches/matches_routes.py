@@ -337,7 +337,7 @@ def get_schedule(
         return JSONResponse(
             status_code=status.HTTP_200_OK,
             content=[
-                object_to_dict(MatchRead.model_validate(match)) for match in matches
+                [object_to_dict(MatchRead.model_validate(match)) for match in matches]
             ],
         )
 
