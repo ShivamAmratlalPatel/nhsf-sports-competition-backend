@@ -280,7 +280,6 @@ def get_schedule(
         db.query(Match)
         .filter(*filters)
         .filter(Match.home_score.is_not(None))
-        .order_by(Match.pitch_id)
         .order_by(Match.time)
         .order_by(Match.id)
         .all()
@@ -289,20 +288,37 @@ def get_schedule(
     if played_matches is None:
         played_matches = []
 
-    unplayed_matches: list[Match] = (
+    unplayed_matches_with_pitches: list[Match] = (
         db.query(Match)
         .filter(*filters)
         .filter(Match.home_score.is_(None))
-        .order_by(Match.pitch_id)
+        .filter(Match.pitch_id.is_not(None))
         .order_by(Match.time)
         .order_by(Match.id)
         .all()
     )
 
-    if unplayed_matches is None:
-        unplayed_matches = []
+    if unplayed_matches_with_pitches is None:
+        unplayed_matches_with_pitches = []
 
-    matches = played_matches + unplayed_matches
+    unplayed_matches_without_pitches: list[Match] = (
+        db.query(Match)
+        .filter(*filters)
+        .filter(Match.home_score.is_(None))
+        .filter(Match.pitch_id.is_(None))
+        .order_by(Match.time)
+        .order_by(Match.id)
+        .all()
+    )
+
+    if unplayed_matches_without_pitches is None:
+        unplayed_matches_without_pitches = []
+
+    matches = (
+        played_matches
+        + unplayed_matches_with_pitches
+        + unplayed_matches_without_pitches
+    )
 
     # TODO optimise this query and make it a function to be used elsewhere
     teams = (
