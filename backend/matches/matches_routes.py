@@ -367,7 +367,7 @@ def log_score(
         away_score=match.away_score,
         home_penalties=match.home_penalties,
         away_penalties=match.away_penalties,
-        user=current_user.full_name
+        actioner=current_user.full_name
         if current_user and current_user.full_name
         else "Unknown",
     )
