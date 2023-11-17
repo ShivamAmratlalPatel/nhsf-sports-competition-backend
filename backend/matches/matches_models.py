@@ -1,5 +1,5 @@
 """Matches Database Models"""
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, func
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, func, String
 from sqlalchemy.dialects import postgresql as pg
 from sqlalchemy.orm import relationship
 
@@ -64,3 +64,36 @@ class Match(Base):
     sport = relationship("Sport", back_populates="matches")
     pitch = relationship("Pitch", back_populates="matches")
     stage = relationship("Stage")
+
+
+class MatchAudit(Base):
+    __tablename__ = "match_audit"
+
+    id = Column(
+        pg.UUID(as_uuid=True),
+        primary_key=True,
+        index=True,
+        default=generate_uuid(),
+        server_default=func.uuid_generate_v4(),
+    )
+    created_date = Column(
+        DateTime(timezone=True),
+        nullable=False,
+        default=datetime_now(),
+        server_default=func.timezone("Europe/London", func.current_timestamp()),
+    )
+    is_deleted = Column(Boolean, nullable=False, default=False, server_default="false")
+    last_modified_date = Column(
+        DateTime(timezone=True),
+        onupdate=datetime_now(),
+        server_onupdate=func.timezone("Europe/London", func.current_timestamp()),
+    )
+    match_id = Column(
+        pg.UUID(as_uuid=True),
+        ForeignKey("matches.id", ondelete="CASCADE"),
+    )
+    actioner = Column(String, nullable=True)
+    home_score = Column(pg.NUMERIC(precision=12, scale=2))
+    away_score = Column(pg.NUMERIC(precision=12, scale=2))
+    home_penalties = Column(pg.NUMERIC(precision=12, scale=2))
+    away_penalties = Column(pg.NUMERIC(precision=12, scale=2))

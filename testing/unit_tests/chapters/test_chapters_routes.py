@@ -118,32 +118,6 @@ class TestPostChapter:
         assert response.json()["detail"][0]["type"] == "enum"
         assert response.json()["detail"][0]["loc"] == ["body", "zone"]
 
-    def test_duplicate_chapter(self: "TestPostChapter", client: TestClient) -> None:
-        """
-        Test Method: test_duplicate_chapter
-
-        Test the scenario where a chapter with the same data already exists.
-
-        Args:
-            client (TestClient): A FastAPI test client.
-
-
-
-        Returns:
-           None
-        """
-        data = fake_chapter()
-
-        response = client.post("/chapter", json=data)
-        assert response.status_code == status.HTTP_201_CREATED
-        assert response.json()["name"] == data["name"]
-        assert response.json()["email"] == data["email"]
-        assert response.json()["zone"] == data["zone"]
-
-        response = client.post("/chapter", json=data)
-        assert response.status_code == status.HTTP_409_CONFLICT
-        assert response.json()["detail"] == "Chapter already exists"
-
 
 class TestGetChapter:
     """

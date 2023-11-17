@@ -84,6 +84,7 @@ class TestMatchRead:
             "home_team_id": generate_uuid(),
             "away_team_id": generate_uuid(),
             "sport_id": generate_uuid(),
+            "pitch": None,
             "pitch_id": generate_uuid(),
             "stage_id": 0,
             "home_score": 0.0,

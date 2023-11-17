@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 from backend.helpers import get_db
-from backend.matches.matches_models import Match
+from backend.matches.matches_models import Match, MatchAudit
 from backend.matches.matches_schemas import (
     MatchCreate,
     MatchRead,
@@ -311,7 +311,15 @@ def get_schedule(
     if not teams or teams == []:
         return JSONResponse(status_code=200, content=[])
 
-    max_groups = max([team.group for team in teams])
+    try:
+        max_groups = max([team.group for team in teams])
+    except TypeError:
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content=[
+                object_to_dict(MatchRead.model_validate(match)) for match in matches
+            ],
+        )
 
     output = []
     for i in range(max_groups):
@@ -352,8 +360,23 @@ def log_score(
     match.home_penalties = score_details.home_penalties
     match.away_penalties = score_details.away_penalties
 
+    match_audit = MatchAudit(
+        id=generate_uuid(),
+        match_id=match.id,
+        home_score=match.home_score,
+        away_score=match.away_score,
+        home_penalties=match.home_penalties,
+        away_penalties=match.away_penalties,
+        user=current_user.full_name
+        if current_user and current_user.full_name
+        else "Unknown",
+    )
+
+    db.add(match_audit)
+
     db.add(match)
     db.commit()
+
     if match.stage_id == 0:
         update_table_for_match(match, db)
     else:
