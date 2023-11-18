@@ -209,7 +209,7 @@ def delete_team(
             detail="Team not found",
         )
     team.is_deleted = True
-    db.add(team)
+    db.delete(team)
     db.commit()
 
     return JSONResponse(status_code=status.HTTP_204_NO_CONTENT, content={})
