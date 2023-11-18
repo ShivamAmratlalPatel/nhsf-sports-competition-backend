@@ -53,19 +53,36 @@ def update_table_for_team(team_id: UUID, db: Session) -> None:
         .count()
     )
 
-    drawn = (
+    lost = (
         db.query(Match)
         .filter(
-            and_(
-                or_(Match.home_team_id == team_id, Match.away_team_id == team_id),
-                Match.home_score == Match.away_score,
-                Match.home_penalties == Match.away_penalties,
+            or_(
+                and_(
+                    Match.home_team_id == team_id,
+                    or_(
+                        Match.home_score < Match.away_score,
+                        and_(
+                            Match.home_score == Match.away_score,
+                            Match.home_penalties < Match.away_penalties,
+                        ),
+                    ),
+                ),
+                and_(
+                    Match.away_team_id == team_id,
+                    or_(
+                        Match.away_score < Match.home_score,
+                        and_(
+                            Match.away_score == Match.home_score,
+                            Match.away_penalties < Match.home_penalties,
+                        ),
+                    ),
+                ),
             ),
         )
         .count()
     )
 
-    lost = played - won - drawn
+    drawn = played - won - lost
 
     scores_for = sum(
         [
