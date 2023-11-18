@@ -10,12 +10,13 @@ from starlette import status
 from backend.config import ACCESS_TOKEN_EXPIRE_MINUTES
 from backend.helpers import get_db
 from backend.users.users_commands.authenticate_user import authenticate_user
+from backend.users.users_commands.check_admin import check_admin
 from backend.users.users_commands.get_users import get_current_active_user
 from backend.users.users_commands.password_token_commands import get_password_hash
 from backend.users.users_commands.tokens import create_access_token
 from backend.users.users_models import User, UserType
 from backend.users.users_schemas import UserBase, UserCreate
-from backend.utils import generate_uuid
+from backend.utils import generate_uuid, object_to_dict
 
 db_session = Depends(get_db)
 current_user_instance = Depends(get_current_active_user)
@@ -84,3 +85,29 @@ def get_me(
 ) -> UserBase:
     """Get current user."""
     return current_user
+
+
+@users_router.get("/users", tags=["users"])
+def get_all_users(db: Session = db_session):
+    users = db.query(User).all()
+
+    return [object_to_dict(UserBase.model_validate(user) for user in users)]
+
+
+@users_router.put("/users/edit", tags=["users"])
+def edit_user(
+    full_name: str,
+    db: Session = db_session,
+    current_user: UserBase = current_user_instance,
+):
+    check_admin(current_user)
+    user: User = db.query(User).filter(User.username == full_name).first()
+
+    if user is None:
+        user: User = db.query(User).filter(User.full_name == full_name).first()
+
+    user.is_deleted = False
+
+    db.add(user)
+
+    db.commit()
