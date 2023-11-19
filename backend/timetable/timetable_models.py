@@ -13,3 +13,4 @@ class Timetable(Base):
     id = Column(Integer, primary_key=True, index=True)
     time_activity = Column(String, nullable=False)
     activity_name = Column(String, nullable=False)
+    location = Column(String, nullable=False)
