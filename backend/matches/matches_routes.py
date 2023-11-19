@@ -34,8 +34,7 @@ from backend.tables.tables_models import LeagueTable
 from backend.users.users_commands.check_admin import check_admin
 from backend.users.users_commands.get_users import get_current_active_user
 from backend.users.users_schemas import UserBase
-from backend.utils import object_to_dict, generate_uuid
-
+from backend.utils import object_to_dict, generate_uuid, datetime_now
 
 from backend.teams.teams_models import Team
 
@@ -719,6 +718,7 @@ def edit_pitch(
         raise HTTPException(status_code=404, detail="Match not found")
     else:
         match.pitch_id = pitch_id
+        match.time = datetime_now()
         db.add(match)
         db.commit()
         return JSONResponse(status_code=200, content="Match pitch updated")
