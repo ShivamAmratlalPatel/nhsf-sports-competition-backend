@@ -22,6 +22,7 @@ from .config import CORS_ORIGINS
 from .middleware import ContentSizeLimitMiddleware
 from .stats.stats_routes import stats_router
 from .tables.tables_routes import tables_router
+from .timetable.timetable_routes import timetable_router
 from .users.users_routes import users_router
 
 LOGLEVEL = os.environ.get("LOGLEVEL", "WARNING").upper()
@@ -75,6 +76,7 @@ app.include_router(sports_router)
 app.include_router(stats_router)
 app.include_router(tables_router)
 app.include_router(teams_router)
+app.include_router(timetable_router)
 app.include_router(users_router)
 
 
@@ -156,7 +158,6 @@ def migrate_db() -> str:
 @app.get("/generate_migrations", response_class=PlainTextResponse)
 def generate_migrations() -> str:
     """Generate new migrations"""
-
     from alembic import command
     from alembic.config import Config
 

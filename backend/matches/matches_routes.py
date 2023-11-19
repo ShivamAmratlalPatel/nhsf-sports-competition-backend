@@ -35,7 +35,6 @@ from backend.users.users_commands.check_admin import check_admin
 from backend.users.users_commands.get_users import get_current_active_user
 from backend.users.users_schemas import UserBase
 from backend.utils import object_to_dict, generate_uuid
-from typing import TYPE_CHECKING
 
 
 from backend.teams.teams_models import Team
@@ -336,7 +335,7 @@ def get_schedule(
         return JSONResponse(
             status_code=status.HTTP_200_OK,
             content=[
-                [object_to_dict(MatchRead.model_validate(match)) for match in matches]
+                [object_to_dict(MatchRead.model_validate(match)) for match in matches],
             ],
         )
 
@@ -347,7 +346,7 @@ def get_schedule(
                 object_to_dict(MatchRead.model_validate(match))
                 for match in matches
                 if get_group_from_match(db, match) == i + 1
-            ]
+            ],
         )
 
     return JSONResponse(

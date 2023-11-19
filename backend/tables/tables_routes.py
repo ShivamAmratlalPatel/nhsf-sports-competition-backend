@@ -54,7 +54,7 @@ def get_table_for_sport(sport_id: UUID, db: Session = db_session) -> JSONRespons
                 object_to_dict(TableRead.model_validate(table_row))
                 for table_row in table_rows
                 if table_row.team.group == i + 1
-            ]
+            ],
         )
 
     return JSONResponse(status_code=200, content=output)
