@@ -68,6 +68,7 @@ current_user_instance = Depends(get_current_active_user)
 def create_match(
     match_details: MatchCreate,
     db: Session = db_session,
+    current_user: UserBase = current_user_instance,
 ) -> JSONResponse:
     """Create a match."""
     match = Match(**match_details.model_dump())
@@ -186,6 +187,7 @@ def update_match(
     match_id: UUID,
     match_details: MatchUpdate,
     db: Session = db_session,
+    current_user: UserBase = current_user_instance,
 ) -> JSONResponse:
     """Update a match."""
     match: Match | None = db.query(Match).filter(Match.id == match_id).first()
@@ -229,6 +231,7 @@ def update_match(
 def delete_match(
     match_id: UUID,
     db: Session = db_session,
+    current_user: UserBase = current_user_instance,
 ) -> JSONResponse:
     """Delete a match."""
     match = db.query(Match).filter(Match.id == match_id).first()

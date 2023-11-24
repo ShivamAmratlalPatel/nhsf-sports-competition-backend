@@ -10,11 +10,14 @@ from starlette import status
 from backend.helpers import get_db
 from backend.sports.sports_models import Sport
 from backend.sports.sports_schemas import SportCreate, SportRead, SportUpdate
+from backend.users.users_commands.get_users import get_current_active_user
+from backend.users.users_schemas import UserBase
 from backend.utils import object_to_dict
 
 sports_router = APIRouter()
 
 db_session = Depends(get_db)
+current_user_instance = Depends(get_current_active_user)
 
 
 @sports_router.post(
@@ -41,6 +44,7 @@ db_session = Depends(get_db)
 def create_sport(
     sport_details: SportCreate,
     db: Session = db_session,
+    current_user: UserBase = current_user_instance,
 ) -> JSONResponse:
     """Create a sport."""
     try:
@@ -159,6 +163,7 @@ def update_sport(
     sport_id: UUID,
     sport_details: SportUpdate,
     db: Session = db_session,
+    current_user: UserBase = current_user_instance,
 ) -> JSONResponse:
     """Update a sport."""
     sport = db.query(Sport).filter(Sport.id == sport_id).first()
@@ -201,6 +206,7 @@ def update_sport(
 def delete_sport(
     sport_id: UUID,
     db: Session = db_session,
+    current_user: UserBase = current_user_instance,
 ) -> JSONResponse:
     """Delete a sport."""
     sport = db.query(Sport).filter(Sport.id == sport_id).first()

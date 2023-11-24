@@ -11,11 +11,14 @@ from starlette import status
 from backend.chapters.chapters_models import Chapter
 from backend.chapters.chapters_schemas import ChapterCreate, ChapterRead, ChapterUpdate
 from backend.helpers import get_db
+from backend.users.users_commands.get_users import get_current_active_user
+from backend.users.users_schemas import UserBase
 from backend.utils import generate_uuid, object_to_dict
 
 chapters_router = APIRouter()
 
 db_session = Depends(get_db)
+current_user_instance = Depends(get_current_active_user)
 
 
 @chapters_router.post(
@@ -42,6 +45,7 @@ db_session = Depends(get_db)
 def create_chapter(
     chapter_details: ChapterCreate,
     db: Session = db_session,
+    current_user: UserBase = current_user_instance,
 ) -> JSONResponse:
     """Create a chapter."""
     try:
@@ -163,6 +167,7 @@ def update_chapter(
     chapter_id: UUID,
     chapter_details: ChapterUpdate,
     db: Session = db_session,
+    current_user: UserBase = current_user_instance,
 ) -> JSONResponse:
     """Update a chapter."""
     chapter = db.query(Chapter).filter(Chapter.id == chapter_id).first()
@@ -205,6 +210,7 @@ def update_chapter(
 def delete_chapter(
     chapter_id: UUID,
     db: Session = db_session,
+    current_user: UserBase = current_user_instance,
 ) -> JSONResponse:
     """Delete a chapter."""
     chapter = db.query(Chapter).filter(Chapter.id == chapter_id).first()

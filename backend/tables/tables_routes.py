@@ -85,6 +85,3 @@ def update_all_tables(db: Session = db_session) -> JSONResponse:
         update_table_for_team(team.id, db)
 
     return JSONResponse(status_code=200, content="Updated tables for all teams")
-
-
-# TODO: write endpoint to intialise table

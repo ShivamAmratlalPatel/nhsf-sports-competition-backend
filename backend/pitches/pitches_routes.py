@@ -10,11 +10,14 @@ from starlette import status
 from backend.helpers import get_db
 from backend.pitches.pitches_models import Pitch
 from backend.pitches.pitches_schemas import PitchCreate, PitchRead, PitchUpdate
+from backend.users.users_commands.get_users import get_current_active_user
+from backend.users.users_schemas import UserBase
 from backend.utils import object_to_dict
 
 pitches_router = APIRouter()
 
 db_session = Depends(get_db)
+current_user_instance = Depends(get_current_active_user)
 
 
 @pitches_router.post(
@@ -41,6 +44,7 @@ db_session = Depends(get_db)
 def create_pitch(
     pitch_details: PitchCreate,
     db: Session = db_session,
+    current_user: UserBase = current_user_instance,
 ) -> JSONResponse:
     """Create a pitch."""
     try:
@@ -160,6 +164,7 @@ def update_pitch(
     pitch_id: UUID,
     pitch_details: PitchUpdate,
     db: Session = db_session,
+    current_user: UserBase = current_user_instance,
 ) -> JSONResponse:
     """Update a pitch."""
     pitch = db.query(Pitch).filter(Pitch.id == pitch_id).first()
@@ -202,6 +207,7 @@ def update_pitch(
 def delete_pitch(
     pitch_id: UUID,
     db: Session = db_session,
+    current_user: UserBase = current_user_instance,
 ) -> JSONResponse:
     """Delete a pitch."""
     pitch = db.query(Pitch).filter(Pitch.id == pitch_id).first()

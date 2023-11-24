@@ -10,11 +10,14 @@ from starlette import status
 from backend.helpers import get_db
 from backend.teams.teams_models import Team
 from backend.teams.teams_schemas import TeamCreate, TeamRead, TeamUpdate
+from backend.users.users_commands.get_users import get_current_active_user
+from backend.users.users_schemas import UserBase
 from backend.utils import object_to_dict
 
 teams_router = APIRouter()
 
 db_session = Depends(get_db)
+current_user_instance = Depends(get_current_active_user)
 
 
 @teams_router.post(
@@ -41,6 +44,7 @@ db_session = Depends(get_db)
 def create_team(
     team_details: TeamCreate,
     db: Session = db_session,
+    current_user: UserBase = current_user_instance,
 ) -> JSONResponse:
     """Create a team."""
     team = Team(**team_details.model_dump())
@@ -158,6 +162,7 @@ def update_team(
     team_id: UUID,
     team_details: TeamUpdate,
     db: Session = db_session,
+    current_user: UserBase = current_user_instance,
 ) -> JSONResponse:
     """Update a team."""
     team = db.query(Team).filter(Team.id == team_id).first()
@@ -200,6 +205,7 @@ def update_team(
 def delete_team(
     team_id: UUID,
     db: Session = db_session,
+    current_user: UserBase = current_user_instance,
 ) -> JSONResponse:
     """Delete a team."""
     team = db.query(Team).filter(Team.id == team_id).first()
