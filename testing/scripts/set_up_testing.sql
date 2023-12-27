@@ -115,3 +115,14 @@ DROP TABLE IF EXISTS temp_ids;
 DELETE FROM users;
 
 INSERT INTO public.users (id, username, email, hashed_password, created_date, is_deleted, last_modified_date, chapter_id, user_type_id, full_name) VALUES ('22e49def-7eb1-452a-aea5-723b886434aa', 'string', 'user@example.com', '$2b$12$w46.KJhlC5nnKq6UR7LO4OkWksNJOZQ7.vsE8cGLE13Ou39KB0FFa', '2023-11-05 12:15:01.397891 +00:00', false, null, null, '87545bbb-9750-4e4f-bdfa-790f3994cd19', 'string');
+
+DELETE FROM timetable;
+INSERT INTO public.timetable (id, time_activity, activity_name, location) VALUES (2, '8:30 AM', 'Registration', '');
+INSERT INTO public.timetable (id, time_activity, activity_name, location) VALUES (3, '9:00 AM', 'Opening Ceremony', 'Sports Hall');
+INSERT INTO public.timetable (id, time_activity, activity_name, location) VALUES (4, '9:30-11:25', 'Netball', 'Sports Hall');
+INSERT INTO public.timetable (id, time_activity, activity_name, location) VALUES (5, '9:30-12:30', 'Football', '3G Pitch Outside');
+INSERT INTO public.timetable (id, time_activity, activity_name, location) VALUES (6, '11:30-12:45', 'Women''s Kabaddi', 'Main Hall');
+INSERT INTO public.timetable (id, time_activity, activity_name, location) VALUES (7, '12:00-13:50', 'Badminton', 'Sports Hall');
+INSERT INTO public.timetable (id, time_activity, activity_name, location) VALUES (8, '13:15-16:05', 'Men''s Kabaddi', 'Main Hall');
+INSERT INTO public.timetable (id, time_activity, activity_name, location) VALUES (9, '13:15-16:30', 'Kho-Kho', 'Sports Hall');
+INSERT INTO public.timetable (id, time_activity, activity_name, location) VALUES (10, '16:30-17:00', 'Closing Ceremony', 'Sports Hall');

@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Any
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, model_validator
 
 from backend.utils import datetime_now, generate_uuid
 from testing.helpers.fake_data import fake_penalties, fake_score
@@ -106,8 +106,8 @@ class KnockoutRead(BaseModel):
 class ScoreDetails(BaseModel):
     """Score details schema."""
 
-    home_score: float
-    away_score: float
+    home_score: float | None = None
+    away_score: float | None = None
     home_penalties: float | None = None
     away_penalties: float | None = None
 
@@ -121,3 +121,21 @@ class ScoreDetails(BaseModel):
             },
         },
     )
+
+    @model_validator(mode="after")
+    def validate_score_details(self) -> "ScoreDetails":
+        """Validate score details."""
+        home_score = self.home_score
+        away_score = self.away_score
+        home_penalties = self.home_penalties
+        away_penalties = self.away_penalties
+
+        if (
+            home_score is None
+            and away_score is None
+            and home_penalties is None
+            and away_penalties is None
+        ):
+            raise ValueError("Either score or penalties must be provided")
+
+        return self
