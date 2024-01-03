@@ -115,6 +115,8 @@ DROP TABLE IF EXISTS temp_ids;
 DELETE FROM users;
 
 INSERT INTO public.users (id, username, email, hashed_password, created_date, is_deleted, last_modified_date, chapter_id, user_type_id, full_name) VALUES ('22e49def-7eb1-452a-aea5-723b886434aa', 'string', 'user@example.com', '$2b$12$w46.KJhlC5nnKq6UR7LO4OkWksNJOZQ7.vsE8cGLE13Ou39KB0FFa', '2023-11-05 12:15:01.397891 +00:00', false, null, null, '87545bbb-9750-4e4f-bdfa-790f3994cd19', 'string');
+INSERT INTO public.users (id, username, email, hashed_password, created_date, is_deleted, last_modified_date, chapter_id, user_type_id, full_name) VALUES (uuid_generate_v4(), 'chapter', 'chapter@example.com', '$2b$12$w46.KJhlC5nnKq6UR7LO4OkWksNJOZQ7.vsE8cGLE13Ou39KB0FFa', '2023-11-05 12:15:01.397891 +00:00', false, null, '15ecd3e8-5489-4056-b474-4495a0b1e3ef', '6b7815b7-5563-445e-b400-48e81d1dbce6', 'string');
+
 
 DELETE FROM timetable;
 INSERT INTO public.timetable (id, time_activity, activity_name, location) VALUES (2, '8:30 AM', 'Registration', '');

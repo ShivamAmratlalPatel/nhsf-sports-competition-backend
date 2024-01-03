@@ -10,29 +10,14 @@ from backend.utils import datetime_now, generate_uuid
 from testing.helpers.fake_data import fake_email, fake_name, fake_zone
 
 
-class ZoneEnum(str, Enum):
-    """Zone enum."""
-
-    london = "London"
-    south = "South"
-    north = "North"
-    central = "Central"
-
-    __slots__ = ()
-
-
 class ChapterBase(BaseModel):
     """Chapter base schema."""
 
     name: str
-    email: EmailStr | None = None
-    zone: ZoneEnum | None = None
     model_config = ConfigDict(
         json_schema_extra={
             "example": {
                 "name": fake_name(),
-                "email": fake_email(),
-                "zone": fake_zone(),
             },
         },
     )
@@ -54,14 +39,10 @@ class ChapterUpdate(BaseModel):
     """Chapter update schema."""
 
     name: str
-    email: EmailStr
-    zone: ZoneEnum
     model_config = ConfigDict(
         json_schema_extra={
             "example": {
                 "name": fake_name(),
-                "email": fake_email(),
-                "zone": fake_zone(),
             },
         },
     )

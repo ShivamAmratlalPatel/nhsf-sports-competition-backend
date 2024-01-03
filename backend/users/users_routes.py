@@ -45,6 +45,7 @@ def login_for_access_token(
     access_token = create_access_token(
         data={"sub": user.username, "user_type": user.user_type_name},
         expires_delta=access_token_expires,
+        chapter_id=user.chapter_id,
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
