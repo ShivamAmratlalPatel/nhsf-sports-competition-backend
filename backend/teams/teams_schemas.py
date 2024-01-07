@@ -13,6 +13,7 @@ class TeamBase(BaseModel):
     """Team base schema."""
 
     name: str
+    internal_name: str
     chapter_id: UUID
     sport_id: UUID
     group: int | None = None
@@ -20,6 +21,7 @@ class TeamBase(BaseModel):
         json_schema_extra={
             "example": {
                 "name": fake_name(),
+                "internal_name": fake_name(),
                 "chapter_id": generate_uuid(),
                 "sport_id": generate_uuid(),
                 "group": 0,
@@ -44,6 +46,7 @@ class TeamUpdate(BaseModel):
     """Team update schema."""
 
     name: str
+    internal_name: str
     chapter_id: UUID
     sport_id: UUID
     group: int | None = None
@@ -51,6 +54,7 @@ class TeamUpdate(BaseModel):
         json_schema_extra={
             "example": {
                 "name": fake_name(),
+                "internal_name": fake_name(),
                 "chapter_id": generate_uuid(),
                 "sport_id": generate_uuid(),
                 "group": 0,

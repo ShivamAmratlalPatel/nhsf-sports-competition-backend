@@ -20,6 +20,7 @@ class Team(Base):
         server_default=func.uuid_generate_v4(),
     )
     name = Column(String, nullable=False)
+    internal_name = Column(String, nullable=False)
     created_date = Column(
         DateTime(timezone=True),
         nullable=False,

@@ -332,7 +332,7 @@ def get_schedule(
         return JSONResponse(status_code=200, content=[])
 
     try:
-        max_groups = max([team.group for team in teams])
+        max_groups = max([team.group for team in teams]) + 1
     except TypeError:
         return JSONResponse(
             status_code=status.HTTP_200_OK,
@@ -347,7 +347,7 @@ def get_schedule(
             [
                 object_to_dict(MatchRead.model_validate(match))
                 for match in matches
-                if get_group_from_match(db, match) == i + 1
+                if get_group_from_match(db, match) == i
             ],
         )
 
@@ -725,3 +725,41 @@ def edit_pitch(
         db.add(match)
         db.commit()
         return JSONResponse(status_code=200, content="Match pitch updated")
+
+
+@matches_router.get(
+    "/clear_match/{sport_id}", tags=["matches"], status_code=status.HTTP_204_NO_CONTENT
+)
+def clear_matches(
+    sport_id: UUID,
+    db: Session = db_session,
+    current_user: UserBase = current_user_instance,
+) -> JSONResponse:
+    check_admin(current_user)
+
+    played_matches: list[Match] | None = (
+        db.query(Match)
+        .filter(Match.sport_id == sport_id)
+        .filter(Match.is_deleted.is_(False))
+        .filter(Match.home_score.is_not(None))
+    )
+
+    if played_matches:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="MAtches have already been played",
+        )
+
+    matches_to_delete = (
+        db.query(Match)
+        .filter(Match.sport_id == sport_id)
+        .filter(Match.is_deleted.is_(False))
+    )
+
+    for match in matches_to_delete:
+        match.is_deleted = True
+        db.add(match)
+
+    db.commit()
+
+    return JSONResponse(status_code=status.HTTP_204_NO_CONTENT)

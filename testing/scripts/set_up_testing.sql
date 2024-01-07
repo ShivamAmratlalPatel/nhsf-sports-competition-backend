@@ -8,12 +8,10 @@ CREATE TEMP TABLE temp_ids
 DELETE
 FROM chapters;
 -- Insert into chapters table and store the ID in the temporary table
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted,
+INSERT INTO public.chapters (id, name, created_date, is_deleted,
                              last_modified_date)
 VALUES ('15ecd3e8-5489-4056-b474-4495a0b1e3ef',
         'Imperial',
-        'London',
-        'a@ba.com',
         '2023-09-13 00:09:50.564341 +00:00',
         FALSE,
         NULL);
@@ -38,10 +36,11 @@ INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_dat
 DELETE
 FROM teams;
 -- Insert into teams table using the ID from the temporary table
-INSERT INTO public.teams (id, name, created_date, is_deleted, last_modified_date,
+INSERT INTO public.teams (id, name, internal_name, created_date, is_deleted, last_modified_date,
                           chapter_id, sport_id)
 VALUES ('7dc264e3-db16-47c7-bd46-ad766c05a42d',
-        'Imperial Football Team',
+        'Imperial',
+        'Football',
         NOW(),
         FALSE,
         NULL,
@@ -49,12 +48,10 @@ VALUES ('7dc264e3-db16-47c7-bd46-ad766c05a42d',
         '7dac42d7-e397-4efa-b70a-0232cacd4c4f');
 
 -- Insert into chapters table and store the ID in the temporary table
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted,
+INSERT INTO public.chapters (id, name, created_date, is_deleted,
                              last_modified_date)
 VALUES ('e846aa5a-7a7f-46c1-934d-032140116141',
         'UCLAN',
-        'North',
-        'a@b.com',
         '2023-09-13 00:09:50.564341 +00:00',
         FALSE,
         NULL);
@@ -67,10 +64,11 @@ WHERE NOT EXISTS (SELECT 1
                   WHERE id = 'e846aa5a-7a7f-46c1-934d-032140116141');
 
 -- Insert into teams table using the ID from the temporary table
-INSERT INTO public.teams (id, name, created_date, is_deleted, last_modified_date,
+INSERT INTO public.teams (id, name, internal_name, created_date, is_deleted, last_modified_date,
                           chapter_id, sport_id)
 VALUES ('35569907-cf47-4fc9-80db-0fc5762e7e5e',
-        'UCLAN Football Team',
+        'UCLAN',
+        'Football',
         '2023-09-13 00:11:24.107033 +00:00',
         FALSE,
         NULL,

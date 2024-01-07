@@ -7,11 +7,13 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from starlette import status
 
+from backend.chapters.chapters_models import Chapter
 from backend.helpers import get_db
 from backend.matches.matches_models import Match
 from backend.players.players_models import Player
 from backend.players.players_schemas import PlayerCreate, PlayerRead
 from backend.teams.teams_commands.chapter_from_team import chapter_id_from_team
+from backend.teams.teams_models import Team
 from backend.users.users_commands.chapter_user import verify_chapter_user
 from backend.users.users_commands.get_users import get_current_active_user
 from backend.users.users_schemas import UserBase
@@ -256,3 +258,52 @@ def get_match_players(
         status_code=status.HTTP_200_OK,
         content=players,
     )
+
+
+@players_router.get(
+    "/players/chapter/{chapter_id}",
+    tags=["players"],
+    description="Get description players.",
+    responses={
+        status.HTTP_200_OK: {
+            "model": PlayerRead,
+            "description": "Players retrieved successfully",
+        },
+    },
+)
+def get_chapter_players(
+    chapter_id: UUID, db: Session = db_session
+) -> dict[str, list[dict]]:
+    chapter: Chapter = db.get(Chapter, chapter_id)
+
+    if not chapter:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Chapter not found"
+        )
+
+    teams: list[Team] = (
+        db.query(Team)
+        .filter(Team.chapter_id == chapter.id)
+        .filter(Team.is_deleted.is_(False))
+    )
+
+    if not teams:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No teams")
+
+    players = {}
+
+    for team in teams:
+        team_players: list[Player] = (
+            db.query(Player)
+            .filter(Player.team_id == team.id)
+            .filter(Player.is_deleted.is_(False))
+        )
+
+        team_players: list[dict] = [
+            object_to_dict(PlayerRead.model_validate(player), format_date=True)
+            for player in team_players
+        ]
+
+        players[str(team.id)] = team_players
+
+    return players

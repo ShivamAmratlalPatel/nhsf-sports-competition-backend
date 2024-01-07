@@ -123,7 +123,7 @@ class ScoreDetails(BaseModel):
     )
 
     @model_validator(mode="after")
-    def validate_score_details(self) -> "ScoreDetails":
+    def validate_score_details(self: "ScoreDetails") -> "ScoreDetails":
         """Validate score details."""
         home_score = self.home_score
         away_score = self.away_score

@@ -2,7 +2,7 @@
 from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, model_validator
 
 from backend.utils import datetime_now, generate_uuid
 from testing.helpers.fake_data import fake_name
@@ -12,7 +12,7 @@ class PlayerBase(BaseModel):
     """Player base schema."""
 
     name: str
-    team_id: UUID
+    team_id: UUID | None = None
 
     model_config = ConfigDict(
         json_schema_extra={
