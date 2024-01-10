@@ -11,6 +11,7 @@ from starlette import status
 from backend.chapters.chapters_models import Chapter
 from backend.chapters.chapters_schemas import ChapterCreate, ChapterRead, ChapterUpdate
 from backend.helpers import get_db
+from backend.users.users_commands.check_admin import check_admin
 from backend.users.users_commands.get_users import get_current_active_user
 from backend.users.users_schemas import UserBase
 from backend.utils import generate_uuid, object_to_dict
@@ -48,6 +49,52 @@ def create_chapter(
     current_user: UserBase = current_user_instance,
 ) -> JSONResponse:
     """Create a chapter."""
+    check_admin(current_user)
+    try:
+        chapter = Chapter(**chapter_details.model_dump())
+        chapter.id = generate_uuid()
+        db.add(chapter)
+        db.commit()
+    except IntegrityError as e:
+        logging.exception("Chapter already exists")
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Chapter already exists",
+        ) from e
+    return JSONResponse(
+        status_code=status.HTTP_201_CREATED,
+        content=object_to_dict(ChapterRead.model_validate(chapter)),
+    )
+
+
+@chapters_router.post(
+    "/chapter/admin",
+    tags=["chapters"],
+    description="Create chapter.",
+    responses={
+        status.HTTP_201_CREATED: {
+            "model": ChapterRead,
+            "description": "Successful response: chapter created",
+            "title": "Chapter details",
+        },
+        status.HTTP_409_CONFLICT: {
+            "description": "Chapter already exists",
+            "title": "Chapter already exists",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "Chapter already exists"},
+                },
+            },
+        },
+    },
+)
+def create_chapter_admin(
+    chapter_details: ChapterCreate,
+    db: Session = db_session,
+    current_user: UserBase = current_user_instance,
+) -> JSONResponse:
+    """Create a chapter."""
+    check_admin(current_user)
     try:
         chapter = Chapter(**chapter_details.model_dump())
         chapter.id = generate_uuid()
@@ -142,6 +189,45 @@ def get_chapters(
     )
 
 
+@chapters_router.get(
+    "/chapters/admin",
+    tags=["chapters"],
+    description="Get chapters.",
+    responses={
+        status.HTTP_200_OK: {
+            "model": list[ChapterRead],
+            "description": "Successful response: chapters found",
+            "title": "Chapter details",
+        },
+        status.HTTP_404_NOT_FOUND: {
+            "description": "Chapters not found",
+            "title": "Chapters not found",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "Chapters not found"},
+                },
+            },
+        },
+    },
+)
+def get_chapters_admin(
+    db: Session = db_session,
+) -> JSONResponse:
+    """Get all chapters."""
+    chapters = db.query(Chapter).order_by(Chapter.name).all()
+    if not chapters:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Chapters not found",
+        )
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content=[
+            object_to_dict(ChapterRead.model_validate(chapter)) for chapter in chapters
+        ],
+    )
+
+
 @chapters_router.put(
     "/chapter/{chapter_id}",
     tags=["chapters"],
@@ -170,6 +256,7 @@ def update_chapter(
     current_user: UserBase = current_user_instance,
 ) -> JSONResponse:
     """Update a chapter."""
+    check_admin(current_user)
     chapter = db.query(Chapter).filter(Chapter.id == chapter_id).first()
     if not chapter:
         raise HTTPException(
@@ -213,6 +300,7 @@ def delete_chapter(
     current_user: UserBase = current_user_instance,
 ) -> JSONResponse:
     """Delete a chapter."""
+    check_admin(current_user)
     chapter = db.query(Chapter).filter(Chapter.id == chapter_id).first()
     if not chapter:
         raise HTTPException(

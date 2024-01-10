@@ -38,6 +38,7 @@ def upgrade() -> None:
         [
             {"id": "87545bbb-9750-4e4f-bdfa-790f3994cd19", "name": "admin"},
             {"id": "6b7815b7-5563-445e-b400-48e81d1dbce6", "name": "chapter"},
+            {"id": "975ca347-4467-4d68-b2ef-f5a81c090959", "name": "super_admin"},
         ],
     )
 

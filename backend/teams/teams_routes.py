@@ -7,12 +7,20 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from starlette import status
 
+from backend.chapters.chapters_models import Chapter
 from backend.helpers import get_db
+from backend.sports.sports_models import Sport
 from backend.teams.teams_models import Team
-from backend.teams.teams_schemas import TeamCreate, TeamRead, TeamUpdate
+from backend.teams.teams_schemas import (
+    TeamCreate,
+    TeamRead,
+    TeamUpdate,
+    TeamCreateAdmin,
+)
+from backend.users.users_commands.check_admin import check_admin
 from backend.users.users_commands.get_users import get_current_active_user
 from backend.users.users_schemas import UserBase
-from backend.utils import object_to_dict
+from backend.utils import object_to_dict, generate_uuid
 
 teams_router = APIRouter()
 
@@ -47,6 +55,7 @@ def create_team(
     current_user: UserBase = current_user_instance,
 ) -> JSONResponse:
     """Create a team."""
+    check_admin(current_user)
     team = Team(**team_details.model_dump())
     db.add(team)
     try:
@@ -60,6 +69,84 @@ def create_team(
     return JSONResponse(
         status_code=status.HTTP_201_CREATED,
         content=object_to_dict(TeamRead.model_validate(team)),
+    )
+
+
+@teams_router.post(
+    "/team/admin",
+    tags=["teams"],
+    description="Create team.",
+    responses={
+        status.HTTP_201_CREATED: {
+            "model": TeamRead,
+            "description": "Successful response: team created",
+            "title": "Team details",
+        },
+        status.HTTP_409_CONFLICT: {
+            "description": "Team already exists",
+            "title": "Team already exists",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "Team already exists"},
+                },
+            },
+        },
+    },
+)
+def create_team_admin(
+    team_details: TeamCreateAdmin,
+    db: Session = db_session,
+    current_user: UserBase = current_user_instance,
+) -> JSONResponse:
+    """Create a team."""
+    check_admin(current_user)
+
+    existing_sport_teams: list[Team] | None = (
+        db.query(Team)
+        .filter(Team.sport_id == team_details.sport_id)
+        .filter(Team.chapter_id == team_details.chapter_id)
+        .filter(Team.is_deleted.is_(False))
+        .all()
+    )
+
+    chapter = db.get(Chapter, team_details.chapter_id)
+    sport = db.get(Sport, team_details.sport_id)
+
+    new_team = Team(
+        id=generate_uuid(),
+        name=chapter.name,
+        internal_name=sport.name,
+        sport_id=team_details.sport_id,
+        chapter_id=team_details.chapter_id,
+    )
+
+    if existing_sport_teams:
+        for team in existing_sport_teams:
+            if team.name == chapter.name:
+                team.name = f"{team.name} A"
+                new_team.name = f"{new_team.name} B"
+            elif team.name == f"{chapter.name} A":
+                new_team.name = f"{new_team.name} B"
+            elif team.name == f"{chapter.name} B":
+                new_team.name = f"{new_team.name} C"
+            else:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Too many teams",
+                )
+            db.add(team)
+    db.add(new_team)
+
+    try:
+        db.commit()
+    except IntegrityError as e:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Team already exists",
+        ) from e
+    return JSONResponse(
+        status_code=status.HTTP_201_CREATED,
+        content=object_to_dict(TeamRead.model_validate(new_team)),
     )
 
 
@@ -164,6 +251,7 @@ def update_team(
     db: Session = db_session,
     current_user: UserBase = current_user_instance,
 ) -> JSONResponse:
+    check_admin(current_user)
     """Update a team."""
     team = db.query(Team).filter(Team.id == team_id).first()
     if not team:
@@ -208,6 +296,7 @@ def delete_team(
     current_user: UserBase = current_user_instance,
 ) -> JSONResponse:
     """Delete a team."""
+    check_admin(current_user)
     team = db.query(Team).filter(Team.id == team_id).first()
     if not team:
         raise HTTPException(

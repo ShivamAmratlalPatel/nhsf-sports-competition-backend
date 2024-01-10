@@ -71,6 +71,7 @@ def create_match(
     current_user: UserBase = current_user_instance,
 ) -> JSONResponse:
     """Create a match."""
+    check_admin(current_user)
     match = Match(**match_details.model_dump())
     db.add(match)
     try:
@@ -190,6 +191,7 @@ def update_match(
     current_user: UserBase = current_user_instance,
 ) -> JSONResponse:
     """Update a match."""
+    check_admin(current_user)
     match: Match | None = db.query(Match).filter(Match.id == match_id).first()
     if match is None:
         raise HTTPException(
@@ -234,6 +236,7 @@ def delete_match(
     current_user: UserBase = current_user_instance,
 ) -> JSONResponse:
     """Delete a match."""
+    check_admin(current_user)
     match = db.query(Match).filter(Match.id == match_id).first()
     if not match:
         raise HTTPException(

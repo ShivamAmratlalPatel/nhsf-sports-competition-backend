@@ -3,7 +3,7 @@
 from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 
 from backend.utils import datetime_now, generate_uuid
 from testing.helpers.fake_data import fake_name
@@ -42,6 +42,11 @@ class TeamCreate(TeamBase):
     )
 
 
+class TeamCreateAdmin(BaseModel):
+    chapter_id: UUID
+    sport_id: UUID
+
+
 class TeamUpdate(BaseModel):
     """Team update schema."""
 
@@ -70,6 +75,7 @@ class TeamRead(TeamBase):
     created_date: datetime
     last_modified_date: datetime | None = None
     is_deleted: bool
+    admin_name: str | None = None
     model_config = ConfigDict(
         from_attributes=True,
         json_schema_extra={
@@ -82,3 +88,12 @@ class TeamRead(TeamBase):
             },
         },
     )
+
+    @model_validator(mode="after")
+    def calculate_admin_name(self: "TeamRead") -> "TeamRead":
+        """Calculate admin name."""
+        if " " in self.name:
+            self.admin_name = f"{self.internal_name} {self.name.split(' ')[-1]}"
+        else:
+            self.admin_name = self.internal_name
+        return self

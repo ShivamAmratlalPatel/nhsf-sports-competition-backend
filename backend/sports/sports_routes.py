@@ -10,6 +10,7 @@ from starlette import status
 from backend.helpers import get_db
 from backend.sports.sports_models import Sport
 from backend.sports.sports_schemas import SportCreate, SportRead, SportUpdate
+from backend.users.users_commands.check_admin import check_admin
 from backend.users.users_commands.get_users import get_current_active_user
 from backend.users.users_schemas import UserBase
 from backend.utils import object_to_dict
@@ -47,6 +48,7 @@ def create_sport(
     current_user: UserBase = current_user_instance,
 ) -> JSONResponse:
     """Create a sport."""
+    check_admin(current_user)
     try:
         sport = Sport(**sport_details.model_dump())
         db.add(sport)
@@ -166,6 +168,7 @@ def update_sport(
     current_user: UserBase = current_user_instance,
 ) -> JSONResponse:
     """Update a sport."""
+    check_admin(current_user)
     sport = db.query(Sport).filter(Sport.id == sport_id).first()
     if not sport:
         raise HTTPException(
@@ -209,6 +212,7 @@ def delete_sport(
     current_user: UserBase = current_user_instance,
 ) -> JSONResponse:
     """Delete a sport."""
+    check_admin(current_user)
     sport = db.query(Sport).filter(Sport.id == sport_id).first()
     if not sport:
         raise HTTPException(

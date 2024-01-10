@@ -10,6 +10,7 @@ from starlette import status
 from backend.helpers import get_db
 from backend.pitches.pitches_models import Pitch
 from backend.pitches.pitches_schemas import PitchCreate, PitchRead, PitchUpdate
+from backend.users.users_commands.check_admin import check_admin
 from backend.users.users_commands.get_users import get_current_active_user
 from backend.users.users_schemas import UserBase
 from backend.utils import object_to_dict
@@ -47,6 +48,7 @@ def create_pitch(
     current_user: UserBase = current_user_instance,
 ) -> JSONResponse:
     """Create a pitch."""
+    check_admin(current_user)
     try:
         pitch = Pitch(**pitch_details.model_dump())
         db.add(pitch)
@@ -167,6 +169,7 @@ def update_pitch(
     current_user: UserBase = current_user_instance,
 ) -> JSONResponse:
     """Update a pitch."""
+    check_admin(current_user)
     pitch = db.query(Pitch).filter(Pitch.id == pitch_id).first()
     if not pitch:
         raise HTTPException(
@@ -210,6 +213,7 @@ def delete_pitch(
     current_user: UserBase = current_user_instance,
 ) -> JSONResponse:
     """Delete a pitch."""
+    check_admin(current_user)
     pitch = db.query(Pitch).filter(Pitch.id == pitch_id).first()
     if not pitch:
         raise HTTPException(
