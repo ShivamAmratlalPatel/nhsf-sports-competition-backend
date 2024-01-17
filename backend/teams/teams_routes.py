@@ -3,6 +3,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
+from sqlalchemy import Row
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from starlette import status
@@ -211,17 +212,100 @@ def get_team(
 )
 def get_teams(
     chapter_id: UUID | None = None,
+    sport_id: UUID | None = None,
+    sort_by_group: bool = False,
     db: Session = db_session,
 ) -> JSONResponse:
     """Get all teams."""
-    if chapter_id:
-        teams = db.query(Team).filter(Team.chapter_id == chapter_id).all()
+    if sort_by_group:
+        max_group: Row = (
+            db.query(Team.group)
+            .filter(Team.group.is_not(None))
+            .order_by(Team.group.desc())
+            .first()
+        )
+        if not max_group[0]:
+            if chapter_id:
+                teams = db.query(Team).filter(Team.chapter_id == chapter_id).all()
+            elif sport_id:
+                teams = db.query(Team).filter(Team.sport_id == sport_id).all()
+            else:
+                teams = db.query(Team).all()
+            return JSONResponse(
+                status_code=status.HTTP_200_OK,
+                content=[
+                    [object_to_dict(TeamRead.model_validate(team)) for team in teams]
+                ],
+            )
+        else:
+            teams: list[list[Team]] = []
+            if chapter_id:
+                query_teams: list[Team] | None = (
+                    db.query(Team)
+                    .filter(Team.chapter_id == chapter_id)
+                    .filter(Team.group.is_(None))
+                    .all()
+                )
+            elif sport_id:
+                query_teams: list[Team] | None = (
+                    db.query(Team)
+                    .filter(Team.sport_id == sport_id)
+                    .filter(Team.group.is_(None))
+                    .all()
+                )
+            else:
+                query_teams: list[Team] | None = (
+                    db.query(Team).filter(Team.group.is_(None)).all()
+                )
+
+            if query_teams:
+                teams.append(query_teams)
+
+            for group in range(1, max_group[0] + 1):
+                if chapter_id:
+                    query_teams: list[Team] | None = (
+                        db.query(Team)
+                        .filter(Team.chapter_id == chapter_id)
+                        .filter(Team.group == group)
+                        .all()
+                    )
+                elif sport_id:
+                    query_teams: list[Team] | None = (
+                        db.query(Team)
+                        .filter(Team.sport_id == sport_id)
+                        .filter(Team.group == group)
+                        .all()
+                    )
+                else:
+                    query_teams: list[Team] | None = (
+                        db.query(Team).filter(Team.group == group).all()
+                    )
+
+                if query_teams:
+                    teams.append(query_teams)
+
+            return JSONResponse(
+                status_code=status.HTTP_200_OK,
+                content=[
+                    [
+                        object_to_dict(TeamRead.model_validate(team))
+                        for team in group_team
+                    ]
+                    for group_team in teams
+                ],
+            )
     else:
-        teams = db.query(Team).all()
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content=[object_to_dict(TeamRead.model_validate(team)) for team in teams],
-    )
+        if chapter_id:
+            teams = db.query(Team).filter(Team.chapter_id == chapter_id).all()
+        elif sport_id:
+            teams = db.query(Team).filter(Team.sport_id == sport_id).all()
+        else:
+            teams = db.query(Team).all()
+
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content=[object_to_dict(TeamRead.model_validate(team)) for team in teams],
+        )
 
 
 @teams_router.put(

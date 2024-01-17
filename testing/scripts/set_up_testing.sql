@@ -117,16 +117,6 @@ VALUES ('3429e138-0e55-4096-b30d-6b2f789365b4', 'KabaddiW', now(), false, null, 
         false);
 
 
--- Insert into chapters table and store the ID in the temporary table
-INSERT INTO public.chapters (id, name, created_date, is_deleted,
-                             last_modified_date)
-VALUES ('e846aa5a-7a7f-46c1-934d-032140116141',
-        'UCLAN',
-        '2023-09-13 00:09:50.564341 +00:00',
-        FALSE,
-        NULL);
-
-
 -- Insert into pitches table and store the ID in the temporary table
 INSERT INTO public.pitches (id, name, created_date, is_deleted, last_modified_date, sport_id)
 VALUES ('b6faa095-b64f-4bca-a9e3-d9795b530f21', 'Football Pitch 1', '2023-09-14 23:26:38.610667 +00:00', false, null,

@@ -31,7 +31,12 @@ class Player(Base):
         onupdate=datetime_now(),
         server_onupdate=func.timezone("Europe/London", func.current_timestamp()),
     )
-    team_id = Column(
+    morning_team_id = Column(
+        pg.UUID(as_uuid=True),
+        ForeignKey("teams.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    away_team_id = Column(
         pg.UUID(as_uuid=True),
         ForeignKey("teams.id", ondelete="CASCADE"),
         nullable=False,
