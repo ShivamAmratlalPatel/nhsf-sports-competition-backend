@@ -3,13 +3,14 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
-from sqlalchemy import Row
+from sqlalchemy import Row, or_
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from starlette import status
 
 from backend.chapters.chapters_models import Chapter
 from backend.helpers import get_db
+from backend.players.players_models import Player
 from backend.sports.sports_models import Sport
 from backend.teams.teams_models import Team
 from backend.teams.teams_schemas import (
@@ -218,19 +219,29 @@ def get_teams(
 ) -> JSONResponse:
     """Get all teams."""
     if sort_by_group:
-        max_group: Row = (
+        max_group: Row | None = (
             db.query(Team.group)
             .filter(Team.group.is_not(None))
             .order_by(Team.group.desc())
             .first()
         )
-        if not max_group[0]:
+        if max_group is None:
             if chapter_id:
-                teams = db.query(Team).filter(Team.chapter_id == chapter_id).all()
+                teams = (
+                    db.query(Team)
+                    .filter(Team.chapter_id == chapter_id)
+                    .filter(Team.is_deleted.is_(True))
+                    .all()
+                )
             elif sport_id:
-                teams = db.query(Team).filter(Team.sport_id == sport_id).all()
+                teams = (
+                    db.query(Team)
+                    .filter(Team.sport_id == sport_id)
+                    .filter(Team.is_deleted.is_(True))
+                    .all()
+                )
             else:
-                teams = db.query(Team).all()
+                teams = db.query(Team).filter(Team.is_deleted.is_(True)).all()
             return JSONResponse(
                 status_code=status.HTTP_200_OK,
                 content=[
@@ -243,6 +254,7 @@ def get_teams(
                 query_teams: list[Team] | None = (
                     db.query(Team)
                     .filter(Team.chapter_id == chapter_id)
+                    .filter(Team.is_deleted.is_(True))
                     .filter(Team.group.is_(None))
                     .all()
                 )
@@ -250,12 +262,16 @@ def get_teams(
                 query_teams: list[Team] | None = (
                     db.query(Team)
                     .filter(Team.sport_id == sport_id)
+                    .filter(Team.is_deleted.is_(True))
                     .filter(Team.group.is_(None))
                     .all()
                 )
             else:
                 query_teams: list[Team] | None = (
-                    db.query(Team).filter(Team.group.is_(None)).all()
+                    db.query(Team)
+                    .filter(Team.group.is_(None))
+                    .filter(Team.is_deleted.is_(True))
+                    .all()
                 )
 
             if query_teams:
@@ -266,6 +282,7 @@ def get_teams(
                     query_teams: list[Team] | None = (
                         db.query(Team)
                         .filter(Team.chapter_id == chapter_id)
+                        .filter(Team.is_deleted.is_(True))
                         .filter(Team.group == group)
                         .all()
                     )
@@ -273,12 +290,16 @@ def get_teams(
                     query_teams: list[Team] | None = (
                         db.query(Team)
                         .filter(Team.sport_id == sport_id)
+                        .filter(Team.is_deleted.is_(True))
                         .filter(Team.group == group)
                         .all()
                     )
                 else:
                     query_teams: list[Team] | None = (
-                        db.query(Team).filter(Team.group == group).all()
+                        db.query(Team)
+                        .filter(Team.group == group)
+                        .filter(Team.is_deleted.is_(True))
+                        .all()
                     )
 
                 if query_teams:
@@ -296,11 +317,21 @@ def get_teams(
             )
     else:
         if chapter_id:
-            teams = db.query(Team).filter(Team.chapter_id == chapter_id).all()
+            teams = (
+                db.query(Team)
+                .filter(Team.chapter_id == chapter_id)
+                .filter(Team.is_deleted.is_(True))
+                .all()
+            )
         elif sport_id:
-            teams = db.query(Team).filter(Team.sport_id == sport_id).all()
+            teams = (
+                db.query(Team)
+                .filter(Team.sport_id == sport_id)
+                .filter(Team.is_deleted.is_(True))
+                .all()
+            )
         else:
-            teams = db.query(Team).all()
+            teams = db.query(Team).filter(Team.is_deleted.is_(True)).all()
 
         return JSONResponse(
             status_code=status.HTTP_200_OK,
@@ -337,7 +368,7 @@ def update_team(
 ) -> JSONResponse:
     check_admin(current_user)
     """Update a team."""
-    team = db.query(Team).filter(Team.id == team_id).first()
+    team = db.get(Team, team_id)
     if not team:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -381,14 +412,72 @@ def delete_team(
 ) -> JSONResponse:
     """Delete a team."""
     check_admin(current_user)
-    team = db.query(Team).filter(Team.id == team_id).first()
+    team = db.get(Team, team_id)
     if not team:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Team not found",
         )
     team.is_deleted = True
-    db.delete(team)
+    db.add(team)
     db.commit()
 
+    team_players = (
+        db.query(Player)
+        .filter(
+            or_(Player.morning_team_id == team_id, Player.afternoon_team_id == team_id)
+        )
+        .filter(Player.is_deleted.is_(False))
+        .all()
+    )
+
+    for player in team_players:
+        player.is_deleted = True
+        db.add(player)
+        db.commit()
+
     return JSONResponse(status_code=status.HTTP_204_NO_CONTENT, content={})
+
+
+@teams_router.put(
+    "/team/{team_id}/group",
+    tags=["teams"],
+    description="Update team.",
+    responses={
+        status.HTTP_200_OK: {
+            "model": TeamRead,
+            "description": "Successful response: team updated",
+            "title": "Team details",
+        },
+        status.HTTP_404_NOT_FOUND: {
+            "description": "Team not found",
+            "title": "Team not found",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "Team not found"},
+                },
+            },
+        },
+    },
+)
+def update_group(
+    team_id: UUID,
+    group: int,
+    db: Session = db_session,
+    current_user: UserBase = current_user_instance,
+) -> JSONResponse:
+    check_admin(current_user)
+    """Update a team's group."""
+    team = db.get(Team, team_id)
+    if not team:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Team not found",
+        )
+    team.group = group
+    db.add(team)
+    db.commit()
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content=object_to_dict(TeamRead.model_validate(team)),
+    )

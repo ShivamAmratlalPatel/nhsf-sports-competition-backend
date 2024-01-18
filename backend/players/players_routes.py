@@ -1,9 +1,10 @@
 """Ednpoints for players"""
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
+from sqlalchemy import or_
 from sqlalchemy.orm import Session
 from starlette import status
 
@@ -131,7 +132,12 @@ def get_home_players(
 
     players: list[Player] = (
         db.query(Player)
-        .filter(Player.team_id == match.home_team_id)
+        .filter(
+            or_(
+                Player.morning_team_id == match.home_team_id,
+                Player.afternoon_team_id == match.home_team_id,
+            )
+        )
         .filter(Player.is_deleted.is_(False))
         .all()
     )
@@ -173,7 +179,12 @@ def get_away_players(
 
     players: list[Player] = (
         db.query(Player)
-        .filter(Player.team_id == match.away_team_id)
+        .filter(
+            or_(
+                Player.morning_team_id == match.away_team_id,
+                Player.afternoon_team_id == match.away_team_id,
+            )
+        )
         .filter(Player.is_deleted.is_(False))
         .all()
     )
@@ -215,7 +226,12 @@ def get_match_players(
 
     home_players: list[Player] = (
         db.query(Player)
-        .filter(Player.team_id == match.home_team_id)
+        .filter(
+            or_(
+                Player.morning_team_id == match.home_team_id,
+                Player.afternoon_team_id == match.home_team_id,
+            )
+        )
         .filter(Player.is_deleted.is_(False))
         .all()
     )
@@ -225,7 +241,12 @@ def get_match_players(
 
     away_players: list[Player] = (
         db.query(Player)
-        .filter(Player.team_id == match.away_team_id)
+        .filter(
+            or_(
+                Player.morning_team_id == match.away_team_id,
+                Player.afternoon_team_id == match.away_team_id,
+            )
+        )
         .filter(Player.is_deleted.is_(False))
         .all()
     )
@@ -295,7 +316,12 @@ def get_chapter_players(
     for team in teams:
         team_players: list[Player] = (
             db.query(Player)
-            .filter(Player.team_id == team.id)
+            .filter(
+                or_(
+                    Player.morning_team_id == team.id,
+                    Player.afternoon_team_id == team.id,
+                )
+            )
             .filter(Player.is_deleted.is_(False))
         )
 
@@ -307,3 +333,41 @@ def get_chapter_players(
         players[str(team.id)] = team_players
 
     return players
+
+
+@players_router.get(
+    "/players/team/{team_id}",
+    tags=["players"],
+    description="Get description players.",
+    responses={
+        status.HTTP_200_OK: {
+            "model": PlayerRead,
+            "description": "Players retrieved successfully",
+        },
+    },
+)
+def get_chapter_players(team_id: UUID, db: Session = db_session) -> list[dict]:
+    team: Chapter = db.get(Team, team_id)
+
+    if not team:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Chapter not found"
+        )
+
+    team_players: list[Player] = (
+        db.query(Player)
+        .filter(
+            or_(
+                Player.morning_team_id == team.id,
+                Player.afternoon_team_id == team.id,
+            )
+        )
+        .filter(Player.is_deleted.is_(False))
+    )
+
+    team_players: list[dict] = [
+        object_to_dict(PlayerRead.model_validate(player), format_date=True)
+        for player in team_players
+    ]
+
+    return team_players

@@ -12,13 +12,15 @@ class PlayerBase(BaseModel):
     """Player base schema."""
 
     name: str
-    team_id: UUID | None = None
+    morning_team_id: UUID | None = None
+    afternoon_team_id: UUID | None = None
 
     model_config = ConfigDict(
         json_schema_extra={
             "example": {
                 "name": fake_name(),
-                "team_id": generate_uuid(),
+                "morning_team_id": generate_uuid(),
+                "afternoon_team_id": generate_uuid(),
             },
         },
     )

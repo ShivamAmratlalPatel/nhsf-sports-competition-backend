@@ -36,7 +36,7 @@ class Player(Base):
         ForeignKey("teams.id", ondelete="CASCADE"),
         nullable=False,
     )
-    away_team_id = Column(
+    afternoon_team_id = Column(
         pg.UUID(as_uuid=True),
         ForeignKey("teams.id", ondelete="CASCADE"),
         nullable=False,

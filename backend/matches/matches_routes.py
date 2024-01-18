@@ -690,7 +690,8 @@ def generate_schedule(
 
     check_teams(teams)
 
-    randomly_assign_groups(db, number_of_groups, teams)
+    if teams[0].group is not None:
+        randomly_assign_groups(db, number_of_groups, teams)
 
     generate_schedule_for_group(db, number_of_groups, sport_id)
 
