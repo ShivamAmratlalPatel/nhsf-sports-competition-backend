@@ -1,5 +1,5 @@
 """Generate a schedule for a sport."""
-from random import shuffle, randint
+from random import shuffle
 from uuid import UUID
 
 from fastapi import HTTPException
@@ -7,14 +7,15 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 from backend.matches.matches_models import Match
-from backend.pitches.pitches_models import Pitch
 from backend.stages.stages_schemas import StagesEnum
 from backend.teams.teams_models import Team
-from backend.utils import generate_uuid, random_datetime
+from backend.utils import generate_uuid
 
 
 def generate_schedule_for_group(
-    db: Session, number_of_groups: int, sport_id: UUID
+    db: Session,
+    number_of_groups: int,
+    sport_id: UUID,
 ) -> None:
     """Generate a schedule for a group."""
     # region generate schedule for each group
@@ -54,7 +55,8 @@ def generate_schedule_for_group(
                             matches = six_in_a_group_schedule(group_teams)
                         except HTTPException:
                             raise HTTPException(
-                                status_code=400, detail="More than 6 in the group"
+                                status_code=400,
+                                detail="More than 6 in the group",
                             )
         # endregion
         for match in matches:
@@ -64,9 +66,25 @@ def generate_schedule_for_group(
 
 
 def randomly_assign_groups(
-    db: Session, number_of_groups: int, teams: list[Team]
+    db: Session,
+    number_of_groups: int,
+    teams: list[Team],
 ) -> None:
     """Randomly assign teams to groups."""
+    # region randomly assign groups
+    shuffle(teams)
+    assign_groups(db, number_of_groups, teams)
+    # endregion
+
+
+def assign_groups(db, number_of_groups, teams):
+    for position, team in enumerate(teams):
+        team.group = position % number_of_groups
+        db.add(team)
+    db.commit()
+
+
+def check_groups_not_already_assigned(teams):
     # region check groups are not already assigned
     assigned: bool = teams[0].group is not None
     for team in teams:
@@ -75,13 +93,6 @@ def randomly_assign_groups(
                 status_code=400,
                 detail="Some teams are already assigned to groups. Either assign all teams to groups or none.",
             )
-    # endregion
-    # region randomly assign groups
-    shuffle(teams)
-    for position, team in enumerate(teams):
-        team.group = position % number_of_groups
-        db.add(team)
-    db.commit()
     # endregion
 
 
@@ -139,7 +150,8 @@ def make_match(home_team_id: UUID, away_team_id: UUID, sport_id: UUID) -> Match:
 def two_in_a_group_schedule(teams: list[Team]) -> list[Match]:
     if len(teams) != 2:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Wrong number of teams"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Wrong number of teams",
         )
 
     team_1 = teams[0]
@@ -154,7 +166,8 @@ def two_in_a_group_schedule(teams: list[Team]) -> list[Match]:
 def three_in_a_group_schedule(teams: list[Team]) -> list[Match]:
     if len(teams) != 3:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Wrong number on teams"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Wrong number on teams",
         )
 
     team_1 = teams[0]
@@ -173,7 +186,8 @@ def three_in_a_group_schedule(teams: list[Team]) -> list[Match]:
 def four_in_a_group_schedule(teams: list[Team]) -> list[Match]:
     if len(teams) != 4:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Wrong number on teams"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Wrong number on teams",
         )
 
     team_1 = teams[0]
@@ -196,7 +210,8 @@ def four_in_a_group_schedule(teams: list[Team]) -> list[Match]:
 def five_in_a_group_schedule(teams: list[Team]) -> list[Match]:
     if len(teams) != 5:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Wrong number of teams"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Wrong number of teams",
         )
 
     team_1 = teams[0]
@@ -235,7 +250,8 @@ def five_in_a_group_schedule(teams: list[Team]) -> list[Match]:
 def six_in_a_group_schedule(teams: list[Team]) -> list[Match]:
     if len(teams) != 6:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Wrong number of teams"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Wrong number of teams",
         )
 
     team_1 = teams[0]
@@ -280,3 +296,20 @@ def six_in_a_group_schedule(teams: list[Team]) -> list[Match]:
         match_14,
         match_15,
     ]
+
+
+def order_assign_groups(db: Session, number_of_groups: int, teams: list[Team]) -> None:
+    teams.sort(
+        key=lambda x: (
+            x.stage_reached,
+            x.average_point_per_game_in_group_stage,
+            x.regional_competition_id,
+            x.id,
+        ),
+        reverse=True,
+    )
+
+    for team in teams:
+        print(team.name)
+
+    assign_groups(db, number_of_groups, teams)

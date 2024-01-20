@@ -1,6 +1,6 @@
 """Ednpoints for players"""
 
-from typing import TYPE_CHECKING, List
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
@@ -19,7 +19,6 @@ from backend.users.users_commands.chapter_user import verify_chapter_user
 from backend.users.users_commands.get_users import get_current_active_user
 from backend.users.users_schemas import UserBase
 from backend.utils import object_to_dict
-from uuid import UUID
 
 players_router = APIRouter()
 current_user_instance = Depends(get_current_active_user)
@@ -136,7 +135,7 @@ def get_home_players(
             or_(
                 Player.morning_team_id == match.home_team_id,
                 Player.afternoon_team_id == match.home_team_id,
-            )
+            ),
         )
         .filter(Player.is_deleted.is_(False))
         .all()
@@ -183,7 +182,7 @@ def get_away_players(
             or_(
                 Player.morning_team_id == match.away_team_id,
                 Player.afternoon_team_id == match.away_team_id,
-            )
+            ),
         )
         .filter(Player.is_deleted.is_(False))
         .all()
@@ -230,7 +229,7 @@ def get_match_players(
             or_(
                 Player.morning_team_id == match.home_team_id,
                 Player.afternoon_team_id == match.home_team_id,
-            )
+            ),
         )
         .filter(Player.is_deleted.is_(False))
         .all()
@@ -245,7 +244,7 @@ def get_match_players(
             or_(
                 Player.morning_team_id == match.away_team_id,
                 Player.afternoon_team_id == match.away_team_id,
-            )
+            ),
         )
         .filter(Player.is_deleted.is_(False))
         .all()
@@ -272,7 +271,7 @@ def get_match_players(
                 "away": object_to_dict(PlayerRead.model_validate(away_players[i]))
                 if away_players[i]
                 else None,
-            }
+            },
         )
 
     return JSONResponse(
@@ -293,13 +292,13 @@ def get_match_players(
     },
 )
 def get_chapter_players(
-    chapter_id: UUID, db: Session = db_session
+    chapter_id: UUID, db: Session = db_session,
 ) -> dict[str, list[dict]]:
     chapter: Chapter = db.get(Chapter, chapter_id)
 
     if not chapter:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Chapter not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Chapter not found",
         )
 
     teams: list[Team] = (
@@ -320,7 +319,7 @@ def get_chapter_players(
                 or_(
                     Player.morning_team_id == team.id,
                     Player.afternoon_team_id == team.id,
-                )
+                ),
             )
             .filter(Player.is_deleted.is_(False))
         )
@@ -351,7 +350,7 @@ def get_chapter_players(team_id: UUID, db: Session = db_session) -> list[dict]:
 
     if not team:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Chapter not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Chapter not found",
         )
 
     team_players: list[Player] = (
@@ -360,7 +359,7 @@ def get_chapter_players(team_id: UUID, db: Session = db_session) -> list[dict]:
             or_(
                 Player.morning_team_id == team.id,
                 Player.afternoon_team_id == team.id,
-            )
+            ),
         )
         .filter(Player.is_deleted.is_(False))
     )

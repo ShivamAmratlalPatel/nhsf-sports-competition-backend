@@ -136,6 +136,7 @@ class ScoreDetails(BaseModel):
             and home_penalties is None
             and away_penalties is None
         ):
-            raise ValueError("Either score or penalties must be provided")
+            msg = "Either score or penalties must be provided"
+            raise ValueError(msg)
 
         return self

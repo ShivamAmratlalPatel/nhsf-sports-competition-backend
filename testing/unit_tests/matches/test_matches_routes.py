@@ -355,7 +355,9 @@ class TestGetSchedule:
     """
 
     def test_get_schedule(
-        self: "TestGetSchedule", client: TestClient, match_data: dict,
+        self: "TestGetSchedule",
+        client: TestClient,
+        match_data: dict,
     ) -> None:
         """
         Test Method: test_get_schedule

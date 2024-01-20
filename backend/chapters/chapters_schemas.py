@@ -1,13 +1,12 @@
 """Chapters Schemas"""
 
 from datetime import datetime
-from enum import Enum
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, EmailStr
+from pydantic import BaseModel, ConfigDict
 
 from backend.utils import datetime_now, generate_uuid
-from testing.helpers.fake_data import fake_email, fake_name, fake_zone
+from testing.helpers.fake_data import fake_name
 
 
 class ChapterBase(BaseModel):

@@ -1,5 +1,14 @@
 """Teams Database Models"""
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, String, func, Integer
+from sqlalchemy import (
+    Boolean,
+    Column,
+    DateTime,
+    Float,
+    ForeignKey,
+    Integer,
+    String,
+    func,
+)
 from sqlalchemy.dialects import postgresql as pg
 from sqlalchemy.orm import relationship
 
@@ -43,6 +52,9 @@ class Team(Base):
         ForeignKey("sports.id", ondelete="CASCADE"),
         nullable=False,
     )
+    regional_competition_id = Column(Integer)
+    stage_reached = Column(Integer)
+    average_point_per_game_in_group_stage = Column(Float)
     group = Column(Integer)
     chapter = relationship("Chapter", back_populates="teams")
     sport = relationship("Sport", back_populates="teams")

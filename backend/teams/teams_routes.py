@@ -10,19 +10,20 @@ from starlette import status
 
 from backend.chapters.chapters_models import Chapter
 from backend.helpers import get_db
+from backend.matches.matches_models import Match
 from backend.players.players_models import Player
 from backend.sports.sports_models import Sport
 from backend.teams.teams_models import Team
 from backend.teams.teams_schemas import (
     TeamCreate,
+    TeamCreateAdmin,
     TeamRead,
     TeamUpdate,
-    TeamCreateAdmin,
 )
 from backend.users.users_commands.check_admin import check_admin
 from backend.users.users_commands.get_users import get_current_active_user
 from backend.users.users_schemas import UserBase
-from backend.utils import object_to_dict, generate_uuid
+from backend.utils import generate_uuid, object_to_dict
 
 teams_router = APIRouter()
 
@@ -246,7 +247,7 @@ def get_teams(
             return JSONResponse(
                 status_code=status.HTTP_200_OK,
                 content=[
-                    [object_to_dict(TeamRead.model_validate(team)) for team in teams]
+                    [object_to_dict(TeamRead.model_validate(team)) for team in teams],
                 ],
             )
         else:
@@ -278,7 +279,7 @@ def get_teams(
             if query_teams:
                 teams.append(query_teams)
 
-            for group in range(1, max_group[0] + 1):
+            for group in range(0, max_group[0] + 1):
                 if chapter_id:
                     query_teams: list[Team] | None = (
                         db.query(Team)
@@ -426,7 +427,7 @@ def delete_team(
     team_players = (
         db.query(Player)
         .filter(
-            or_(Player.morning_team_id == team_id, Player.afternoon_team_id == team_id)
+            or_(Player.morning_team_id == team_id, Player.afternoon_team_id == team_id),
         )
         .filter(Player.is_deleted.is_(False))
         .all()
@@ -475,6 +476,35 @@ def update_group(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Team not found",
         )
+
+    played_matches: list[Match] = (
+        db.query(Match)
+        .filter(or_(Match.home_team_id == team_id, Match.away_team_id == team_id))
+        .filter(Match.is_deleted.is_(False))
+        .filter(
+            or_(
+                Match.home_score.isnot(None),
+                Match.away_score.isnot(None),
+            ),
+        )
+    ).all()
+
+    if played_matches:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot change group of team that has played matches",
+        )
+
+    unplayed_matches: list[Match] = (
+        db.query(Match)
+        .filter(or_(Match.home_team_id == team_id, Match.away_team_id == team_id))
+        .filter(Match.is_deleted.is_(False))
+    ).all()
+
+    for match in unplayed_matches:
+        match.is_deleted = True
+        db.add(match)
+
     team.group = group
     db.add(team)
     db.commit()

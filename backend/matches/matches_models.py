@@ -1,5 +1,5 @@
 """Matches Database Models"""
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, func, String
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, func
 from sqlalchemy.dialects import postgresql as pg
 from sqlalchemy.orm import relationship
 

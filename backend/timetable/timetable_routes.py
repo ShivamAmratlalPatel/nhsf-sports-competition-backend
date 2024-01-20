@@ -10,8 +10,6 @@ from backend.timetable.timetable_models import Timetable
 from backend.timetable.timetable_schemas import TimetableRead
 from backend.utils import object_to_dict
 
-
-
 timetable_router = APIRouter()
 
 db_session = Depends(get_db)

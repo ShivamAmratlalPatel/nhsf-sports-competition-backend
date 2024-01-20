@@ -6,10 +6,10 @@ from uuid import UUID, uuid4
 
 import pytz
 from _decimal import Decimal
+from faker import Faker
 from pydantic import BaseModel, StringConstraints
 
 from backend.database import Base
-from faker import Faker
 
 
 def generate_uuid() -> UUID:

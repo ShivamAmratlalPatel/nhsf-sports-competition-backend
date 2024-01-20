@@ -1,2 +1,2 @@
-PYTHONPATH=. alembic revision --autogenerate -m "added start time to sport
+PYTHONPATH=. alembic revision --autogenerate -m "added regional properties to team"
 "

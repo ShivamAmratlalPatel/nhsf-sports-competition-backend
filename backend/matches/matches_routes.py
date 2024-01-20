@@ -10,18 +10,20 @@ from starlette import status
 from backend.helpers import get_db
 from backend.matches.matches_models import Match, MatchAudit
 from backend.matches.matches_schemas import (
+    KnockoutRead,
     MatchCreate,
     MatchRead,
     MatchUpdate,
     ScoreDetails,
-    KnockoutRead,
 )
 from backend.matches.mathes_commands.generate_schedule import (
-    generate_schedule_for_group,
-    randomly_assign_groups,
-    check_teams,
-    get_list_of_teams_for_sport,
     check_matches_have_not_been_generated,
+    check_teams,
+    generate_schedule_for_group,
+    get_list_of_teams_for_sport,
+    randomly_assign_groups,
+    check_groups_not_already_assigned,
+    order_assign_groups,
 )
 from backend.matches.mathes_commands.get_team_from_match import (
     get_away_team_from_match,
@@ -31,12 +33,11 @@ from backend.sports.sports_models import Sport
 from backend.tables.tables_commands.update_knockout import update_knockout_for_match
 from backend.tables.tables_commands.update_table import update_table_for_match
 from backend.tables.tables_models import LeagueTable
+from backend.teams.teams_models import Team
 from backend.users.users_commands.check_admin import check_admin
 from backend.users.users_commands.get_users import get_current_active_user
 from backend.users.users_schemas import UserBase
-from backend.utils import object_to_dict, generate_uuid, datetime_now
-
-from backend.teams.teams_models import Team
+from backend.utils import generate_uuid, object_to_dict
 
 matches_router = APIRouter()
 
@@ -678,6 +679,7 @@ def generate_knockout(
 def generate_schedule(
     sport_id: UUID,
     number_of_groups: int,
+    randomise_groups: bool = False,
     db: Session = db_session,
     current_user: UserBase = current_user_instance,
 ) -> None:
@@ -690,7 +692,12 @@ def generate_schedule(
 
     check_teams(teams)
 
-    randomly_assign_groups(db, number_of_groups, teams)
+    check_groups_not_already_assigned(teams)
+
+    if randomise_groups:
+        randomly_assign_groups(db, number_of_groups, teams)
+    else:
+        order_assign_groups(db, number_of_groups, teams)
 
     generate_schedule_for_group(db, number_of_groups, sport_id)
 
@@ -730,7 +737,9 @@ def edit_pitch(
 
 
 @matches_router.get(
-    "/clear_match/{sport_id}", tags=["matches"], status_code=status.HTTP_204_NO_CONTENT
+    "/clear_match/{sport_id}",
+    tags=["matches"],
+    status_code=status.HTTP_204_NO_CONTENT,
 )
 def clear_matches(
     sport_id: UUID,

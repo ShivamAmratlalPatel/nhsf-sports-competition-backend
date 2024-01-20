@@ -9,7 +9,7 @@ from backend.utils import datetime_now
 
 
 def create_access_token(
-    data: dict, expires_delta: timedelta | None = None, chapter_id: UUID | None = None
+    data: dict, expires_delta: timedelta | None = None, chapter_id: UUID | None = None,
 ) -> str:
     """Create access token."""
     to_encode = data.copy()

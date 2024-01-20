@@ -1,7 +1,7 @@
 """Get the home and away team from a match."""
-from backend.matches.matches_models import Match
 from sqlalchemy.orm import Session
 
+from backend.matches.matches_models import Match
 from backend.teams.teams_models import Team
 
 

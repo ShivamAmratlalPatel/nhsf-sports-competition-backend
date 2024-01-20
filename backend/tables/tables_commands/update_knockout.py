@@ -1,10 +1,10 @@
 """Functions to update the knockout stage of a sport."""
 from uuid import UUID
 
-from backend.matches.matches_models import Match
-from sqlalchemy.orm import Session
 from fastapi.exceptions import HTTPException
+from sqlalchemy.orm import Session
 
+from backend.matches.matches_models import Match
 from backend.utils import generate_uuid
 
 

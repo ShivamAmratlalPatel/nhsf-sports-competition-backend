@@ -2,7 +2,7 @@
 from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, model_validator
+from pydantic import BaseModel, ConfigDict
 
 from backend.utils import datetime_now, generate_uuid
 from testing.helpers.fake_data import fake_name

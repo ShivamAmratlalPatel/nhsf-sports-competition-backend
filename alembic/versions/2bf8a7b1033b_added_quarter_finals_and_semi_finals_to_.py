@@ -23,7 +23,10 @@ def upgrade() -> None:
     op.add_column(
         "sports",
         sa.Column(
-            "quarter_finals", sa.Boolean(), server_default="false", nullable=False,
+            "quarter_finals",
+            sa.Boolean(),
+            server_default="false",
+            nullable=False,
         ),
     )
     op.add_column(
