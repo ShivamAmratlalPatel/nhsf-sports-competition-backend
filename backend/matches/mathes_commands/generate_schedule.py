@@ -67,6 +67,15 @@ def randomly_assign_groups(
     db: Session, number_of_groups: int, teams: list[Team]
 ) -> None:
     """Randomly assign teams to groups."""
+    # region check groups are not already assigned
+    assigned: bool = teams[0].group is not None
+    for team in teams:
+        if team.group is not None != assigned:
+            raise HTTPException(
+                status_code=400,
+                detail="Some teams are already assigned to groups. Either assign all teams to groups or none.",
+            )
+    # endregion
     # region randomly assign groups
     shuffle(teams)
     for position, team in enumerate(teams):

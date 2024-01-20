@@ -1,1 +1,1 @@
-PYTHONPATH=. alembic revision --autogenerate -m "corrected player afternoon team id"
+PYTHONPATH=. alembic revision --autogenerate -m "added zone and email to chapters"
