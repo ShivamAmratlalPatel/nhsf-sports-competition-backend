@@ -14,6 +14,8 @@ class TableRead(BaseModel):
     drawn: int
     lost: int
     played: int
+    points: float
+    score_difference: float
     points_per_game: float
     score_difference_per_game: float
     scores_for_per_game: float

@@ -32,8 +32,12 @@ class Sport(Base):
         server_onupdate=func.timezone("Europe/London", func.current_timestamp()),
     )
     quarter_finals = Column(
-        Boolean, nullable=False, default=False, server_default="false",
+        Boolean,
+        nullable=False,
+        default=False,
+        server_default="false",
     )
     semi_finals = Column(Boolean, nullable=False, default=False, server_default="false")
+    start_time = Column(DateTime(timezone=True))
     teams = relationship("Team", back_populates="sport")
     matches = relationship("Match", back_populates="sport")

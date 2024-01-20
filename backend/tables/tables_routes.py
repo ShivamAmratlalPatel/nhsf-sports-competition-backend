@@ -38,9 +38,9 @@ def get_table_for_sport(sport_id: UUID, db: Session = db_session) -> JSONRespons
     # Sort by points_per_game, then score_difference_per_game, then scores_for_per_game
     table_rows.sort(
         key=lambda x: (
-            x.points_per_game,
-            x.score_difference_per_game,
-            x.scores_for_per_game,
+            x.points,
+            x.score_difference,
+            x.scores_for,
         ),
         reverse=True,
     )
@@ -48,12 +48,12 @@ def get_table_for_sport(sport_id: UUID, db: Session = db_session) -> JSONRespons
     max_groups = max([i.team.group for i in table_rows])
 
     output = []
-    for i in range(max_groups):
+    for i in range(max_groups + 1):
         output.append(
             [
                 object_to_dict(TableRead.model_validate(table_row))
                 for table_row in table_rows
-                if table_row.team.group == i + 1
+                if table_row.team.group == i
             ],
         )
 

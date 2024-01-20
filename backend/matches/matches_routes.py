@@ -724,7 +724,6 @@ def edit_pitch(
         raise HTTPException(status_code=404, detail="Match not found")
     else:
         match.pitch_id = pitch_id
-        match.time = datetime_now()
         db.add(match)
         db.commit()
         return JSONResponse(status_code=200, content="Match pitch updated")

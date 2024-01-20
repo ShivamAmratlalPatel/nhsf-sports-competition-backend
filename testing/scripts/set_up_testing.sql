@@ -466,3 +466,22 @@ INSERT INTO public.teams (id, name, created_date, is_deleted, last_modified_date
 VALUES ('89067134-9a01-4077-ba2a-6b2ef9603453', 'Manchester B', '2024-01-20 15:07:57.331610 +00:00', false, null,
         '84f381da-cb08-4e76-9460-6e2f846036e6', '29fc8489-95ee-4dd5-bf21-0703f4df41c6', null, 'KabaddiM B');
 
+
+
+INSERT INTO public.pitches (id, name, created_date, is_deleted, last_modified_date, sport_id) VALUES ('5da2cb5e-f54e-4df8-918e-6d5411910415', 'Court 1', '2023-11-08 17:03:36.333814 +00:00', false, null, '189772ac-8d6d-4662-b5aa-000fa4271138');
+INSERT INTO public.pitches (id, name, created_date, is_deleted, last_modified_date, sport_id) VALUES ('b171b45a-babf-499c-9cea-b25780deb291', 'Court 2', '2023-11-08 17:03:36.333814 +00:00', false, null, '189772ac-8d6d-4662-b5aa-000fa4271138');
+INSERT INTO public.pitches (id, name, created_date, is_deleted, last_modified_date, sport_id) VALUES ('18dda105-6bad-4437-bd46-c85cc50ad4e1', 'Court 3', '2023-11-08 17:03:36.333814 +00:00', false, null, '189772ac-8d6d-4662-b5aa-000fa4271138');
+INSERT INTO public.pitches (id, name, created_date, is_deleted, last_modified_date, sport_id) VALUES ('de6b1240-2135-4dac-b4cd-db81070c2368', 'Court 4', '2023-11-08 17:03:36.333814 +00:00', false, null, '189772ac-8d6d-4662-b5aa-000fa4271138');
+INSERT INTO public.pitches (id, name, created_date, is_deleted, last_modified_date, sport_id) VALUES ('dddaabea-1546-4426-b62a-3d89d8cb7bab', 'Pitch 1', '2023-11-08 17:03:36.333814 +00:00', false, null, '29fc8489-95ee-4dd5-bf21-0703f4df41c6');
+INSERT INTO public.pitches (id, name, created_date, is_deleted, last_modified_date, sport_id) VALUES ('20c17537-6add-4a7f-9404-149f879d3c0d', 'Pitch 1', '2023-11-08 17:03:36.333814 +00:00', false, null, '3429e138-0e55-4096-b30d-6b2f789365b4');
+INSERT INTO public.pitches (id, name, created_date, is_deleted, last_modified_date, sport_id) VALUES ('3e818e0b-9f94-4157-b90a-a99927f8afbe', 'Pitch 1', '2023-11-08 17:03:36.333814 +00:00', false, null, '5d231a25-d15a-4881-a004-9b9ddfa4b988');
+INSERT INTO public.pitches (id, name, created_date, is_deleted, last_modified_date, sport_id) VALUES ('fce0d089-83ec-4fb6-a130-727a7ce5b88c', 'Pitch 2', '2023-11-08 17:03:36.333814 +00:00', false, null, '5d231a25-d15a-4881-a004-9b9ddfa4b988');
+INSERT INTO public.pitches (id, name, created_date, is_deleted, last_modified_date, sport_id) VALUES ('9790ebec-195b-454f-98cc-c90e6569d692', 'Pitch 3', '2023-11-08 17:03:36.333814 +00:00', false, null, '5d231a25-d15a-4881-a004-9b9ddfa4b988');
+INSERT INTO public.pitches (id, name, created_date, is_deleted, last_modified_date, sport_id) VALUES ('7881d69b-fb82-4963-8b37-0c84abcf0813', 'Pitch 4', '2024-01-20 15:58:44.589067 +00:00', false, null, '5d231a25-d15a-4881-a004-9b9ddfa4b988');
+INSERT INTO public.pitches (id, name, created_date, is_deleted, last_modified_date, sport_id) VALUES ('b83df692-21d0-4eb0-91b0-7d023e938f97', 'Pitch 5', '2024-01-20 15:58:44.589067 +00:00', false, null, '5d231a25-d15a-4881-a004-9b9ddfa4b988');
+INSERT INTO public.pitches (id, name, created_date, is_deleted, last_modified_date, sport_id) VALUES ('cb54a1b3-82f0-471d-be74-cef4a998c1b8', 'Pitch 1', '2023-11-08 17:03:36.333814 +00:00', false, null, '7dac42d7-e397-4efa-b70a-0232cacd4c4f');
+INSERT INTO public.pitches (id, name, created_date, is_deleted, last_modified_date, sport_id) VALUES ('9e067202-99c7-4c1d-9b4e-9e31c81035f6', 'Pitch 2', '2023-11-08 17:03:36.333814 +00:00', false, null, '7dac42d7-e397-4efa-b70a-0232cacd4c4f');
+INSERT INTO public.pitches (id, name, created_date, is_deleted, last_modified_date, sport_id) VALUES ('6ec2dda8-3912-4c9b-a5b5-6e22204e24c7', 'Pitch 3', '2023-11-08 17:03:36.333814 +00:00', false, null, '7dac42d7-e397-4efa-b70a-0232cacd4c4f');
+INSERT INTO public.pitches (id, name, created_date, is_deleted, last_modified_date, sport_id) VALUES ('29673f13-8f63-4e88-9122-db09b2b9653d', 'Pitch 1', '2023-11-08 17:03:36.333814 +00:00', false, null, '7e90575b-5b04-4a12-9279-f7124a5f737c');
+INSERT INTO public.pitches (id, name, created_date, is_deleted, last_modified_date, sport_id) VALUES ('87bdafea-6462-4951-86be-ac5fef4892e6', 'Pitch 2', '2024-01-20 15:59:12.613652 +00:00', false, null, '7e90575b-5b04-4a12-9279-f7124a5f737c');
+INSERT INTO public.pitches (id, name, created_date, is_deleted, last_modified_date, sport_id) VALUES ('1e99f23f-0a2e-431c-9e99-4b790febc103', 'Ptich 3', '2024-01-20 15:59:12.613652 +00:00', false, null, '7e90575b-5b04-4a12-9279-f7124a5f737c');
