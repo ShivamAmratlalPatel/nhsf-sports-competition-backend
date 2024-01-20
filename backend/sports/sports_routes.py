@@ -128,7 +128,7 @@ def get_sports(
     db: Session = db_session,
 ) -> JSONResponse:
     """Get all sports."""
-    sports = db.query(Sport).all()
+    sports = db.query(Sport).order_by(Sport.name).all()
     if not sports:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
