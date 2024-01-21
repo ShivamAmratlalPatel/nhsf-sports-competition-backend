@@ -298,6 +298,59 @@ def six_in_a_group_schedule(teams: list[Team]) -> list[Match]:
     ]
 
 
+def seven_in_a_group_schedule(teams: list[Team]) -> list[Match]:
+    raise NotImplementedError
+    if len(teams) != 7:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Wrong number of teams",
+        )
+
+    team_1 = teams[0]
+    team_2 = teams[1]
+    team_3 = teams[2]
+    team_4 = teams[3]
+    team_5 = teams[4]
+    team_6 = teams[5]
+    team_7 = teams[6]
+
+    sport_id: UUID = team_1.id
+
+    match_1 = make_match(team_6.id, team_3.id, sport_id)
+    match_2 = make_match(team_1.id, team_4.id, sport_id)
+    match_3 = make_match(team_5.id, team_2.id, sport_id)
+    match_4 = make_match(team_4.id, team_6.id, sport_id)
+    match_5 = make_match(team_2.id, team_3.id, sport_id)
+    match_6 = make_match(team_5.id, team_1.id, sport_id)
+    match_7 = make_match(team_6.id, team_2.id, sport_id)
+    match_8 = make_match(team_4.id, team_5.id, sport_id)
+    match_9 = make_match(team_3.id, team_1.id, sport_id)
+    match_10 = make_match(team_5.id, team_6.id, sport_id)
+    match_11 = make_match(team_1.id, team_2.id, sport_id)
+    match_12 = make_match(team_3.id, team_4.id, sport_id)
+    match_13 = make_match(team_6.id, team_1.id, sport_id)
+    match_14 = make_match(team_5.id, team_3.id, sport_id)
+    match_15 = make_match(team_2.id, team_4.id, sport_id)
+
+    return [
+        match_1,
+        match_2,
+        match_3,
+        match_4,
+        match_5,
+        match_6,
+        match_7,
+        match_8,
+        match_9,
+        match_10,
+        match_11,
+        match_12,
+        match_13,
+        match_14,
+        match_15,
+    ]
+
+
 def order_assign_groups(db: Session, number_of_groups: int, teams: list[Team]) -> None:
     teams.sort(
         key=lambda x: (
