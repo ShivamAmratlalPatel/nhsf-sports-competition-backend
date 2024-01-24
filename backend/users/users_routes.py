@@ -62,6 +62,15 @@ def login_for_access_token(
 def post_user(user_create: UserCreate, db: Session = db_session) -> JSONResponse:
     """Create user."""
     admin_user_id = db.query(UserType).filter(UserType.name == "admin").first().id
+    user_already_exists = (
+        db.query(User).filter(User.username == user_create.username).first()
+    )
+    if user_already_exists:
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={"message": "Username already exists"},
+        )
+
     user = User(
         id=generate_uuid(),
         username=user_create.username,

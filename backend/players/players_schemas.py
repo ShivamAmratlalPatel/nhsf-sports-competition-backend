@@ -1,5 +1,6 @@
 """Players schemas."""
 from datetime import datetime
+from enum import Enum
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict
@@ -8,12 +9,25 @@ from backend.utils import datetime_now, generate_uuid
 from testing.helpers.fake_data import fake_name
 
 
+class CardType(Enum):
+    """Card type enum."""
+
+    YELLOW = "yellow"
+    RED = "red"
+
+
+class CardBase(BaseModel):
+    type: CardType
+    reason: str | None = None
+
+
 class PlayerBase(BaseModel):
     """Player base schema."""
 
     name: str
     morning_team_id: UUID | None = None
     afternoon_team_id: UUID | None = None
+    cards: list
 
     model_config = ConfigDict(
         json_schema_extra={

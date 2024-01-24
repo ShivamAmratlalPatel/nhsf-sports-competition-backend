@@ -4,21 +4,28 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
-from sqlalchemy import or_
+from sqlalchemy import or_, text
 from sqlalchemy.orm import Session
+from sqlalchemy.orm.attributes import flag_modified
 from starlette import status
 
 from backend.chapters.chapters_models import Chapter
 from backend.helpers import get_db
 from backend.matches.matches_models import Match
 from backend.players.players_models import Player
-from backend.players.players_schemas import PlayerCreate, PlayerRead
+from backend.players.players_schemas import (
+    PlayerCreate,
+    PlayerRead,
+    PlayerUpdate,
+    CardBase,
+)
 from backend.teams.teams_commands.chapter_from_team import chapter_id_from_team
 from backend.teams.teams_models import Team
 from backend.users.users_commands.chapter_user import verify_chapter_user
+from backend.users.users_commands.check_admin import check_admin
 from backend.users.users_commands.get_users import get_current_active_user
 from backend.users.users_schemas import UserBase
-from backend.utils import object_to_dict
+from backend.utils import object_to_dict, convert_list_to_list
 
 players_router = APIRouter()
 current_user_instance = Depends(get_current_active_user)
@@ -292,13 +299,15 @@ def get_match_players(
     },
 )
 def get_chapter_players(
-    chapter_id: UUID, db: Session = db_session,
+    chapter_id: UUID,
+    db: Session = db_session,
 ) -> dict[str, list[dict]]:
     chapter: Chapter = db.get(Chapter, chapter_id)
 
     if not chapter:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Chapter not found",
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Chapter not found",
         )
 
     teams: list[Team] = (
@@ -350,7 +359,8 @@ def get_chapter_players(team_id: UUID, db: Session = db_session) -> list[dict]:
 
     if not team:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Chapter not found",
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Chapter not found",
         )
 
     team_players: list[Player] = (
@@ -370,3 +380,89 @@ def get_chapter_players(team_id: UUID, db: Session = db_session) -> list[dict]:
     ]
 
     return team_players
+
+
+@players_router.put(
+    "/player/{player_id}",
+    tags=["players"],
+    description="Update player.",
+    responses={
+        status.HTTP_200_OK: {
+            "model": PlayerRead,
+            "description": "Player updated successfully",
+        },
+        status.HTTP_404_NOT_FOUND: {
+            "description": "Player not found",
+        },
+    },
+)
+def update_player(
+    player_id: UUID,
+    player_update: PlayerUpdate,
+    db: Session = db_session,
+    current_user: UserBase = current_user_instance,
+) -> JSONResponse:
+    """Update a player."""
+    check_admin(current_user)
+    player = db.query(Player).filter(Player.id == player_id).first()
+
+    if not player:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Player not found",
+        )
+
+    if current_user.user_type_name == "chapter":
+        try:
+            verify_chapter_user(current_user.chapter_id, player.chapter_id)
+        except ValueError as e:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="User not part of chapter",
+            ) from e
+
+    player.name = player_update.name
+    player.team_id = player_update.team_id
+
+    db.commit()
+
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content=object_to_dict(PlayerRead.model_validate(player), format_date=True),
+    )
+
+
+@players_router.put(
+    "/player/{player_id}/update_card",
+    tags=["players"],
+)
+def update_player_card(
+    player_id: UUID,
+    card_details: CardBase,
+    db: Session = db_session,
+    current_user: UserBase = current_user_instance,
+) -> JSONResponse:
+    check_admin(current_user)
+    player = db.get(Player, player_id)
+
+    if player is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Player not found",
+        )
+
+    cards = player.cards
+
+    cards.append(object_to_dict(card_details, format_date=True))
+
+    player.cards = convert_list_to_list(cards, format_date=True)
+
+    flag_modified(player, "cards")
+
+    db.add(player)
+    db.commit()
+
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content=object_to_dict(PlayerRead.model_validate(player), format_date=True),
+    )

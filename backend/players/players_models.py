@@ -34,10 +34,9 @@ class Player(Base):
     morning_team_id = Column(
         pg.UUID(as_uuid=True),
         ForeignKey("teams.id", ondelete="CASCADE"),
-        nullable=False,
     )
     afternoon_team_id = Column(
         pg.UUID(as_uuid=True),
         ForeignKey("teams.id", ondelete="CASCADE"),
-        nullable=False,
     )
+    cards = Column(pg.JSONB, nullable=False, default="[]", server_default="[]")
