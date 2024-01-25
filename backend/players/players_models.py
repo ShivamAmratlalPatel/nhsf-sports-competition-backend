@@ -40,3 +40,6 @@ class Player(Base):
         ForeignKey("teams.id", ondelete="CASCADE"),
     )
     cards = Column(pg.JSONB, nullable=False, default="[]", server_default="[]")
+    order_id = Column(String)
+    ticket_id = Column(String)
+    checked_in = Column(Boolean, nullable=False, default=False, server_default="false")

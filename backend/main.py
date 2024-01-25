@@ -22,6 +22,7 @@ from .config import CORS_ORIGINS
 from .middleware import ContentSizeLimitMiddleware
 from .stats.stats_routes import stats_router
 from .tables.tables_routes import tables_router
+from .tickets.ticket_routes import ticket_router
 from .timetable.timetable_routes import timetable_router
 from .users.users_routes import users_router
 
@@ -76,6 +77,7 @@ app.include_router(sports_router)
 app.include_router(stats_router)
 app.include_router(tables_router)
 app.include_router(teams_router)
+app.include_router(ticket_router)
 app.include_router(timetable_router)
 app.include_router(users_router)
 

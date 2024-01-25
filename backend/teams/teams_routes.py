@@ -1,4 +1,4 @@
-"""Ednpoints for teams"""
+"""Endpoints for teams"""
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException

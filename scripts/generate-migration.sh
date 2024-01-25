@@ -1,2 +1,2 @@
-PYTHONPATH=. alembic revision --autogenerate -m "fixed morning and afternoon team id keys"
+PYTHONPATH=. alembic revision --autogenerate -m "added ticket tailor columns"
 

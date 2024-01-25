@@ -1,4 +1,4 @@
-"""Ednpoints for sports"""
+"""Endpoints for sports"""
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException

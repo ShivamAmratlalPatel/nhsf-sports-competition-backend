@@ -1,4 +1,4 @@
-"""Ednpoints for chapters"""
+"""Endpoints for chapters"""
 import logging
 from uuid import UUID
 

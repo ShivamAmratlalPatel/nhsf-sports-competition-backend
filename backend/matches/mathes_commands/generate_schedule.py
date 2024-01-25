@@ -577,7 +577,4 @@ def order_assign_groups(db: Session, number_of_groups: int, teams: list[Team]) -
         reverse=True,
     )
 
-    for team in teams:
-        print(team.name)
-
     assign_groups(db, number_of_groups, teams)

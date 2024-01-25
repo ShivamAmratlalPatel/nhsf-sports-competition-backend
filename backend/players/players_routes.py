@@ -1,4 +1,4 @@
-"""Ednpoints for players"""
+"""Endpoints for players"""
 
 from uuid import UUID
 

@@ -106,27 +106,13 @@ INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, la
 VALUES ('bfd680a1-dd05-4b0f-bf45-4df1e7b47336', 'Swansea', 'South Zone', 'hindu@swansea-societies.co.uk',
         '2024-01-20 15:11:16.170134 +00:00', false, null);
 
-
-INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date, quarter_finals, semi_finals)
-VALUES ('7e90575b-5b04-4a12-9279-f7124a5f737c', 'Netball', now(), false, null, false,
-        true);
-INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date, quarter_finals, semi_finals)
-VALUES ('189772ac-8d6d-4662-b5aa-000fa4271138', 'Badminton', now(), false, null, false,
-        true);
-INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date, quarter_finals, semi_finals)
-VALUES ('5d231a25-d15a-4881-a004-9b9ddfa4b988', 'Kho', now(), false, null, false, true);
-INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date, quarter_finals, semi_finals)
-VALUES ('7dac42d7-e397-4efa-b70a-0232cacd4c4f', 'Football', '2023-09-13 00:09:50.564341 +00:00', false, null, false,
-        true);
-INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date, quarter_finals, semi_finals)
-VALUES ('29fc8489-95ee-4dd5-bf21-0703f4df41c6', 'KabaddiM', now(), false, null, false,
-        true);
-INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date, quarter_finals, semi_finals)
-VALUES ('3429e138-0e55-4096-b30d-6b2f789365b4', 'KabaddiW', now(), false, null, false,
-        false);
-INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date, quarter_finals, semi_finals)
-VALUES ('5c6adafc-c26e-4beb-b5ea-8dd0b813f7b3', 'Cricket', '2024-01-20 15:29:12.994798 +00:00', false, null, false,
-        false);
+INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date, quarter_finals, semi_finals, start_time, minutes_per_game) VALUES ('7e90575b-5b04-4a12-9279-f7124a5f737c', 'Netball', '2024-01-25 00:50:47.826239 +00:00', false, null, false, true, null, null);
+INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date, quarter_finals, semi_finals, start_time, minutes_per_game) VALUES ('189772ac-8d6d-4662-b5aa-000fa4271138', 'Badminton', '2024-01-25 00:50:47.834280 +00:00', false, null, false, true, null, null);
+INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date, quarter_finals, semi_finals, start_time, minutes_per_game) VALUES ('7dac42d7-e397-4efa-b70a-0232cacd4c4f', 'Football', '2023-09-13 00:09:50.564341 +00:00', false, null, false, true, null, null);
+INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date, quarter_finals, semi_finals, start_time, minutes_per_game) VALUES ('29fc8489-95ee-4dd5-bf21-0703f4df41c6', 'KabaddiM', '2024-01-25 00:50:47.928228 +00:00', false, null, false, true, null, null);
+INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date, quarter_finals, semi_finals, start_time, minutes_per_game) VALUES ('3429e138-0e55-4096-b30d-6b2f789365b4', 'KabaddiW', '2024-01-25 00:50:47.962122 +00:00', false, null, false, false, null, null);
+INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date, quarter_finals, semi_finals, start_time, minutes_per_game) VALUES ('5c6adafc-c26e-4beb-b5ea-8dd0b813f7b3', 'Cricket', '2024-01-20 15:29:12.994798 +00:00', false, null, false, false, null, null);
+INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date, quarter_finals, semi_finals, start_time, minutes_per_game) VALUES ('5d231a25-d15a-4881-a004-9b9ddfa4b988', 'Kho', '2024-01-25 00:50:47.858564 +00:00', false, null, false, true, '2024-02-17 13:30:00.201000 +00:00', 10);
 
 -- Insert into pitches table and store the ID in the temporary table
 INSERT INTO public.pitches (id, name, created_date, is_deleted, last_modified_date, sport_id)
@@ -151,24 +137,14 @@ VALUES ('6b9e0b40-221a-4f30-a9ed-28a283436e97', 'super_admin', 'user@example.com
         null, null, '975ca347-4467-4d68-b2ef-f5a81c090959', 'super_admin');
 
 
-INSERT INTO public.timetable (id, time_activity, activity_name, location)
-VALUES (2, '8:30 AM', 'Registration', '');
-INSERT INTO public.timetable (id, time_activity, activity_name, location)
-VALUES (3, '9:00 AM', 'Opening Ceremony', 'Sports Hall');
-INSERT INTO public.timetable (id, time_activity, activity_name, location)
-VALUES (4, '9:30-11:25', 'Netball', 'Sports Hall');
-INSERT INTO public.timetable (id, time_activity, activity_name, location)
-VALUES (5, '9:30-12:30', 'Football', '3G Pitch Outside');
-INSERT INTO public.timetable (id, time_activity, activity_name, location)
-VALUES (6, '11:30-12:45', 'Women''s Kabaddi', 'Main Hall');
-INSERT INTO public.timetable (id, time_activity, activity_name, location)
-VALUES (7, '12:00-13:50', 'Badminton', 'Sports Hall');
-INSERT INTO public.timetable (id, time_activity, activity_name, location)
-VALUES (8, '13:15-16:05', 'Men''s Kabaddi', 'Main Hall');
-INSERT INTO public.timetable (id, time_activity, activity_name, location)
-VALUES (9, '13:15-16:30', 'Kho-Kho', 'Sports Hall');
-INSERT INTO public.timetable (id, time_activity, activity_name, location)
-VALUES (10, '16:30-17:00', 'Closing Ceremony', 'Sports Hall');
+INSERT INTO public.timetable (id, time_activity, activity_name, location) VALUES (2, '09:00', 'Opening Ceremony', 'Main Sports Hall');
+INSERT INTO public.timetable (id, time_activity, activity_name, location) VALUES (3, '10:10', 'Football, Netball, Cricket, Badminton, Kabaadi Womens Starting', '');
+INSERT INTO public.timetable (id, time_activity, activity_name, location) VALUES (1, '08:30', 'Registration', '');
+INSERT INTO public.timetable (id, time_activity, activity_name, location) VALUES (4, '12:45', 'Kabaddi Mens Starting', ' ');
+INSERT INTO public.timetable (id, time_activity, activity_name, location) VALUES (5, '13:50', 'Kho Starting', ' ');
+INSERT INTO public.timetable (id, time_activity, activity_name, location) VALUES (6, '16:30', 'Closing Ceremony', 'Main Sports Hall');
+
+
 
 INSERT INTO public.teams (id, name, regional_competition_id, stage_reached, average_point_per_game_in_group_stage, created_date, is_deleted, last_modified_date, chapter_id, sport_id, "group", internal_name) VALUES ('c2c839dc-bd92-49dd-87ca-53b2a8575b4e', 'Aston', 0, 0, 0, '2024-01-20 15:07:57.331610 +00:00', false, '2024-01-20 22:37:09.798549 +00:00', '72f0206b-bfe8-410a-b1f5-06488f6cd6c5', '5d231a25-d15a-4881-a004-9b9ddfa4b988', null, 'Kho');
 INSERT INTO public.teams (id, name, regional_competition_id, stage_reached, average_point_per_game_in_group_stage, created_date, is_deleted, last_modified_date, chapter_id, sport_id, "group", internal_name) VALUES ('93c6a13b-2662-4775-8c94-f8ac25f29361', 'Bristol', 2, 5, 3, '2024-01-20 15:07:57.331610 +00:00', false, '2024-01-20 22:37:09.798549 +00:00', '3493aa2e-5a2c-46fb-8672-2e3e9ed95bd2', '5d231a25-d15a-4881-a004-9b9ddfa4b988', null, 'Kho');

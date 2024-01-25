@@ -1,4 +1,4 @@
-"""Ednpoints for stats"""
+"""Endpoints for stats"""
 from uuid import UUID
 
 from fastapi import APIRouter, Depends

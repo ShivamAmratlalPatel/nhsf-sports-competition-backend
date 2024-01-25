@@ -1,4 +1,4 @@
-"""Ednpoints for timetable"""
+"""Endpoints for timetable"""
 
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
@@ -17,7 +17,7 @@ db_session = Depends(get_db)
 
 @timetable_router.get("/timetable", tags=["timetable"])
 def get_timetable(db: Session = db_session):
-    timetables = db.query(Timetable).all()
+    timetables = db.query(Timetable).order_by(Timetable.id).all()
 
     return JSONResponse(
         status_code=status.HTTP_200_OK,
