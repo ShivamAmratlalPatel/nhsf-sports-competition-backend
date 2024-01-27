@@ -1,10 +1,9 @@
-
 from pydantic import BaseModel
 
 
 class CustomQuestion(BaseModel):
-    question: str
-    answer: str
+    question: str | None = None
+    answer: str | None = None
 
 
 class Payload(BaseModel):

@@ -4,12 +4,13 @@ from starlette import status
 
 from backend.chapters.chapters_models import Chapter
 from backend.config import TICKET_TAILOR_PLAYER_TICKET_TYPE_ID
+from backend.errors.errors_models import Error
 from backend.players.players_models import Player
 from backend.spectators.spectators_models import Spectator
 from backend.sports.sports_models import Sport
 from backend.teams.teams_models import Team
 from backend.tickets.tickets_schemas import Payload
-from backend.utils import generate_uuid
+from backend.utils import generate_uuid, object_to_dict
 
 
 def add_new_player_from_ticket_tailor(payload: Payload, db: Session) -> Player:
@@ -77,10 +78,10 @@ def add_new_player_from_ticket_tailor(payload: Payload, db: Session) -> Player:
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Chapter not found",
         )
-    if morning_sport_answer == "Kabaddi Mens":
-        morning_sport_answer = "KabaddiM"
-    elif afternoon_sport_answer == "Kabaddi Womens":
-        afternoon_sport_answer = "KabaddiF"
+    if morning_sport_answer == "Kabaddi Womens":
+        morning_sport_answer = "KabaddiF"
+    if afternoon_sport_answer == "Kabaddi Mens":
+        afternoon_sport_answer = "KabaddiM"
     if morning_sport_answer == "None":
         morning_team_id = None
     else:
@@ -104,12 +105,16 @@ def add_new_player_from_ticket_tailor(payload: Payload, db: Session) -> Player:
             .first()
         )
         if morning_team is None:
-            print("Morning team not found")
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Morning team not found",
+            error = Error(
+                id=generate_uuid(),
+                error=f"Morning team not found for {payload.full_name}",
+                data=object_to_dict(payload, format_date=True),
             )
-        morning_team_id = morning_team.id
+            db.add(error)
+            db.commit()
+            morning_team_id = None
+        else:
+            morning_team_id = morning_team.id
     if afternoon_sport_answer == "None":
         afternoon_team_id = None
     else:
@@ -120,6 +125,7 @@ def add_new_player_from_ticket_tailor(payload: Payload, db: Session) -> Player:
             .first()
         )
         if afternoon_sport is None:
+            print(payload)
             print("Afternoon sport not found")
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -133,12 +139,16 @@ def add_new_player_from_ticket_tailor(payload: Payload, db: Session) -> Player:
             .first()
         )
         if afternoon_team is None:
-            print("Afternoon team not found")
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Afternoon team not found",
+            error = Error(
+                id=generate_uuid(),
+                error=f"Afternoon team not found for {payload.full_name}",
+                data=object_to_dict(payload, format_date=True),
             )
-        afternoon_team_id = afternoon_team.id
+            db.add(error)
+            db.commit()
+            afternoon_team_id = None
+        else:
+            afternoon_team_id = afternoon_team.id
 
     (
         allergies_medical_conditions_answer,
