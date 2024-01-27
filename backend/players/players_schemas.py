@@ -27,7 +27,11 @@ class PlayerBase(BaseModel):
     name: str
     morning_team_id: UUID | None = None
     afternoon_team_id: UUID | None = None
-    cards: list
+    cards: list | None = []
+    order_id: str | None = None
+    ticket_id: str | None = None
+    barcode: str | None = None
+    checked_in: bool = False
 
     model_config = ConfigDict(
         json_schema_extra={

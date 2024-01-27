@@ -9,10 +9,13 @@ from starlette import status
 
 from backend.matches.matches_models import Match
 from backend.pitches.pitches_models import Pitch
-from backend.sports.sports_models import Sport
 from backend.stages.stages_schemas import StagesEnum
 from backend.teams.teams_models import Team
 from backend.utils import generate_uuid
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from backend.sports.sports_models import Sport
 
 
 def generate_schedule_for_group(
@@ -21,7 +24,6 @@ def generate_schedule_for_group(
     sport_id: UUID,
 ) -> None:
     """Generate a schedule for a group."""
-
     pitches: list[Match] = (
         db.query(Pitch)
         .filter(Pitch.sport_id == sport_id)
@@ -54,27 +56,27 @@ def generate_schedule_for_group(
         # region generate schedule for group
         try:
             matches = two_in_a_group_schedule(
-                group_teams, pitches[group % number_of_pitches]
+                group_teams, pitches[group % number_of_pitches],
             )
         except HTTPException:
             try:
                 matches = three_in_a_group_schedule(
-                    group_teams, pitches[group % number_of_pitches]
+                    group_teams, pitches[group % number_of_pitches],
                 )
             except HTTPException:
                 try:
                     matches = four_in_a_group_schedule(
-                        group_teams, pitches[group % number_of_pitches]
+                        group_teams, pitches[group % number_of_pitches],
                     )
                 except HTTPException:
                     try:
                         matches = five_in_a_group_schedule(
-                            group_teams, pitches[group % number_of_pitches]
+                            group_teams, pitches[group % number_of_pitches],
                         )
                     except HTTPException:
                         try:
                             matches = six_in_a_group_schedule(
-                                group_teams, pitches[group % number_of_pitches]
+                                group_teams, pitches[group % number_of_pitches],
                             )
                         except HTTPException:
                             raise HTTPException(
@@ -527,7 +529,7 @@ def seven_in_a_group_schedule(teams: list[Team], pitch: Pitch) -> list[Match]:
     team_4 = teams[3]
     team_5 = teams[4]
     team_6 = teams[5]
-    team_7 = teams[6]
+    teams[6]
 
     sport_id: UUID = team_1.id
 

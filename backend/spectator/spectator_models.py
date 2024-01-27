@@ -1,16 +1,16 @@
-"""Sports Database Models"""
-from sqlalchemy import Boolean, Column, DateTime, Float, String, func
+"""Spectators Database Models"""
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, String, func
 from sqlalchemy.dialects import postgresql as pg
-from sqlalchemy.orm import relationship
 
 from backend.database import Base
 from backend.utils import datetime_now, generate_uuid
 
 
-class Sport(Base):
-    """Sport database model."""
+class Spectator(Base):
+    """Spectator database model."""
 
-    __tablename__ = "sports"
+    __tablename__ = "spectators"
+
     id = Column(
         pg.UUID(as_uuid=True),
         primary_key=True,
@@ -31,14 +31,12 @@ class Sport(Base):
         onupdate=datetime_now(),
         server_onupdate=func.timezone("Europe/London", func.current_timestamp()),
     )
-    quarter_finals = Column(
-        Boolean,
-        nullable=False,
-        default=False,
-        server_default="false",
+    chapter_id = Column(
+        pg.UUID(as_uuid=True),
+        ForeignKey("chapters.id", ondelete="CASCADE"),
+        nullable=True,
     )
-    semi_finals = Column(Boolean, nullable=False, default=False, server_default="false")
-    start_time = Column(DateTime(timezone=True))
-    minutes_per_game = Column(Float)
-    teams = relationship("Team", back_populates="sport")
-    matches = relationship("Match", back_populates="sport")
+    order_id = Column(String)
+    ticket_id = Column(String)
+    barcode = Column(String)
+    checked_in = Column(Boolean, nullable=False, default=False, server_default="false")

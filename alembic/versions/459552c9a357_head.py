@@ -23,7 +23,12 @@ def upgrade() -> None:
     op.add_column("players", sa.Column("afternoon_team_id", sa.UUID(), nullable=False))
     op.drop_constraint("players_away_team_id_fkey", "players", type_="foreignkey")
     op.create_foreign_key(
-        None, "players", "teams", ["afternoon_team_id"], ["id"], ondelete="CASCADE",
+        None,
+        "players",
+        "teams",
+        ["afternoon_team_id"],
+        ["id"],
+        ondelete="CASCADE",
     )
     op.drop_column("players", "away_team_id")
     # ### end Alembic commands ###

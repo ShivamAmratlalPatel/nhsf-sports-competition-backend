@@ -4,7 +4,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
-from sqlalchemy import or_, text
+from sqlalchemy import or_
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.attributes import flag_modified
 from starlette import status
@@ -14,10 +14,10 @@ from backend.helpers import get_db
 from backend.matches.matches_models import Match
 from backend.players.players_models import Player
 from backend.players.players_schemas import (
+    CardBase,
     PlayerCreate,
     PlayerRead,
     PlayerUpdate,
-    CardBase,
 )
 from backend.teams.teams_commands.chapter_from_team import chapter_id_from_team
 from backend.teams.teams_models import Team
@@ -25,7 +25,7 @@ from backend.users.users_commands.chapter_user import verify_chapter_user
 from backend.users.users_commands.check_admin import check_admin
 from backend.users.users_commands.get_users import get_current_active_user
 from backend.users.users_schemas import UserBase
-from backend.utils import object_to_dict, convert_list_to_list
+from backend.utils import convert_list_to_list, object_to_dict
 
 players_router = APIRouter()
 current_user_instance = Depends(get_current_active_user)
@@ -465,4 +465,77 @@ def update_player_card(
     return JSONResponse(
         status_code=status.HTTP_200_OK,
         content=object_to_dict(PlayerRead.model_validate(player), format_date=True),
+    )
+
+
+@players_router.delete(
+    "/player/{player_id}",
+    tags=["players"],
+    description="Delete player.",
+    responses={
+        status.HTTP_204_NO_CONTENT: {
+            "description": "Player deleted successfully",
+        },
+        status.HTTP_404_NOT_FOUND: {
+            "description": "Player not found",
+        },
+    },
+)
+def delete_player(
+    player_id: UUID,
+    db: Session = db_session,
+    current_user: UserBase = current_user_instance,
+) -> JSONResponse:
+    """Delete a player."""
+
+    player: Player | None = (
+        db.query(Player)
+        .filter(Player.id == player_id)
+        .filter(Player.is_deleted.is_(False))
+        .first()
+    )
+
+    if player is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Player not found",
+        )
+
+    if current_user.user_type_name == "chapter":
+        if player.morning_team_id:
+            team: Team | None = (
+                db.query(Team)
+                .filter(Team.id == player.morning_team_id)
+                .filter(Team.is_deleted.is_(False))
+                .first()
+            )
+
+        elif player.afternoon_team_id:
+            team: Team | None = (
+                db.query(Team)
+                .filter(Team.id == player.afternoon_team_id)
+                .filter(Team.is_deleted.is_(False))
+                .first()
+            )
+        else:
+            team = None
+
+        if team is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Team not found",
+            )
+
+        if current_user.chapter_id != team.chapter_id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="User not part of chapter",
+            )
+
+    player.is_deleted = True
+    db.add(player)
+    db.commit()
+
+    return JSONResponse(
+        status_code=status.HTTP_204_NO_CONTENT,
     )

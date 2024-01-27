@@ -19,6 +19,7 @@ class Player(Base):
         server_default=func.uuid_generate_v4(),
     )
     name = Column(String, nullable=False)
+    email = Column(String, nullable=True)
     created_date = Column(
         DateTime(timezone=True),
         nullable=False,
@@ -39,7 +40,8 @@ class Player(Base):
         pg.UUID(as_uuid=True),
         ForeignKey("teams.id", ondelete="CASCADE"),
     )
-    cards = Column(pg.JSONB, nullable=False, default="[]", server_default="[]")
+    cards = Column(pg.JSONB, nullable=False, default=[], server_default="[]")
     order_id = Column(String)
     ticket_id = Column(String)
+    barcode = Column(String)
     checked_in = Column(Boolean, nullable=False, default=False, server_default="false")

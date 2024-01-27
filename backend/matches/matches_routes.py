@@ -17,13 +17,13 @@ from backend.matches.matches_schemas import (
     ScoreDetails,
 )
 from backend.matches.mathes_commands.generate_schedule import (
+    check_groups_not_already_assigned,
     check_matches_have_not_been_generated,
     check_teams,
     generate_schedule_for_group,
     get_list_of_teams_for_sport,
-    randomly_assign_groups,
-    check_groups_not_already_assigned,
     order_assign_groups,
+    randomly_assign_groups,
 )
 from backend.matches.mathes_commands.get_team_from_match import (
     get_away_team_from_match,
