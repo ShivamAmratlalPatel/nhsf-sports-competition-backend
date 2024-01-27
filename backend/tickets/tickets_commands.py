@@ -145,6 +145,7 @@ def add_new_player_from_ticket_tailor(payload: Payload, db: Session) -> Player:
         emergency_contact_name_answer,
         emergency_contact_number_answer,
         emergency_contact_relation_answer,
+        original_chapter,
     ) = calculate_other_questions(payload)
 
     player = Player(
@@ -163,13 +164,23 @@ def add_new_player_from_ticket_tailor(payload: Payload, db: Session) -> Player:
         emergency_contact_number=emergency_contact_number_answer,
         emergency_contact_phone=emergency_contact_relation_answer,
         allergies_medical_conditions=allergies_medical_conditions_answer,
+        original_chapter=original_chapter,
     )
     db.add(player)
     db.commit()
     return player
 
 
-def calculate_other_questions(payload: Payload) -> tuple[str, str, str, str]:
+def calculate_other_questions(payload: Payload) -> tuple[str, str, str, str, str]:
+    original_chapter = next(
+        (
+            question.answer
+            for question in payload.custom_questions
+            if question.question
+            == "If you are playing for another university/school, please write your university here"
+        ),
+        None,
+    )
     emergency_contact_name_answer = next(
         (
             question.answer
@@ -207,6 +218,7 @@ def calculate_other_questions(payload: Payload) -> tuple[str, str, str, str]:
         emergency_contact_name_answer,
         emergency_contact_number_answer,
         emergency_contact_relation_answer,
+        original_chapter,
     )
 
 
@@ -218,6 +230,7 @@ def log_new_tickets(db: Session, tickets: list[dict]) -> None:
             emergency_contact_name_answer,
             emergency_contact_number_answer,
             emergency_contact_relation_answer,
+            original_chapter,
         ) = calculate_other_questions(payload)
         if payload.ticket_type_id == TICKET_TAILOR_PLAYER_TICKET_TYPE_ID:
             player: Player | None = (

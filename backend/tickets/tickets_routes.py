@@ -132,6 +132,7 @@ def webhook_ticket_created(
             emergency_contact_name_answer,
             emergency_contact_number_answer,
             emergency_contact_relation_answer,
+            original_chapter,
         ) = calculate_other_questions(data.payload)
         spectator = Spectator(
             id=generate_uuid(),
@@ -146,6 +147,7 @@ def webhook_ticket_created(
             emergency_contact_number=emergency_contact_number_answer,
             emergency_contact_phone=emergency_contact_relation_answer,
             allergies_medical_conditions=allergies_medical_conditions_answer,
+            original_chapter=original_chapter,
         )
 
         db.add(spectator)

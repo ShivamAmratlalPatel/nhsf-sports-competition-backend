@@ -52,3 +52,4 @@ class Player(Base):
     emergency_contact_number = Column(String)
     emergency_contact_phone = Column(String)
     allergies_medical_conditions = Column(String)
+    original_chapter = Column(String)
