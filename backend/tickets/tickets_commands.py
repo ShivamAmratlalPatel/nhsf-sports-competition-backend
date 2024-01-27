@@ -209,7 +209,7 @@ def calculate_other_questions(payload: Payload) -> tuple[str, str, str, str, str
         (
             question.answer
             for question in payload.custom_questions
-            if question.question == "Allergies/Medical Conditions"
+            if question.question == "Do you have any allergies/medical requirements?"
         ),
         None,
     )
