@@ -1,2 +1,2 @@
-PYTHONPATH=. alembic revision --autogenerate -m "added email to players table"
+PYTHONPATH=. alembic revision --autogenerate -m "added extra columns to players and spectators"
 
