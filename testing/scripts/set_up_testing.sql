@@ -1,110 +1,58 @@
 TRUNCATE chapters, league_tables, match_audit, matches, pitches, players, sports, teams, timetable, users;
 -- Insert into chapters table and store the ID in the temporary table
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, last_modified_date)
-VALUES ('72f0206b-bfe8-410a-b1f5-06488f6cd6c5', 'Aston', 'Central Zone', 'Tisha34.tj@gmail.com',
-        '2024-01-20 15:11:16.170134 +00:00', false, null);
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, last_modified_date)
-VALUES ('58471153-118b-4404-9a4c-18907c74a39f', 'Cambridge', 'Central Zone', 'lb971@cam.ac.uk',
-        '2024-01-20 15:11:16.170134 +00:00', false, null);
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, last_modified_date)
-VALUES ('7263988c-7a4d-479f-8593-10ad88ae8f3c', 'Coventry', 'Central Zone', 'anupran.saha@gmail.com',
-        '2024-01-20 15:11:16.170134 +00:00', false, null);
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, last_modified_date)
-VALUES ('886a7171-9ca2-45e2-9c40-797c42d85579', 'DMU', 'Central Zone', 'neeamistry@hotmail.com',
-        '2024-01-20 15:11:16.170134 +00:00', false, null);
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, last_modified_date)
-VALUES ('cbc56117-9b0e-4ead-ae24-96438aa00ab8', 'Leicester', 'Central Zone', 'jd505@student.le.ac.uk',
-        '2024-01-20 15:11:16.170134 +00:00', false, null);
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, last_modified_date)
-VALUES ('a5fc593e-bc9a-4acc-b7a1-966d9dc9badf', 'Loughborough', 'Central Zone', 'j.shah6-22@student.lboro.ac.uk',
-        '2024-01-20 15:11:16.170134 +00:00', false, null);
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, last_modified_date)
-VALUES ('3d698d07-68bc-4289-9ceb-378ecd2afc32', 'Nottingham', 'Central Zone', 'vdusara10@gmail.com',
-        '2024-01-20 15:11:16.170134 +00:00', false, null);
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, last_modified_date)
-VALUES ('98c5f225-08a8-45a5-be02-09971086b50b', 'NTU', 'Central Zone', 'n1140937@my.ntu.ac.uk',
-        '2024-01-20 15:11:16.170134 +00:00', false, null);
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, last_modified_date)
-VALUES ('ddde08f0-355f-4653-8beb-56bb9d971b69', 'UoB', 'Central Zone', 'hindu@guild.bham.ac.uk',
-        '2024-01-20 15:11:16.170134 +00:00', false, null);
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, last_modified_date)
-VALUES ('ff28e798-58b2-4317-96dc-012812adf222', 'Warwick', 'Central Zone', 'devi.jethwa@warwick.ac.uk',
-        '2024-01-20 15:11:16.170134 +00:00', false, null);
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, last_modified_date)
-VALUES ('d49db23a-7ac3-4a1f-9dbc-952763f06d97', 'ARU', 'London Zone', 'ss3001@student.aru.ac.uk',
-        '2024-01-20 15:11:16.170134 +00:00', false, null);
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, last_modified_date)
-VALUES ('93468e9b-6235-4293-a75c-eec568abad79', 'Brunel', 'London Zone', 'Brunelhindusoc@gmail.com',
-        '2024-01-20 15:11:16.170134 +00:00', false, null);
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, last_modified_date)
-VALUES ('7654a817-f5de-4e7a-9e55-720ea57009f8', 'City', 'London Zone', 'deveshkerai@yahoo.co.uk',
-        '2024-01-20 15:11:16.170134 +00:00', false, null);
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, last_modified_date)
-VALUES ('e0f3b37c-217d-43e1-b380-1a98aec05f67', 'Imperial', 'London Zone', 'riship0610@gmail.com',
-        '2024-01-20 15:11:16.170134 +00:00', false, null);
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, last_modified_date)
-VALUES ('1b498bf2-92ec-4ee7-a843-f468865da0ec', 'KCL', 'London Zone', 'Bhumit Deswal (deswalbhumit01@gmail.com)',
-        '2024-01-20 15:11:16.170134 +00:00', false, null);
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, last_modified_date)
-VALUES ('7da95fc9-226c-424b-96c7-b962a83d173e', 'Kingston', 'London Zone', 'jay.dubasia@hotmail.com',
-        '2024-01-20 15:11:16.170134 +00:00', false, null);
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, last_modified_date)
-VALUES ('65b7479a-73d7-45c1-8164-4379af31a340', 'LSE', 'London Zone', 'V.vinod@lse.ac.um',
-        '2024-01-20 15:11:16.170134 +00:00', false, null);
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, last_modified_date)
-VALUES ('592116a5-0c3b-4851-a167-771ff9317e4d', 'Queen Mary''s', 'London Zone', 'dgove.22@gmail.com',
-        '2024-01-20 15:11:16.170134 +00:00', false, null);
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, last_modified_date)
-VALUES ('decf38f4-2785-4d76-ac7c-0c5b57d2568d', 'SOAS', 'London Zone', 'gauribij26@gmail.com',
-        '2024-01-20 15:11:16.170134 +00:00', false, null);
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, last_modified_date)
-VALUES ('f4ae5e0f-ab6c-4d91-835c-74ecfc504b7b', 'Lancaster', 'North Zone', 'a.ratnaparkhi@lancaster.ac.uk',
-        '2024-01-20 15:11:16.170134 +00:00', false, null);
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, last_modified_date)
-VALUES ('40f1702b-0659-4439-a54e-07f0d1a94175', 'Leeds', 'North Zone', 'angelicapatel88@gmail.com',
-        '2024-01-20 15:11:16.170134 +00:00', false, null);
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, last_modified_date)
-VALUES ('5baa35b5-b0cc-4650-919f-e73c2207755b', 'Liverpool', 'North Zone', 'hindu@society.liverpoolguild.org',
-        '2024-01-20 15:11:16.170134 +00:00', false, null);
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, last_modified_date)
-VALUES ('84f381da-cb08-4e76-9460-6e2f846036e6', 'Manchester', 'North Zone', 'rahul651973@gmail.com',
-        '2024-01-20 15:11:16.170134 +00:00', false, null);
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, last_modified_date)
-VALUES ('291b67b0-5605-40c1-826f-58c404eac75e', 'Sheffield', 'North Zone', 'tjethwa1@sheffield.ac.uk',
-        '2024-01-20 15:11:16.170134 +00:00', false, null);
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, last_modified_date)
-VALUES ('5e4e5c1e-1f2c-43fb-a88f-8fa52e3e49ce', 'Trafford Schools', 'North Zone', 'ravisankargautham@gmail.com',
-        '2024-01-20 15:11:16.170134 +00:00', false, null);
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, last_modified_date)
-VALUES ('efc636d4-998c-4013-a64d-37d3f872be77', 'UCLAN', 'North Zone', 'skmistry10@gmail.com',
-        '2024-01-20 15:11:16.170134 +00:00', false, null);
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, last_modified_date)
-VALUES ('b161e2c7-136e-4cf2-975b-49520f5f3880', 'York', 'North Zone', 'ah2284@york.ac.uk',
-        '2024-01-20 15:11:16.170134 +00:00', false, null);
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, last_modified_date)
-VALUES ('49bd28c2-b3a1-4996-aeed-6e716f5f04f8', 'Bath', 'South Zone', 'sb2754@bath.ac.uk',
-        '2024-01-20 15:11:16.170134 +00:00', false, null);
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, last_modified_date)
-VALUES ('3493aa2e-5a2c-46fb-8672-2e3e9ed95bd2', 'Bristol', 'South Zone', 'lz21737@bristol.ac.uk',
-        '2024-01-20 15:11:16.170134 +00:00', false, null);
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, last_modified_date)
-VALUES ('f7843b64-d70f-4fd3-9e17-c7a9ac794af3', 'Cardiff', 'South Zone', 'pateld23@cardiff.ac.uk',
-        '2024-01-20 15:11:16.170134 +00:00', false, null);
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, last_modified_date)
-VALUES ('4b409f56-719d-451a-a8a1-e20db213deca', 'Kent', 'South Zone', 'Kp546@kent.ac.uk',
-        '2024-01-20 15:11:16.170134 +00:00', false, null);
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, last_modified_date)
-VALUES ('d14c2a87-9f04-4320-91cc-5c5938321059', 'Portsmouth', 'South Zone', 'UP2025779@myport.ac.uk',
-        '2024-01-20 15:11:16.170134 +00:00', false, null);
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, last_modified_date)
-VALUES ('d15a7718-7a71-4e68-9055-c0727dd4dd29', 'Reading', 'South Zone', 'nhsfreading@gmail.com',
-        '2024-01-20 15:11:16.170134 +00:00', false, null);
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, last_modified_date)
-VALUES ('c0a2acd6-1505-4af6-bb64-b4a1a85a465a', 'Southampton', 'South Zone', 'rahulmittal2208@gmail.com',
-        '2024-01-20 15:11:16.170134 +00:00', false, null);
-INSERT INTO public.chapters (id, name, zone, email, created_date, is_deleted, last_modified_date)
-VALUES ('bfd680a1-dd05-4b0f-bf45-4df1e7b47336', 'Swansea', 'South Zone', 'hindu@swansea-societies.co.uk',
-        '2024-01-20 15:11:16.170134 +00:00', false, null);
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('d49db23a-7ac3-4a1f-9dbc-952763f06d97', 'ARU', '2024-01-20 15:11:16.170134 +00:00', false, null, 'London Zone', 'ss3001@student.aru.ac.uk');
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('72f0206b-bfe8-410a-b1f5-06488f6cd6c5', 'Aston', '2024-01-20 15:11:16.170134 +00:00', false, null, 'Central Zone', 'Tisha34.tj@gmail.com');
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('49bd28c2-b3a1-4996-aeed-6e716f5f04f8', 'Bath', '2024-01-20 15:11:16.170134 +00:00', false, null, 'South Zone', 'sb2754@bath.ac.uk');
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('ac682b91-ba40-4789-8057-bc00aeca0600', 'Brighton and Sussex', '2024-01-27 03:16:53.069479 +00:00', false, null, 'South Zone', null);
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('3493aa2e-5a2c-46fb-8672-2e3e9ed95bd2', 'Bristol', '2024-01-20 15:11:16.170134 +00:00', false, null, 'South Zone', 'lz21737@bristol.ac.uk');
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('93468e9b-6235-4293-a75c-eec568abad79', 'Brunel', '2024-01-20 15:11:16.170134 +00:00', false, null, 'London Zone', 'Brunelhindusoc@gmail.com');
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('58471153-118b-4404-9a4c-18907c74a39f', 'Cambridge', '2024-01-20 15:11:16.170134 +00:00', false, null, 'Central Zone', 'lb971@cam.ac.uk');
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('f7843b64-d70f-4fd3-9e17-c7a9ac794af3', 'Cardiff', '2024-01-20 15:11:16.170134 +00:00', false, null, 'South Zone', 'pateld23@cardiff.ac.uk');
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('7654a817-f5de-4e7a-9e55-720ea57009f8', 'City', '2024-01-20 15:11:16.170134 +00:00', false, null, 'London Zone', 'deveshkerai@yahoo.co.uk');
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('7263988c-7a4d-479f-8593-10ad88ae8f3c', 'Coventry', '2024-01-20 15:11:16.170134 +00:00', false, null, 'Central Zone', 'anupran.saha@gmail.com');
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('886a7171-9ca2-45e2-9c40-797c42d85579', 'DMU', '2024-01-20 15:11:16.170134 +00:00', false, null, 'Central Zone', 'neeamistry@hotmail.com');
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('c946992c-a674-4cdf-bbb0-aa9f2f2dc243', 'Dhyan', '2024-01-27 03:16:53.069479 +00:00', false, null, 'London Zone', null);
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('362ee6d0-987a-4536-964f-41792082e85e', 'Dundee', '2024-01-27 03:16:53.069479 +00:00', false, null, 'North Zone', null);
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('a5caf8d1-0cfb-4bb1-a1cb-74aeb703b909', 'Edinburgh', '2024-01-27 03:16:53.069479 +00:00', false, null, 'North Zone', null);
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('a3927277-fc08-4be5-a749-f08be6bab684', 'Essex', '2024-01-27 03:16:53.069479 +00:00', false, null, 'London Zone', null);
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('e2f654ff-4957-4cef-95b9-d877b8dbd99f', 'Exeter', '2024-01-27 03:16:53.069479 +00:00', false, null, 'South Zone', null);
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('60f2cadd-c8a5-4867-a958-dc471922ff83', 'Hertfordshire', '2024-01-27 03:16:53.069479 +00:00', false, null, 'London Zone', null);
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('e0f3b37c-217d-43e1-b380-1a98aec05f67', 'Imperial', '2024-01-20 15:11:16.170134 +00:00', false, null, 'London Zone', 'riship0610@gmail.com');
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('1b498bf2-92ec-4ee7-a843-f468865da0ec', 'KCL', '2024-01-20 15:11:16.170134 +00:00', false, null, 'London Zone', 'Bhumit Deswal (deswalbhumit01@gmail.com)');
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('ce53c739-a88b-4ae9-838c-ef9658809fcf', 'Keele', '2024-01-27 03:16:53.069479 +00:00', false, null, 'North Zone', null);
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('4b409f56-719d-451a-a8a1-e20db213deca', 'Kent', '2024-01-20 15:11:16.170134 +00:00', false, null, 'South Zone', 'Kp546@kent.ac.uk');
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('7da95fc9-226c-424b-96c7-b962a83d173e', 'Kingston', '2024-01-20 15:11:16.170134 +00:00', false, null, 'London Zone', 'jay.dubasia@hotmail.com');
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('65b7479a-73d7-45c1-8164-4379af31a340', 'LSE', '2024-01-20 15:11:16.170134 +00:00', false, null, 'London Zone', 'V.vinod@lse.ac.um');
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('f4ae5e0f-ab6c-4d91-835c-74ecfc504b7b', 'Lancaster', '2024-01-20 15:11:16.170134 +00:00', false, null, 'North Zone', 'a.ratnaparkhi@lancaster.ac.uk');
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('40f1702b-0659-4439-a54e-07f0d1a94175', 'Leeds', '2024-01-20 15:11:16.170134 +00:00', false, null, 'North Zone', 'angelicapatel88@gmail.com');
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('cbc56117-9b0e-4ead-ae24-96438aa00ab8', 'Leicester', '2024-01-20 15:11:16.170134 +00:00', false, null, 'Central Zone', 'jd505@student.le.ac.uk');
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('5baa35b5-b0cc-4650-919f-e73c2207755b', 'Liverpool', '2024-01-20 15:11:16.170134 +00:00', false, null, 'North Zone', 'hindu@society.liverpoolguild.org');
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('a5fc593e-bc9a-4acc-b7a1-966d9dc9badf', 'Loughborough', '2024-01-20 15:11:16.170134 +00:00', false, null, 'Central Zone', 'j.shah6-22@student.lboro.ac.uk');
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('84f381da-cb08-4e76-9460-6e2f846036e6', 'Manchester', '2024-01-20 15:11:16.170134 +00:00', false, null, 'North Zone', 'rahul651973@gmail.com');
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('98c5f225-08a8-45a5-be02-09971086b50b', 'NTU', '2024-01-20 15:11:16.170134 +00:00', false, null, 'Central Zone', 'n1140937@my.ntu.ac.uk');
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('6266b52b-1910-4c48-9ace-ac1848bbda4b', 'Northampton', '2024-01-27 03:13:15.366924 +00:00', false, null, 'Central Zone', null);
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('3d698d07-68bc-4289-9ceb-378ecd2afc32', 'Nottingham', '2024-01-20 15:11:16.170134 +00:00', false, null, 'Central Zone', 'vdusara10@gmail.com');
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('2b2ac195-5481-4e5f-889f-40f98c0be1b5', 'Oxford', '2024-01-27 03:16:53.069479 +00:00', false, null, 'South Zone', null);
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('e824f7a9-1d89-414b-b03d-cff76af3a09d', 'Oxford Brookes', '2024-01-27 03:16:53.069479 +00:00', false, null, 'South Zone', null);
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('db409c03-b248-4ac5-8f72-61f05e003522', 'Plymouth', '2024-01-27 03:16:53.069479 +00:00', false, null, 'South Zone', null);
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('d14c2a87-9f04-4320-91cc-5c5938321059', 'Portsmouth', '2024-01-20 15:11:16.170134 +00:00', false, null, 'South Zone', 'UP2025779@myport.ac.uk');
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('592116a5-0c3b-4851-a167-771ff9317e4d', 'QM', '2024-01-20 15:11:16.170134 +00:00', false, null, 'London Zone', 'dgove.22@gmail.com');
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('d15a7718-7a71-4e68-9055-c0727dd4dd29', 'Reading', '2024-01-20 15:11:16.170134 +00:00', false, null, 'South Zone', 'nhsfreading@gmail.com');
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('decf38f4-2785-4d76-ac7c-0c5b57d2568d', 'SOAS', '2024-01-20 15:11:16.170134 +00:00', false, null, 'London Zone', 'gauribij26@gmail.com');
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('291b67b0-5605-40c1-826f-58c404eac75e', 'Sheffield', '2024-01-20 15:11:16.170134 +00:00', false, null, 'North Zone', 'tjethwa1@sheffield.ac.uk');
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('c0a2acd6-1505-4af6-bb64-b4a1a85a465a', 'Southampton', '2024-01-20 15:11:16.170134 +00:00', false, null, 'South Zone', 'rahulmittal2208@gmail.com');
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('c9ed1e8f-8987-4893-b546-a1908886c2ed', 'St Georges', '2024-01-27 03:16:53.069479 +00:00', false, null, 'London Zone', null);
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('6dab19da-ffae-4acb-a68a-02ca965888e3', 'Surrey', '2024-01-27 03:16:53.069479 +00:00', false, null, 'South Zone', null);
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('bfd680a1-dd05-4b0f-bf45-4df1e7b47336', 'Swansea', '2024-01-20 15:11:16.170134 +00:00', false, null, 'South Zone', 'hindu@swansea-societies.co.uk');
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('5e4e5c1e-1f2c-43fb-a88f-8fa52e3e49ce', 'Trafford', '2024-01-20 15:11:16.170134 +00:00', false, null, 'North Zone', 'ravisankargautham@gmail.com');
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('efc636d4-998c-4013-a64d-37d3f872be77', 'UCLAN', '2024-01-20 15:11:16.170134 +00:00', false, null, 'North Zone', 'skmistry10@gmail.com');
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('fe23c14b-77fb-4466-a845-d2d9ee147243', 'UEA', '2024-01-27 03:13:35.404131 +00:00', false, null, 'Central Zone', null);
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('a2fceea0-3909-4db0-a1a1-94ac2fa5218c', 'UWE', '2024-01-27 03:16:53.069479 +00:00', false, null, 'South Zone', null);
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('ddde08f0-355f-4653-8beb-56bb9d971b69', 'UoB', '2024-01-20 15:11:16.170134 +00:00', false, null, 'Central Zone', 'hindu@guild.bham.ac.uk');
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('ff28e798-58b2-4317-96dc-012812adf222', 'Warwick', '2024-01-20 15:11:16.170134 +00:00', false, null, 'Central Zone', 'devi.jethwa@warwick.ac.uk');
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('74ac2810-2cb9-47ed-9b04-4eab02650886', 'Westminster', '2024-01-27 03:16:53.069479 +00:00', false, null, 'London Zone', null);
+INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('b161e2c7-136e-4cf2-975b-49520f5f3880', 'York', '2024-01-20 15:11:16.170134 +00:00', false, null, 'North Zone', 'ah2284@york.ac.uk');
+
 
 INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date, quarter_finals, semi_finals, start_time, minutes_per_game) VALUES ('7e90575b-5b04-4a12-9279-f7124a5f737c', 'Netball', '2024-01-25 00:50:47.826239 +00:00', false, null, false, true, null, null);
 INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date, quarter_finals, semi_finals, start_time, minutes_per_game) VALUES ('189772ac-8d6d-4662-b5aa-000fa4271138', 'Badminton', '2024-01-25 00:50:47.834280 +00:00', false, null, false, true, null, null);

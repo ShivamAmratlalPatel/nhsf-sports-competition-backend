@@ -1,4 +1,4 @@
-"""Players Database Models"""
+"""Spectators Database Models"""
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, String, func
 from sqlalchemy.dialects import postgresql as pg
 
@@ -6,10 +6,10 @@ from backend.database import Base
 from backend.utils import datetime_now, generate_uuid
 
 
-class Player(Base):
-    """Player database model."""
+class Spectator(Base):
+    """Spectator database model."""
 
-    __tablename__ = "players"
+    __tablename__ = "spectators"
 
     id = Column(
         pg.UUID(as_uuid=True),
@@ -18,8 +18,8 @@ class Player(Base):
         default=generate_uuid(),
         server_default=func.uuid_generate_v4(),
     )
-    name = Column(String, nullable=False)
-    email = Column(String, nullable=True)
+    name = Column(String)
+    email = Column(String)
     created_date = Column(
         DateTime(timezone=True),
         nullable=False,
@@ -32,15 +32,11 @@ class Player(Base):
         onupdate=datetime_now(),
         server_onupdate=func.timezone("Europe/London", func.current_timestamp()),
     )
-    morning_team_id = Column(
+    chapter_id = Column(
         pg.UUID(as_uuid=True),
-        ForeignKey("teams.id", ondelete="CASCADE"),
+        ForeignKey("chapters.id", ondelete="CASCADE"),
+        nullable=True,
     )
-    afternoon_team_id = Column(
-        pg.UUID(as_uuid=True),
-        ForeignKey("teams.id", ondelete="CASCADE"),
-    )
-    cards = Column(pg.JSONB, nullable=False, default=[], server_default="[]")
     order_id = Column(String)
     ticket_id = Column(String)
     barcode = Column(String)
