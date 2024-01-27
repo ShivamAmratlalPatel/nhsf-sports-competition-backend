@@ -18,10 +18,10 @@ class Payload(BaseModel):
     description: str
     email: str
     event_id: str
-    first_name: str
-    full_name: str
+    first_name: str | None = None
+    full_name: str | None = None
     group_ticket_barcode: str | None
-    last_name: str
+    last_name: str | None = None
     order_id: str
     qr_code_url: str
     reference: str | None

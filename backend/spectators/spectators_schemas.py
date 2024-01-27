@@ -12,3 +12,9 @@ class SpectatorRead(BaseModel):
     ticket_id: str | None = None
     barcode: str | None = None
     checked_in: bool
+    ticket_voided: bool
+    emergency_contact_name: str | None = None
+    emergency_contact_number: str | None = None
+    emergency_contact_phone: str | None = None
+    allergies_medical_conditions: str | None = None
+    original_chapter: str | None = None
