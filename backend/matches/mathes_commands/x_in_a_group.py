@@ -1,14 +1,15 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
 from uuid import UUID
 
 from fastapi import HTTPException
 from starlette import status
 
 from backend.matches.matches_models import Match
-from backend.matches.mathes_commands.generate_schedule import make_match
 from backend.pitches.pitches_models import Pitch
 from backend.sports.sports_models import Sport
+from backend.stages.stages_schemas import StagesEnum
 from backend.teams.teams_models import Team
+from backend.utils import generate_uuid
 
 
 def two_in_a_group_schedule(teams: list[Team], pitch: Pitch) -> list[Match]:
@@ -38,21 +39,20 @@ def three_in_a_group_schedule(teams: list[Team], pitch: Pitch) -> list[Match]:
     team_2 = teams[1]
     team_3 = teams[2]
 
-    sport_id: UUID = team_1.id
     sport: Sport = team_1.sport
 
     match_1 = make_match(team_1.id, team_2.id, sport.id, sport.start_time, pitch.id)
     match_2 = make_match(
         team_3.id,
         team_2.id,
-        sport_id,
+        sport.id,
         sport.start_time + timedelta(minutes=sport.minutes_per_game),
         pitch.id,
     )
     match_3 = make_match(
         team_1.id,
         team_3.id,
-        sport_id,
+        sport.id,
         sport.start_time + 2 * timedelta(minutes=sport.minutes_per_game),
         pitch.id,
     )
@@ -224,105 +224,104 @@ def six_in_a_group_schedule(teams: list[Team], pitch: Pitch) -> list[Match]:
     team_5 = teams[4]
     team_6 = teams[5]
 
-    sport_id: UUID = team_1.id
     sport: Sport = team_1.sport
 
-    match_1 = make_match(team_6.id, team_3.id, sport_id, sport.start_time, pitch.id)
+    match_1 = make_match(team_6.id, team_3.id, sport.id, sport.start_time, pitch.id)
     match_2 = make_match(
         team_1.id,
         team_4.id,
-        sport_id,
+        sport.id,
         sport.start_time + timedelta(minutes=sport.minutes_per_game),
         pitch.id,
     )
     match_3 = make_match(
         team_5.id,
         team_2.id,
-        sport_id,
+        sport.id,
         sport.start_time + 2 * timedelta(minutes=sport.minutes_per_game),
         pitch.id,
     )
     match_4 = make_match(
         team_4.id,
         team_6.id,
-        sport_id,
+        sport.id,
         sport.start_time + 3 * timedelta(minutes=sport.minutes_per_game),
         pitch.id,
     )
     match_5 = make_match(
         team_2.id,
         team_3.id,
-        sport_id,
+        sport.id,
         sport.start_time + 4 * timedelta(minutes=sport.minutes_per_game),
         pitch.id,
     )
     match_6 = make_match(
         team_5.id,
         team_1.id,
-        sport_id,
+        sport.id,
         sport.start_time + 5 * timedelta(minutes=sport.minutes_per_game),
         pitch.id,
     )
     match_7 = make_match(
         team_6.id,
         team_2.id,
-        sport_id,
+        sport.id,
         sport.start_time + 6 * timedelta(minutes=sport.minutes_per_game),
         pitch.id,
     )
     match_8 = make_match(
         team_4.id,
         team_5.id,
-        sport_id,
+        sport.id,
         sport.start_time + 7 * timedelta(minutes=sport.minutes_per_game),
         pitch.id,
     )
     match_9 = make_match(
         team_3.id,
         team_1.id,
-        sport_id,
+        sport.id,
         sport.start_time + 8 * timedelta(minutes=sport.minutes_per_game),
         pitch.id,
     )
     match_10 = make_match(
         team_5.id,
         team_6.id,
-        sport_id,
+        sport.id,
         sport.start_time + 9 * timedelta(minutes=sport.minutes_per_game),
         pitch.id,
     )
     match_11 = make_match(
         team_1.id,
         team_2.id,
-        sport_id,
+        sport.id,
         sport.start_time + 10 * timedelta(minutes=sport.minutes_per_game),
         pitch.id,
     )
     match_12 = make_match(
         team_3.id,
         team_4.id,
-        sport_id,
+        sport.id,
         sport.start_time + 11 * timedelta(minutes=sport.minutes_per_game),
         pitch.id,
     )
     match_13 = make_match(
         team_6.id,
         team_1.id,
-        sport_id,
+        sport.id,
         sport.start_time + 12 * timedelta(minutes=sport.minutes_per_game),
         pitch.id,
     )
     match_14 = make_match(
         team_5.id,
         team_3.id,
-        sport_id,
+        sport.id,
         sport.start_time + 13 * timedelta(minutes=sport.minutes_per_game),
         pitch.id,
     )
     match_15 = make_match(
         team_2.id,
         team_4.id,
-        sport_id,
+        sport.id,
         sport.start_time + 14 * timedelta(minutes=sport.minutes_per_game),
         pitch.id,
     )
@@ -528,3 +527,21 @@ def seven_in_a_group_schedule(teams: list[Team], pitch: Pitch) -> list[Match]:
         match_20,
         match_21,
     ]
+
+
+def make_match(
+    home_team_id: UUID,
+    away_team_id: UUID,
+    sport_id: UUID,
+    time: datetime | None = None,
+    pitch_id: UUID | None = None,
+) -> Match:
+    return Match(
+        id=generate_uuid(),
+        home_team_id=home_team_id,
+        away_team_id=away_team_id,
+        sport_id=sport_id,
+        stage_id=StagesEnum.group_stage.value,
+        time=time,
+        pitch_id=pitch_id,
+    )

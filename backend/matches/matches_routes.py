@@ -1,8 +1,10 @@
 """Endpoints for matches"""
+from typing import Type
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
+from sqlalchemy import or_
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from starlette import status
@@ -697,6 +699,15 @@ def generate_schedule(
     if randomise_groups:
         randomly_assign_groups(db, number_of_groups, teams)
     else:
+        for team in teams:
+            if team.regional_competition_id is None:
+                team.regional_competition_id = 0
+            if team.stage_reached is None:
+                team.stage_reached = 0
+            if team.average_point_per_game_in_group_stage is None:
+                team.average_point_per_game_in_group_stage = 0
+            db.add(team)
+            db.commit()
         order_assign_groups(db, number_of_groups, teams)
 
     generate_schedule_for_group(db, number_of_groups, sport_id)
@@ -736,41 +747,59 @@ def edit_pitch(
         return JSONResponse(status_code=200, content="Match pitch updated")
 
 
-@matches_router.get(
-    "/clear_match/{sport_id}",
+@matches_router.put(
+    "/reset_matches/{sport_id}",
     tags=["matches"],
     status_code=status.HTTP_204_NO_CONTENT,
 )
-def clear_matches(
+def reset_matches(
     sport_id: UUID,
     db: Session = db_session,
     current_user: UserBase = current_user_instance,
 ) -> JSONResponse:
+    """Reset matches."""
     check_admin(current_user)
 
-    played_matches: list[Match] | None = (
+    played_matches: list[Type[Match]] = (
         db.query(Match)
         .filter(Match.sport_id == sport_id)
         .filter(Match.is_deleted.is_(False))
-        .filter(Match.home_score.is_not(None))
+        .filter(
+            or_(
+                Match.home_score.is_not(None),
+                Match.away_score.is_not(None),
+            )
+        )
+        .all()
     )
 
     if played_matches:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="MAtches have already been played",
+            detail="Some matches have already been played so can't reset",
         )
 
-    matches_to_delete = (
+    matches_to_reset: list[Type[Match]] = (
         db.query(Match)
         .filter(Match.sport_id == sport_id)
         .filter(Match.is_deleted.is_(False))
+        .all()
     )
 
-    for match in matches_to_delete:
-        match.is_deleted = True
-        db.add(match)
+    for match in matches_to_reset:
+        db.delete(match)
+        db.commit()
 
-    db.commit()
+    teams: list[Type[Team]] = (
+        db.query(Team)
+        .filter(Team.sport_id == sport_id)
+        .filter(Team.is_deleted.is_(False))
+        .all()
+    )
 
-    return JSONResponse(status_code=status.HTTP_204_NO_CONTENT)
+    for team in teams:
+        team.group = None
+        db.add(team)
+        db.commit()
+
+    return JSONResponse(status_code=status.HTTP_204_NO_CONTENT, content={})

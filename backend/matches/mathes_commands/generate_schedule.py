@@ -1,5 +1,4 @@
 """Generate a schedule for a sport."""
-from datetime import datetime
 from random import shuffle
 from uuid import UUID
 
@@ -16,9 +15,7 @@ from backend.matches.mathes_commands.x_in_a_group import (
     seven_in_a_group_schedule,
 )
 from backend.pitches.pitches_models import Pitch
-from backend.stages.stages_schemas import StagesEnum
 from backend.teams.teams_models import Team
-from backend.utils import generate_uuid
 
 
 def generate_schedule_for_group(
@@ -174,24 +171,6 @@ def check_matches_have_not_been_generated(db: Session, sport_id: UUID) -> None:
             detail="Matches have already been generated",
         )
     # endregion
-
-
-def make_match(
-    home_team_id: UUID,
-    away_team_id: UUID,
-    sport_id: UUID,
-    time: datetime | None = None,
-    pitch_id: UUID | None = None,
-) -> Match:
-    return Match(
-        id=generate_uuid(),
-        home_team_id=home_team_id,
-        away_team_id=away_team_id,
-        sport_id=sport_id,
-        stage_id=StagesEnum.group_stage.value,
-        time=time,
-        pitch_id=pitch_id,
-    )
 
 
 def order_assign_groups(db: Session, number_of_groups: int, teams: list[Team]) -> None:
