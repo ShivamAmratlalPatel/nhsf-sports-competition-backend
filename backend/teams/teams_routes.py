@@ -438,6 +438,18 @@ def delete_team(
         db.add(player)
         db.commit()
 
+    matches = (
+        db.query(Match)
+        .filter(or_(Match.home_team_id == team_id, Match.away_team_id == team_id))
+        .filter(Match.is_deleted.is_(False))
+        .all()
+    )
+
+    for match in matches:
+        match.is_deleted = True
+        db.add(match)
+        db.commit()
+
     return JSONResponse(status_code=status.HTTP_204_NO_CONTENT, content={})
 
 
@@ -511,4 +523,130 @@ def update_group(
     return JSONResponse(
         status_code=status.HTTP_200_OK,
         content=object_to_dict(TeamRead.model_validate(team)),
+    )
+
+
+@teams_router.put(
+    "/team/{team_id}/change_chapter/{chapter_id}",
+    tags=["teams"],
+    description="Change team's chapter.",
+    responses={
+        status.HTTP_200_OK: {
+            "model": TeamRead,
+            "description": "Successful response: team updated",
+            "title": "Team details",
+        },
+        status.HTTP_404_NOT_FOUND: {
+            "description": "Team not found",
+            "title": "Team not found",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "Team not found"},
+                },
+            },
+        },
+    },
+)
+def change_chapter(
+    team_id: UUID,
+    chapter_id: UUID,
+    db: Session = db_session,
+    current_user: UserBase = current_user_instance,
+) -> JSONResponse:
+    check_admin(current_user)
+    """Change a team's chapter."""
+    check_admin(current_user)
+
+    old_team = db.get(Team, team_id)
+
+    if not old_team:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Team not found",
+        )
+
+    if old_team.chapter_id == chapter_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Team already in chapter",
+        )
+
+    old_chapter = db.get(Chapter, old_team.chapter_id)
+
+    sport = db.get(Sport, old_team.sport_id)
+
+    old_chapter_teams = (
+        db.query(Team)
+        .filter(Team.chapter_id == old_chapter.id)
+        .filter(Team.is_deleted.is_(False))
+        .filter(Team.id != old_team.id)
+        .filter(Team.sport_id == old_team.sport_id)
+        .all()
+    )
+
+    if old_team.name[-1] in ["A", "B", "C", "D"]:
+        if len(old_chapter_teams) == 1:
+            old_chapter_teams[0].name = old_chapter.name
+            old_chapter_teams[0].internal_name = sport.name
+            db.add(old_chapter_teams[0])
+            db.commit()
+        else:
+            old_chapter_teams.sort(key=lambda x: x.name[-1])
+            for index, team in enumerate(old_chapter_teams):
+                if index == 0:
+                    team.name = f"{old_chapter.name} A"
+                    team.internal_name = f"{sport.name} A"
+                elif index == 1:
+                    team.name = f"{old_chapter.name} B"
+                    team.internal_name = f"{sport.name} B"
+                elif index == 2:
+                    team.name = f"{old_chapter.name} C"
+                    team.internal_name = f"{sport.name} C"
+                elif index == 3:
+                    team.name = f"{old_chapter.name} D"
+                    team.internal_name = f"{sport.name} D"
+                else:
+                    raise HTTPException(
+                        status_code=status.HTTP_400_BAD_REQUEST,
+                        detail="Too many teams",
+                    )
+                db.add(index)
+                db.commit()
+
+    existing_sport_teams: list[Team] | None = (
+        db.query(Team)
+        .filter(Team.sport_id == old_team.sport_id)
+        .filter(Team.chapter_id == chapter_id)
+        .filter(Team.is_deleted.is_(False))
+        .all()
+    )
+
+    chapter = db.get(Chapter, chapter_id)
+
+    old_team.chapter_id = chapter_id
+    old_team.name = chapter.name
+    old_team.internal_name = sport.name
+
+    if existing_sport_teams:
+        for team in existing_sport_teams:
+            if team.name == chapter.name:
+                team.name = f"{team.name} A"
+                old_team.name = f"{old_team.name} B"
+            elif team.name == f"{chapter.name} A":
+                old_team.name = f"{old_team.name} C"
+            elif team.name == f"{chapter.name} B":
+                old_team.name = f"{old_team.name} D"
+            else:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Too many teams",
+                )
+            db.add(team)
+
+    db.add(old_team)
+    db.commit()
+
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content=object_to_dict(TeamRead.model_validate(old_team)),
     )
