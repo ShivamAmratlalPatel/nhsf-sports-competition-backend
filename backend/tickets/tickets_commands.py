@@ -172,7 +172,7 @@ def add_new_player_from_ticket_tailor(payload: Payload, db: Session) -> Player:
         ticket_voided=False if payload.status == "valid" else True,
         emergency_contact_name=emergency_contact_name_answer,
         emergency_contact_number=emergency_contact_number_answer,
-        emergency_contact_phone=emergency_contact_relation_answer,
+        emergency_contact_relation=emergency_contact_relation_answer,
         allergies_medical_conditions=allergies_medical_conditions_answer,
         original_chapter=original_chapter,
     )
@@ -260,7 +260,7 @@ def log_new_tickets(db: Session, tickets: list[dict]) -> None:
                 player.ticket_voided = False if payload.status == "valid" else True
                 player.emergency_contact_name = emergency_contact_name_answer
                 player.emergency_contact_number = emergency_contact_number_answer
-                player.emergency_contact_phone = emergency_contact_relation_answer
+                player.emergency_contact_relation = emergency_contact_relation_answer
                 player.allergies_medical_conditions = (
                     allergies_medical_conditions_answer
                 )
@@ -287,7 +287,7 @@ def log_new_tickets(db: Session, tickets: list[dict]) -> None:
                 spectator.ticket_voided = False if ticket["status"] == "valid" else True
                 spectator.emergency_contact_name = emergency_contact_name_answer
                 spectator.emergency_contact_number = emergency_contact_number_answer
-                spectator.emergency_contact_phone = emergency_contact_relation_answer
+                spectator.emergency_contact_relation = emergency_contact_relation_answer
                 spectator.allergies_medical_conditions = (
                     allergies_medical_conditions_answer
                 )
@@ -305,7 +305,7 @@ def log_new_tickets(db: Session, tickets: list[dict]) -> None:
                     ticket_voided=False if ticket["status"] == "valid" else True,
                     emergency_contact_name=emergency_contact_name_answer,
                     emergency_contact_number=emergency_contact_number_answer,
-                    emergency_contact_phone=emergency_contact_relation_answer,
+                    emergency_contact_relation=emergency_contact_relation_answer,
                     allergies_medical_conditions=allergies_medical_conditions_answer,
                 )
                 db.add(spectator)

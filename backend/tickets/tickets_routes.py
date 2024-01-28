@@ -1,7 +1,7 @@
 """Endpoints for tickets"""
 
 import requests
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from starlette import status
@@ -16,12 +16,13 @@ from backend.helpers import get_db
 from backend.players.players_models import Player
 from backend.players.players_schemas import PlayerRead
 from backend.spectators.spectators_models import Spectator
+from backend.spectators.spectators_schemas import SpectatorRead
 from backend.tickets.tickets_commands import (
     add_new_player_from_ticket_tailor,
     log_new_tickets,
     calculate_other_questions,
 )
-from backend.tickets.tickets_schemas import IssuedTicketCreatedEvent
+from backend.tickets.tickets_schemas import IssuedTicketCreatedEvent, Payload
 from backend.utils import object_to_dict, generate_uuid
 
 db_session = Depends(get_db)
@@ -34,9 +35,43 @@ headers = {
 }
 
 
+def check_ticket(individual: Player | Spectator) -> bool:
+    """Check if ticket is valid."""
+    resp = requests.get(
+        f"{TICKET_TAILOR_BASE_URL}/issued_tickets/{individual.ticket_id}",
+        auth=(TICKET_TAILOR_API_KEY, ""),
+        headers=headers,
+    )
+
+    if resp.status_code == status.HTTP_200_OK:
+        ticket = Payload(**resp.json()["data"])
+        if ticket.status != "valid":
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Ticket voided. Please refer them to the registration desk.",
+            )
+        elif ticket.checked_in == "true":
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Ticket already checked in. Please refer them to the registration desk.",
+            )
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Ticket fetch failed with status code {resp.status_code} and { resp.text }. Please refer them to the registration desk.",
+        )
+
+    return True
+
+
 @ticket_router.get("/check_in/{barcode}", tags=["tickets"])
 def check_in(barcode: str, db: Session = db_session) -> JSONResponse:
     """Check in a ticket."""
+
+    raise HTTPException(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        detail="Ticket check in is disabled.",
+    )
 
     player: Player | None = (
         db.query(Player)
@@ -59,6 +94,8 @@ def check_in(barcode: str, db: Session = db_session) -> JSONResponse:
         )
 
     if player:
+        check_ticket(player)
+
         resp = requests.post(
             f"{TICKET_TAILOR_BASE_URL}/check_ins",
             auth=(TICKET_TAILOR_API_KEY, ""),
@@ -73,6 +110,8 @@ def check_in(barcode: str, db: Session = db_session) -> JSONResponse:
         db.add(player)
         db.commit()
     else:
+        check_ticket(spectator)
+
         resp = requests.post(
             f"{TICKET_TAILOR_BASE_URL}/check_ins",
             auth=(TICKET_TAILOR_API_KEY, ""),
@@ -93,11 +132,13 @@ def check_in(barcode: str, db: Session = db_session) -> JSONResponse:
             content=object_to_dict(PlayerRead.model_validate(player), format_date=True),
         )
     elif (
-        resp.status_code in {status.HTTP_200_OK, status.HTTP_201_CREATED} and not player
+        resp.status_code in {status.HTTP_200_OK, status.HTTP_201_CREATED} and spectator
     ):
         return JSONResponse(
-            status_code=status.HTTP_204_NO_CONTENT,
-            content={"message": "Ticket checked in successfully but no player found"},
+            status_code=status.HTTP_207_MULTI_STATUS,
+            content=object_to_dict(
+                SpectatorRead.model_validate(spectator), format_date=True
+            ),
         )
     else:
         print(resp.status_code)
@@ -137,7 +178,7 @@ def webhook_ticket_created(
         spectator = Spectator(
             id=generate_uuid(),
             name=data.payload.full_name,
-            email=data.payload.email.lower(),
+            email=data.payload.email.lower() if data.payload.email else None,
             order_id=order_id,
             ticket_id=ticket_id,
             barcode=barcode,
@@ -145,7 +186,7 @@ def webhook_ticket_created(
             ticket_voided=False if data.payload.status == "valid" else True,
             emergency_contact_name=emergency_contact_name_answer,
             emergency_contact_number=emergency_contact_number_answer,
-            emergency_contact_phone=emergency_contact_relation_answer,
+            emergency_contact_relation=emergency_contact_relation_answer,
             allergies_medical_conditions=allergies_medical_conditions_answer,
             original_chapter=original_chapter,
         )
@@ -180,7 +221,7 @@ def webhook_ticket_updated(
 
         if player:
             player.name = data.payload.full_name
-            player.email = data.payload.email.lower()
+            player.email = data.payload.email.lower() if data.payload.email else None
             player.order_id = order_id
             player.ticket_id = ticket_id
             player.barcode = barcode
@@ -206,7 +247,7 @@ def webhook_ticket_updated(
 
         if spectator:
             spectator.name = data.payload.full_name
-            spectator.email = data.payload.email.lower()
+            spectator.email = data.payload.email.lower() if data.payload.email else None
             spectator.order_id = order_id
             spectator.ticket_id = ticket_id
             spectator.barcode = barcode
@@ -217,7 +258,7 @@ def webhook_ticket_updated(
             spectator = Spectator(
                 id=generate_uuid(),
                 name=data.payload.full_name,
-                email=data.payload.email.lower(),
+                email=data.payload.email.lower() if data.payload.email else None,
                 order_id=order_id,
                 ticket_id=ticket_id,
                 barcode=barcode,

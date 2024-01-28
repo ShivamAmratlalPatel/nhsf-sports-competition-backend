@@ -536,6 +536,19 @@ def delete_player(
     db.add(player)
     db.commit()
 
-    return JSONResponse(
-        status_code=status.HTTP_204_NO_CONTENT,
-    )
+    return JSONResponse(status_code=status.HTTP_204_NO_CONTENT, content={})
+
+
+@players_router.get(
+    "/players/pagination",
+    tags=["players"],
+    description="Get all players.",
+    responses={
+        status.HTTP_200_OK: {
+            "model": list[PlayerRead],
+            "description": "Players retrieved successfully",
+        },
+    },
+)
+def get_paginated_players(db: Session = db_session):
+    raise NotImplementedError

@@ -1,2 +1,2 @@
-PYTHONPATH=. alembic revision --autogenerate -m "added errors table"
+PYTHONPATH=. alembic revision --autogenerate -m "fixed relation column"
 

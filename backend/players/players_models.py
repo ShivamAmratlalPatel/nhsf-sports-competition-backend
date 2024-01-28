@@ -18,7 +18,7 @@ class Player(Base):
         default=generate_uuid(),
         server_default=func.uuid_generate_v4(),
     )
-    name = Column(String, nullable=False)
+    name = Column(String, nullable=True)
     email = Column(String, nullable=True)
     created_date = Column(
         DateTime(timezone=True),
@@ -50,6 +50,6 @@ class Player(Base):
     )
     emergency_contact_name = Column(String)
     emergency_contact_number = Column(String)
-    emergency_contact_phone = Column(String)
+    emergency_contact_relation = Column(String)
     allergies_medical_conditions = Column(String)
     original_chapter = Column(String)

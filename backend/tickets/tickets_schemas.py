@@ -16,7 +16,7 @@ class Payload(BaseModel):
     created_at: int
     custom_questions: list[CustomQuestion]
     description: str
-    email: str
+    email: str | None = None
     event_id: str
     first_name: str | None = None
     full_name: str | None = None

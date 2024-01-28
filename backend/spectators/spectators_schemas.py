@@ -15,6 +15,6 @@ class SpectatorRead(BaseModel):
     ticket_voided: bool
     emergency_contact_name: str | None = None
     emergency_contact_number: str | None = None
-    emergency_contact_phone: str | None = None
+    emergency_contact_relation: str | None = None
     allergies_medical_conditions: str | None = None
     original_chapter: str | None = None
