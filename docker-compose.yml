@@ -7,7 +7,7 @@ services:
     networks:
       - nhsf_postgres_network
     env_file:
-      - $PWD/.env.local
+      - $PWD/.env
     depends_on:
       - postgres
     ports:

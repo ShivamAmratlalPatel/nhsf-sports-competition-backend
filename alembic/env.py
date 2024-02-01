@@ -16,6 +16,7 @@ from backend.sports.sports_models import *
 from backend.stages.stages_models import *
 from backend.tables.tables_models import *
 from backend.teams.teams_models import *
+from backend.tickets.tickets_models import *
 from backend.timetable.timetable_models import *
 from backend.users.users_models import *
 

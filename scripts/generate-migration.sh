@@ -1,2 +1,2 @@
-PYTHONPATH=. alembic revision --autogenerate -m "fixed relation column"
+PYTHONPATH=. alembic revision --autogenerate -m "added_tickets_columns"
 

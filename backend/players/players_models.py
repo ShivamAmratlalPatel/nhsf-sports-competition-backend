@@ -1,6 +1,7 @@
 """Players Database Models"""
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, String, func
 from sqlalchemy.dialects import postgresql as pg
+from sqlalchemy.orm import relationship
 
 from backend.database import Base
 from backend.utils import datetime_now, generate_uuid
@@ -41,15 +42,3 @@ class Player(Base):
         ForeignKey("teams.id", ondelete="CASCADE"),
     )
     cards = Column(pg.JSONB, nullable=False, default=[], server_default="[]")
-    order_id = Column(String)
-    ticket_id = Column(String)
-    barcode = Column(String)
-    checked_in = Column(Boolean, nullable=False, default=False, server_default="false")
-    ticket_voided = Column(
-        Boolean, nullable=False, default=False, server_default="false"
-    )
-    emergency_contact_name = Column(String)
-    emergency_contact_number = Column(String)
-    emergency_contact_relation = Column(String)
-    allergies_medical_conditions = Column(String)
-    original_chapter = Column(String)

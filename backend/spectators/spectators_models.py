@@ -1,6 +1,7 @@
 """Spectators Database Models"""
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, String, func
 from sqlalchemy.dialects import postgresql as pg
+from sqlalchemy.orm import relationship
 
 from backend.database import Base
 from backend.utils import datetime_now, generate_uuid
@@ -32,20 +33,3 @@ class Spectator(Base):
         onupdate=datetime_now(),
         server_onupdate=func.timezone("Europe/London", func.current_timestamp()),
     )
-    chapter_id = Column(
-        pg.UUID(as_uuid=True),
-        ForeignKey("chapters.id", ondelete="CASCADE"),
-        nullable=True,
-    )
-    order_id = Column(String)
-    ticket_id = Column(String)
-    barcode = Column(String)
-    checked_in = Column(Boolean, nullable=False, default=False, server_default="false")
-    ticket_voided = Column(
-        Boolean, nullable=False, default=False, server_default="false"
-    )
-    emergency_contact_name = Column(String)
-    emergency_contact_number = Column(String)
-    emergency_contact_relation = Column(String)
-    allergies_medical_conditions = Column(String)
-    original_chapter = Column(String)

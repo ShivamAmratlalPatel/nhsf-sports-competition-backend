@@ -159,7 +159,7 @@ def convert_dict_to_dict(data: dict, format_date: bool) -> dict:
     return result
 
 
-def object_to_dict(data: BaseModel | dict, format_date: bool = True) -> dict:
+def object_to_dict(data: BaseModel | dict | Base, format_date: bool = True) -> dict:
     """
     Convert a Pydantic model or dictionary instance to a dictionary recursively, providing a JSON-like representation.
 
@@ -172,6 +172,8 @@ def object_to_dict(data: BaseModel | dict, format_date: bool = True) -> dict:
     """
     if isinstance(data, BaseModel):
         data = data.model_dump()
+    elif isinstance(data, Base):
+        data = row2dict(data)
     return convert_dict_to_dict(data, format_date)
 
 
