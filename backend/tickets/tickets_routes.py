@@ -3,7 +3,6 @@
 import requests
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
-from sqlalchemy import text
 from sqlalchemy.orm import Session
 from starlette import status
 
@@ -74,7 +73,6 @@ def check_ticket(ticket: Ticket) -> bool:
 @ticket_router.get("/check_in/{barcode}", tags=["tickets"])
 def check_in(barcode: str, db: Session = db_session) -> JSONResponse:
     """Check in a ticket."""
-
     ticket: Ticket = db.query(Ticket).filter(Ticket.barcode == barcode).first()
 
     if ticket is None:
@@ -112,7 +110,7 @@ def check_in(barcode: str, db: Session = db_session) -> JSONResponse:
             return JSONResponse(
                 status_code=status.HTTP_200_OK,
                 content=object_to_dict(
-                    PlayerRead.model_validate(player), format_date=True
+                    PlayerRead.model_validate(player), format_date=True,
                 ),
             )
         elif ticket.spectator_id:
@@ -153,7 +151,6 @@ def webhook_ticket_created(
     db: Session = db_session,
 ) -> JSONResponse:
     """Webhook for ticket created event."""
-
     return create_ticket(data.payload, db)
 
 
@@ -163,7 +160,6 @@ def webhook_ticket_updated(
     db: Session = db_session,
 ) -> JSONResponse:
     """Webhook for ticket updated event."""
-
     resp = requests.get(
         f"{TICKET_TAILOR_BASE_URL}/issued_tickets/{data.payload.id}",
         auth=(TICKET_TAILOR_API_KEY, ""),
@@ -226,7 +222,7 @@ def get_all_tickets(
             return JSONResponse(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 content={
-                    "message": f"Tickets fetch failed with {resp.status_code} and {resp.text}"
+                    "message": f"Tickets fetch failed with {resp.status_code} and {resp.text}",
                 },
             )
 

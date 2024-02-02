@@ -1,5 +1,4 @@
 """Endpoints for matches"""
-from typing import Type
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -760,7 +759,7 @@ def reset_matches(
     """Reset matches."""
     check_admin(current_user)
 
-    played_matches: list[Type[Match]] = (
+    played_matches: list[type[Match]] = (
         db.query(Match)
         .filter(Match.sport_id == sport_id)
         .filter(Match.is_deleted.is_(False))
@@ -768,7 +767,7 @@ def reset_matches(
             or_(
                 Match.home_score.is_not(None),
                 Match.away_score.is_not(None),
-            )
+            ),
         )
         .all()
     )
@@ -779,7 +778,7 @@ def reset_matches(
             detail="Some matches have already been played so can't reset",
         )
 
-    matches_to_reset: list[Type[Match]] = (
+    matches_to_reset: list[type[Match]] = (
         db.query(Match)
         .filter(Match.sport_id == sport_id)
         .filter(Match.is_deleted.is_(False))
@@ -790,7 +789,7 @@ def reset_matches(
         db.delete(match)
         db.commit()
 
-    teams: list[Type[Team]] = (
+    teams: list[type[Team]] = (
         db.query(Team)
         .filter(Team.sport_id == sport_id)
         .filter(Team.is_deleted.is_(False))

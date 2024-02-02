@@ -6,10 +6,13 @@ from starlette import status
 
 from backend.matches.matches_models import Match
 from backend.pitches.pitches_models import Pitch
-from backend.sports.sports_models import Sport
 from backend.stages.stages_schemas import StagesEnum
 from backend.teams.teams_models import Team
 from backend.utils import generate_uuid
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from backend.sports.sports_models import Sport
 
 
 def two_in_a_group_schedule(teams: list[Team], pitch: Pitch) -> list[Match]:

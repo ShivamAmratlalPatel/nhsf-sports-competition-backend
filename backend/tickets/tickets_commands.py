@@ -1,4 +1,3 @@
-import requests
 from fastapi import HTTPException
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
@@ -8,8 +7,6 @@ from backend.chapters.chapters_models import Chapter
 from backend.config import (
     TICKET_TAILOR_PLAYER_TICKET_TYPE_ID,
     TICKET_TAILOR_EVENT_ID,
-    TICKET_TAILOR_BASE_URL,
-    TICKET_TAILOR_API_KEY,
 )
 from backend.errors.errors_models import Error
 from backend.players.players_models import Player
@@ -248,8 +245,8 @@ def create_ticket(payload: Payload, db: Session) -> JSONResponse:
         order_id=order_id,
         ticket_id=ticket_id,
         barcode=barcode,
-        checked_in=True if payload.checked_in == "true" else False,
-        ticket_voided=False if payload.status == "valid" else True,
+        checked_in=payload.checked_in == "true",
+        ticket_voided=payload.status != "valid",
         data=object_to_dict(payload, format_date=True),
     )
     db.add(ticket)
@@ -340,8 +337,8 @@ def update_ticket(payload: Payload, db):
     ticket.order_id = order_id
     ticket.ticket_id = ticket_id
     ticket.barcode = barcode
-    ticket.checked_in = True if payload.checked_in == "true" else False
-    ticket.ticket_voided = False if payload.status == "valid" else True
+    ticket.checked_in = payload.checked_in == "true"
+    ticket.ticket_voided = payload.status != "valid"
     ticket.update_data = object_to_dict(payload, format_date=True)
     if payload.ticket_type_id == TICKET_TAILOR_PLAYER_TICKET_TYPE_ID:
         if ticket.player_id is None:

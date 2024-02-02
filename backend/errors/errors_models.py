@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, String, func
+from sqlalchemy import Boolean, Column, DateTime, String, func
 from sqlalchemy.dialects import postgresql as pg
 
 from backend.database import Base

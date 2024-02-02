@@ -45,11 +45,11 @@ def upgrade() -> None:
         sa.Column("barcode", sa.String(), nullable=True),
         sa.Column("checked_in", sa.Boolean(), server_default="false", nullable=False),
         sa.Column(
-            "ticket_voided", sa.Boolean(), server_default="false", nullable=False
+            "ticket_voided", sa.Boolean(), server_default="false", nullable=False,
         ),
         sa.Column("data", postgresql.JSONB(astext_type=sa.Text()), nullable=True),
         sa.Column(
-            "update_data", postgresql.JSONB(astext_type=sa.Text()), nullable=True
+            "update_data", postgresql.JSONB(astext_type=sa.Text()), nullable=True,
         ),
         sa.Column("player_id", sa.UUID(), nullable=True),
         sa.Column("spectator_id", sa.UUID(), nullable=True),
@@ -149,13 +149,13 @@ def downgrade() -> None:
     op.add_column(
         "spectators",
         sa.Column(
-            "emergency_contact_name", sa.VARCHAR(), autoincrement=False, nullable=True
+            "emergency_contact_name", sa.VARCHAR(), autoincrement=False, nullable=True,
         ),
     )
     op.add_column(
         "spectators",
         sa.Column(
-            "emergency_contact_number", sa.VARCHAR(), autoincrement=False, nullable=True
+            "emergency_contact_number", sa.VARCHAR(), autoincrement=False, nullable=True,
         ),
     )
     op.add_column(
@@ -227,13 +227,13 @@ def downgrade() -> None:
     op.add_column(
         "players",
         sa.Column(
-            "emergency_contact_name", sa.VARCHAR(), autoincrement=False, nullable=True
+            "emergency_contact_name", sa.VARCHAR(), autoincrement=False, nullable=True,
         ),
     )
     op.add_column(
         "players",
         sa.Column(
-            "emergency_contact_number", sa.VARCHAR(), autoincrement=False, nullable=True
+            "emergency_contact_number", sa.VARCHAR(), autoincrement=False, nullable=True,
         ),
     )
     op.add_column(
@@ -251,9 +251,7 @@ def downgrade() -> None:
 
 def merge_upgrade_ops() -> None:
     """Merge upgrade operations from multiple branches."""
-    pass
 
 
 def merge_downgrade_ops() -> None:
     """Merge downgrade operations from multiple branches."""
-    pass

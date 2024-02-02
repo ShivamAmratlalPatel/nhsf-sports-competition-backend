@@ -44,7 +44,7 @@ def upgrade() -> None:
         sa.Column("barcode", sa.String(), nullable=True),
         sa.Column("checked_in", sa.Boolean(), server_default="false", nullable=False),
         sa.Column(
-            "ticket_voided", sa.Boolean(), server_default="false", nullable=False
+            "ticket_voided", sa.Boolean(), server_default="false", nullable=False,
         ),
         sa.Column("emergency_contact_name", sa.String(), nullable=True),
         sa.Column("emergency_contact_number", sa.String(), nullable=True),
@@ -58,20 +58,20 @@ def upgrade() -> None:
     op.add_column(
         "players",
         sa.Column(
-            "ticket_voided", sa.Boolean(), server_default="false", nullable=False
+            "ticket_voided", sa.Boolean(), server_default="false", nullable=False,
         ),
     )
     op.add_column(
-        "players", sa.Column("emergency_contact_name", sa.String(), nullable=True)
+        "players", sa.Column("emergency_contact_name", sa.String(), nullable=True),
     )
     op.add_column(
-        "players", sa.Column("emergency_contact_number", sa.String(), nullable=True)
+        "players", sa.Column("emergency_contact_number", sa.String(), nullable=True),
     )
     op.add_column(
-        "players", sa.Column("emergency_contact_phone", sa.String(), nullable=True)
+        "players", sa.Column("emergency_contact_phone", sa.String(), nullable=True),
     )
     op.add_column(
-        "players", sa.Column("allergies_medical_conditions", sa.String(), nullable=True)
+        "players", sa.Column("allergies_medical_conditions", sa.String(), nullable=True),
     )
     op.add_column("players", sa.Column("original_chapter", sa.String(), nullable=True))
     # ### end Alembic commands ###
@@ -93,9 +93,7 @@ def downgrade() -> None:
 
 def merge_upgrade_ops() -> None:
     """Merge upgrade operations from multiple branches."""
-    pass
 
 
 def merge_downgrade_ops() -> None:
     """Merge downgrade operations from multiple branches."""
-    pass

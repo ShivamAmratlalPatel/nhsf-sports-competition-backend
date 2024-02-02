@@ -4,14 +4,11 @@ from sqlalchemy import (
     Boolean,
     Column,
     DateTime,
-    Float,
     ForeignKey,
-    Integer,
     String,
     func,
 )
 from sqlalchemy.dialects import postgresql as pg
-from sqlalchemy.orm import relationship
 
 from backend.database import Base
 from backend.utils import datetime_now, generate_uuid
@@ -43,7 +40,7 @@ class Ticket(Base):
     barcode = Column(String)
     checked_in = Column(Boolean, nullable=False, default=False, server_default="false")
     ticket_voided = Column(
-        Boolean, nullable=False, default=False, server_default="false"
+        Boolean, nullable=False, default=False, server_default="false",
     )
     data = Column(pg.JSONB)
     update_data = Column(pg.JSONB)

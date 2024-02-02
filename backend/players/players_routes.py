@@ -535,7 +535,6 @@ def delete_player(
     current_user: UserBase = current_user_instance,
 ) -> JSONResponse:
     """Delete a player."""
-
     player: Player | None = (
         db.query(Player)
         .filter(Player.id == player_id)
