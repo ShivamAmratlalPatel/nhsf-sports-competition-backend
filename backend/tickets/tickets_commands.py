@@ -1,10 +1,16 @@
+import requests
 from fastapi import HTTPException
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from starlette import status
 
 from backend.chapters.chapters_models import Chapter
-from backend.config import TICKET_TAILOR_PLAYER_TICKET_TYPE_ID, TICKET_TAILOR_EVENT_ID
+from backend.config import (
+    TICKET_TAILOR_PLAYER_TICKET_TYPE_ID,
+    TICKET_TAILOR_EVENT_ID,
+    TICKET_TAILOR_BASE_URL,
+    TICKET_TAILOR_API_KEY,
+)
 from backend.errors.errors_models import Error
 from backend.players.players_models import Player
 from backend.players.players_schemas import PlayerRead

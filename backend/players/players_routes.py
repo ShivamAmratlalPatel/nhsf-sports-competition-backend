@@ -19,13 +19,14 @@ from backend.players.players_schemas import (
     PlayerRead,
     PlayerUpdate,
 )
+from backend.sports.sports_models import Sport
 from backend.teams.teams_commands.chapter_from_team import chapter_id_from_team
 from backend.teams.teams_models import Team
 from backend.users.users_commands.chapter_user import verify_chapter_user
 from backend.users.users_commands.check_admin import check_admin
 from backend.users.users_commands.get_users import get_current_active_user
 from backend.users.users_schemas import UserBase
-from backend.utils import convert_list_to_list, object_to_dict
+from backend.utils import convert_list_to_list, object_to_dict, generate_uuid
 
 players_router = APIRouter()
 current_user_instance = Depends(get_current_active_user)
@@ -50,7 +51,7 @@ def create_player(
 ) -> JSONResponse:
     """Create a player."""
     try:
-        chapter_id: UUID = chapter_id_from_team(db, player_create.team_id)
+        chapter_id: UUID = chapter_id_from_team(db, player_create.morning_team_id)
     except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -65,10 +66,57 @@ def create_player(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="User not part of chapter",
             ) from e
+    else:
+        check_admin(current_user)
+
+    if player_create.morning_team_id is not None:
+        morning_team: Team | None = db.get(Team, player_create.morning_team_id)
+        if morning_team is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Morning team not found",
+            )
+        morning_sport = db.get(Sport, morning_team.sport_id)
+        if morning_sport is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Morning sport not found",
+            )
+        if morning_sport.name not in {
+            "Netball",
+            "Badminton",
+            "Football",
+            "KabaddiW",
+            "Cricket",
+        }:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Morning sport not valid",
+            )
+    if player_create.afternoon_team_id is not None:
+        afternoon_team: Team | None = db.get(Team, player_create.afternoon_team_id)
+        if afternoon_team is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Afternoon team not found",
+            )
+        afternoon_sport = db.get(Sport, afternoon_team.sport_id)
+        if afternoon_sport is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Afternoon sport not found",
+            )
+        if afternoon_sport.name not in {"Kho", "KabaddiM"}:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Afternoon sport not valid",
+            )
 
     player = Player(
+        id=generate_uuid(),
         name=player_create.name,
-        team_id=player_create.team_id,
+        morning_team_id=player_create.morning_team_id,
+        afternoon_team_id=player_create.afternoon_team_id,
     )
 
     db.add(player)

@@ -3,6 +3,7 @@
 import requests
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 from starlette import status
 
@@ -95,7 +96,7 @@ def check_in(barcode: str, db: Session = db_session) -> JSONResponse:
     )
 
     if resp.status_code in {status.HTTP_200_OK, status.HTTP_201_CREATED}:
-        ticket.checked_in = False
+        ticket.checked_in = True
         db.add(ticket)
         db.commit()
 
@@ -124,9 +125,14 @@ def check_in(barcode: str, db: Session = db_session) -> JSONResponse:
                 )
 
             return JSONResponse(
-                status_code=status.HTTP_200_OK,
+                status_code=status.HTTP_207_MULTI_STATUS,
                 content=object_to_dict(
-                    SpectatorRead.model_validate(spectator), format_date=True
+                    SpectatorRead(
+                        id=spectator.id,
+                        name=spectator.name,
+                        email=spectator.email,
+                    ),
+                    format_date=True,
                 ),
             )
         else:
@@ -156,9 +162,23 @@ def webhook_ticket_updated(
     data: IssuedTicketCreatedEvent,
     db: Session = db_session,
 ) -> JSONResponse:
-    """Webhook for ticket created event."""
+    """Webhook for ticket updated event."""
 
-    return update_ticket(data.payload, db)
+    resp = requests.get(
+        f"{TICKET_TAILOR_BASE_URL}/issued_tickets/{data.payload.id}",
+        auth=(TICKET_TAILOR_API_KEY, ""),
+        headers=headers,
+    )
+
+    if resp.status_code == status.HTTP_200_OK:
+        ticket: Payload = Payload(**resp.json())
+
+        return update_ticket(ticket, db)
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Ticket fetch failed with status code {resp.status_code} and { resp.text }.",
+        )
 
 
 @ticket_router.get("/get_all_tickets", tags=["tickets"])
