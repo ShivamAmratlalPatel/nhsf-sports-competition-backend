@@ -93,6 +93,12 @@ def create_player(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Morning sport not valid",
             )
+        elif morning_sport.name == "Cricket":
+            if player_create.afternoon_team_id is not None:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Player can't play cricket and another sport",
+                )
     if player_create.afternoon_team_id is not None:
         afternoon_team: Team | None = db.get(Team, player_create.afternoon_team_id)
         if afternoon_team is None:
