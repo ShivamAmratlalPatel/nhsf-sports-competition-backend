@@ -7,6 +7,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from starlette import status
 
+from backend.chapters.chapters_models import Chapter
 from backend.config import ACCESS_TOKEN_EXPIRE_MINUTES
 from backend.helpers import get_db
 from backend.users.users_commands.authenticate_user import authenticate_user
@@ -15,7 +16,7 @@ from backend.users.users_commands.get_users import get_current_active_user
 from backend.users.users_commands.password_token_commands import get_password_hash
 from backend.users.users_commands.tokens import create_access_token
 from backend.users.users_models import User, UserType
-from backend.users.users_schemas import UserBase, UserCreate
+from backend.users.users_schemas import UserBase, UserCreate, UserCreateChapter
 from backend.utils import generate_uuid, object_to_dict
 
 db_session = Depends(get_db)
@@ -79,6 +80,85 @@ def post_user(user_create: UserCreate, db: Session = db_session) -> JSONResponse
         hashed_password=get_password_hash(user_create.password),
         user_type_id=admin_user_id,
         is_deleted=True,
+    )
+    db.add(user)
+    db.commit()
+
+    return JSONResponse(
+        status_code=status.HTTP_201_CREATED,
+        content={"message": "User created successfully"},
+    )
+
+
+@users_router.post(
+    "/users/chapter",
+    tags=["users"],
+    responses={
+        status.HTTP_201_CREATED: {
+            "description": "User created successfully",
+        },
+    },
+)
+def post_user_chapter(
+    user_create: UserCreateChapter, db: Session = db_session,
+) -> JSONResponse:
+    """Create chapter user."""
+    user_already_exists = (
+        db.query(User)
+        .filter(
+            User.username == user_create.username,
+        )
+        .first()
+    )
+    if user_already_exists:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username already exists",
+        )
+
+    user_already_exists = (
+        db.query(User)
+        .filter(
+            User.chapter_id == user_create.chapter_id,
+        )
+        .first()
+    )
+    if user_already_exists:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Only one chapter user is allowed per chapter",
+        )
+
+    chapter_type_id = db.query(UserType).filter(UserType.name == "chapter").first().id
+
+    if chapter_type_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Chapter type not found",
+        )
+
+    chapter = (
+        db.query(Chapter)
+        .filter(Chapter.id == user_create.chapter_id)
+        .filter(Chapter.is_deleted.is_(False))
+        .first()
+    )
+
+    if chapter is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Chapter not found",
+        )
+
+    user = User(
+        id=generate_uuid(),
+        username=user_create.username,
+        email=user_create.email,
+        full_name=user_create.full_name,
+        hashed_password=get_password_hash(user_create.password),
+        user_type_id=chapter_type_id,
+        chapter_id=chapter.id,
+        is_deleted=False,
     )
     db.add(user)
     db.commit()

@@ -39,3 +39,9 @@ class UserCreate(BaseModel):
     email: EmailStr
     password: str
     full_name: str
+
+
+class UserCreateChapter(UserCreate):
+    """User create chapter."""
+
+    chapter_id: UUID
