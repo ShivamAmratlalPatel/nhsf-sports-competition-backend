@@ -33,8 +33,8 @@ def add_new_player_from_ticket_tailor(ticket: Ticket, db: Session) -> Player:
         if chapter is not None:
             if ticket.morning_sport == "Kabaddi Womens":
                 morning_sport_answer = "KabaddiF"
-            if ticket.afternoon_sport == "Kabaddi Mens":
-                afternoon_sport_answer = "KabaddiM"
+            else:
+                morning_sport_answer = ticket.morning_sport
             if ticket.morning_sport == "None" or ticket.morning_sport is None:
                 morning_team_id = None
             else:
@@ -67,6 +67,10 @@ def add_new_player_from_ticket_tailor(ticket: Ticket, db: Session) -> Player:
                     morning_team_id = None
                 else:
                     morning_team_id = morning_team.id
+            if ticket.afternoon_sport == "Kabaddi Mens":
+                afternoon_sport_answer = "KabaddiM"
+            else:
+                afternoon_sport_answer = ticket.afternoon_sport
             if ticket.afternoon_sport == "None" or ticket.afternoon_sport is None:
                 afternoon_team_id = None
             else:
@@ -360,6 +364,17 @@ def update_ticket(payload: Payload, db):
             content=object_to_dict(PlayerRead.model_validate(player), format_date=True),
         )
     else:
+        if ticket.spectator_id is None:
+            spectator = Spectator(
+                id=generate_uuid(),
+                name=payload.full_name,
+                email=payload.email.lower() if payload.email else None,
+            )
+            ticket.spectator_id = spectator.id
+            return JSONResponse(
+                status_code=status.HTTP_201_CREATED,
+                content=object_to_dict(spectator, format_date=True),
+            )
         spectator: Spectator | None = db.get(Spectator, ticket.spectator_id)
         if spectator:
             spectator.name = payload.full_name
