@@ -107,10 +107,17 @@ def check_in(barcode: str, db: Session = db_session) -> JSONResponse:
                     detail="Ticket checked in but player not found. Please refer them to the registration desk.",
                 )
 
+            if player.is_deleted is True:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Player has been deleted. Please refer them to the registration desk.",
+                )
+
             return JSONResponse(
                 status_code=status.HTTP_200_OK,
                 content=object_to_dict(
-                    PlayerRead.model_validate(player), format_date=True,
+                    PlayerRead.model_validate(player),
+                    format_date=True,
                 ),
             )
         elif ticket.spectator_id:
@@ -120,6 +127,12 @@ def check_in(barcode: str, db: Session = db_session) -> JSONResponse:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail="Ticket checked in but spectator not found. Please refer them to the registration desk.",
+                )
+
+            if spectator.is_deleted is True:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Spectator has been deleted. Please refer them to the registration desk.",
                 )
 
             return JSONResponse(
