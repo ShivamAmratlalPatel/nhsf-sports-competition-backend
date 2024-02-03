@@ -1,4 +1,6 @@
 """Endpoints for tickets"""
+from datetime import datetime
+from uuid import UUID
 
 import requests
 from fastapi import APIRouter, Depends, HTTPException
@@ -6,6 +8,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from starlette import status
 
+from backend.commands.get_paginated_result import GetPaginatedResult
 from backend.config import (
     TICKET_TAILOR_API_KEY,
     TICKET_TAILOR_BASE_URL,
@@ -14,6 +17,7 @@ from backend.config import (
 from backend.helpers import get_db
 from backend.players.players_models import Player
 from backend.players.players_schemas import PlayerRead
+from backend.schemas import SortBy, PaginationResult
 from backend.spectators.spectators_models import Spectator
 from backend.spectators.spectators_schemas import SpectatorRead
 from backend.tickets.tickets_commands import (
@@ -22,7 +26,11 @@ from backend.tickets.tickets_commands import (
     update_ticket,
 )
 from backend.tickets.tickets_models import Ticket
-from backend.tickets.tickets_schemas import IssuedTicketCreatedEvent, Payload
+from backend.tickets.tickets_schemas import (
+    IssuedTicketCreatedEvent,
+    Payload,
+    TicketRead,
+)
 from backend.utils import object_to_dict
 
 db_session = Depends(get_db)
@@ -110,7 +118,8 @@ def check_in(barcode: str, db: Session = db_session) -> JSONResponse:
             return JSONResponse(
                 status_code=status.HTTP_200_OK,
                 content=object_to_dict(
-                    PlayerRead.model_validate(player), format_date=True,
+                    PlayerRead.model_validate(player),
+                    format_date=True,
                 ),
             )
         elif ticket.spectator_id:
@@ -229,4 +238,35 @@ def get_all_tickets(
     return JSONResponse(
         status_code=status.HTTP_200_OK,
         content={"message": "Tickets fetched successfully"},
+    )
+
+
+@ticket_router.get("/tickets", tags=["tickets"])
+def list_tickets(
+    cursor_column: datetime | str | None = None,
+    cursor_id: UUID | None = None,
+    previous: bool | None = None,
+    per_page: int | None = 20,
+    filter_by: str | None = None,
+    sort_by: SortBy | None = SortBy.date_desc,
+    db: Session = db_session,
+) -> PaginationResult:
+    """Get all tickets."""
+    pagination = GetPaginatedResult()
+
+    query = db.query(Ticket).order_by(
+        pagination.get_sort_by(
+            Ticket.created_date,
+            Ticket.first_name,
+            sort_by,
+        ),
+        Ticket.id.desc(),
+    )
+    return pagination.run(
+        cursor_id,
+        cursor_column,
+        previous,
+        query,
+        TicketRead,
+        per_page,
     )

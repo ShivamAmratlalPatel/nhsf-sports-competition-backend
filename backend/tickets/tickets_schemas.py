@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from pydantic import BaseModel
 
 
@@ -79,3 +81,23 @@ json_data = {
         "voided_at": None,
     },
 }
+
+
+class TicketRead(BaseModel):
+    id: UUID
+    barcode: str
+    checked_in: str
+    created_at: int
+    custom_questions: list[dict]
+    description: str
+    email: str | None = None
+    event_id: str
+    first_name: str | None = None
+    full_name: str | None = None
+    last_name: str | None = None
+    order_id: str
+    source: str
+    status: str
+    ticket_type_id: str
+    updated_at: int
+    voided_at: int | None
