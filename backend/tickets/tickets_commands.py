@@ -165,7 +165,7 @@ def calculate_other_questions(payload: Payload) -> tuple[str, str, str, str, str
         (
             question.answer
             for question in payload.custom_questions
-            if question.question == "Emergency Contact Number"
+            if question.question == "Emergency Contact Phone Number"
         ),
         None,
     )
