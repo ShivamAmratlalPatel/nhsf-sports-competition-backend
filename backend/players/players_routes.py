@@ -51,7 +51,15 @@ def create_player(
 ) -> JSONResponse:
     """Create a player."""
     try:
-        chapter_id: UUID = chapter_id_from_team(db, player_create.morning_team_id)
+        if player_create.morning_team_id is not None:
+            chapter_id: UUID = chapter_id_from_team(db, player_create.morning_team_id)
+        elif player_create.afternoon_team_id is not None:
+            chapter_id: UUID = chapter_id_from_team(db, player_create.afternoon_team_id)
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Player must be part of a team",
+            )
     except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -408,7 +416,7 @@ def get_chapter_players(
         },
     },
 )
-def get_chapter_players(team_id: UUID, db: Session = db_session) -> list[dict]:
+def get_team_players(team_id: UUID, db: Session = db_session) -> list[dict]:
     team: Chapter = db.get(Team, team_id)
 
     if not team:

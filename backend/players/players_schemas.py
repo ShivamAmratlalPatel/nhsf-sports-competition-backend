@@ -1,6 +1,7 @@
 """Players schemas."""
 from datetime import datetime
 from enum import Enum
+from typing import Any
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict
@@ -55,6 +56,7 @@ class PlayerRead(PlayerBase):
     created_date: datetime
     is_deleted: bool
     last_modified_date: datetime | None = None
+    has_ticket: bool
 
     model_config = ConfigDict(
         from_attributes=True,
