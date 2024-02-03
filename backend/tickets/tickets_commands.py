@@ -274,7 +274,7 @@ def create_ticket(payload: Payload, db: Session) -> JSONResponse:
             return JSONResponse(
                 status_code=status.HTTP_201_CREATED,
                 content=object_to_dict(
-                    PlayerRead.model_validate(player), format_date=True
+                    PlayerRead.model_validate(player), format_date=True,
                 ),
             )
         else:
