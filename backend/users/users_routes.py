@@ -1,5 +1,6 @@
 """Routes for users."""
 from datetime import timedelta
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
@@ -199,6 +200,21 @@ def edit_user(
         user: User = db.query(User).filter(User.full_name == full_name).first()
 
     user.is_deleted = False
+
+    db.add(user)
+
+    db.commit()
+
+
+@users_router.put("/users/{user_id}/change_password", tags=["users"])
+def change_password(
+    user_id: UUID,
+    password: str,
+    db: Session = db_session,
+):
+    user: User = db.get(User, user_id)
+
+    user.hashed_password = get_password_hash(password)
 
     db.add(user)
 
