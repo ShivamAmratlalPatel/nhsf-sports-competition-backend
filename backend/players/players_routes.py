@@ -465,7 +465,6 @@ def update_player(
     current_user: UserBase = current_user_instance,
 ) -> JSONResponse:
     """Update a player."""
-    check_admin(current_user)
     player = db.query(Player).filter(Player.id == player_id).first()
 
     if not player:
@@ -474,17 +473,32 @@ def update_player(
             detail="Player not found",
         )
 
+    if player.morning_team_id is not None:
+        morning_team = db.get(Team, player.morning_team_id)
+        chapter_id = morning_team.chapter_id
+    elif player.afternoon_team_id is not None:
+        afternoon_team = db.get(Team, player.afternoon_team_id)
+        chapter_id = afternoon_team.chapter_id
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Player must be part of a team",
+        )
+
     if current_user.user_type_name == "chapter":
         try:
-            verify_chapter_user(current_user.chapter_id, player.chapter_id)
+            verify_chapter_user(current_user.chapter_id, chapter_id)
         except ValueError as e:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="User not part of chapter",
             ) from e
+    else:
+        check_admin(current_user)
 
     player.name = player_update.name
-    player.team_id = player_update.team_id
+    player.morning_team_id = player_update.morning_team_id
+    player.afternoon_team_id = player_update.afternoon_team_id
 
     db.commit()
 
@@ -592,6 +606,8 @@ def delete_player(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="User not part of chapter",
             )
+    else:
+        check_admin(current_user)
 
     player.is_deleted = True
     db.add(player)
