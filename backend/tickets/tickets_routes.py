@@ -5,6 +5,7 @@ from uuid import UUID
 import requests
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
+from sqlalchemy import or_
 from sqlalchemy.orm import Session
 from starlette import status
 
@@ -260,19 +261,33 @@ def list_tickets(
     previous: bool | None = None,
     per_page: int | None = 20,
     filter_by: str | None = None,
-    sort_by: SortBy | None = SortBy.date_desc,
+    sort_by: SortBy | None = SortBy.date_asc,
     db: Session = db_session,
 ) -> PaginationResult:
     """Get all tickets."""
     pagination = GetPaginatedResult()
 
-    query = db.query(Ticket).order_by(
-        pagination.get_sort_by(
-            Ticket.created_date,
-            Ticket.first_name,
-            sort_by,
-        ),
-        Ticket.id.desc(),
+    filters = []
+
+    if filter_by is not None and filter_by != "":
+        filters.append(
+            or_(
+                Ticket.first_name.ilike(f"%{filter_by}%"),
+                Ticket.last_name.ilike(f"%{filter_by}%"),
+            ),
+        )
+
+    query = (
+        db.query(Ticket)
+        .filter(*filters)
+        .order_by(
+            pagination.get_sort_by(
+                Ticket.first_name,
+                Ticket.created_date,
+                sort_by,
+            ),
+            Ticket.id.desc(),
+        )
     )
     return pagination.run(
         cursor_id,
@@ -281,4 +296,24 @@ def list_tickets(
         query,
         TicketRead,
         per_page,
+    )
+
+
+@ticket_router.get("/tickets/{ticket_id}", tags=["tickets"])
+def get_ticket(
+    ticket_id: UUID,
+    db: Session = db_session,
+) -> JSONResponse:
+    """Get a ticket."""
+    ticket = db.get(Ticket, ticket_id)
+
+    if ticket is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Ticket not found",
+        )
+
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content=object_to_dict(TicketRead.model_validate(ticket), format_date=True),
     )

@@ -1,5 +1,10 @@
+from datetime import datetime
+from uuid import UUID
+
+from pydantic import BaseModel
 from sqlakeyset import get_page
 from sqlalchemy import nulls_first, nulls_last
+from sqlalchemy.orm import Query
 
 from backend.schemas import NextPage, PaginationResult, SortBy
 from backend.utils import object_to_dict
@@ -9,7 +14,15 @@ class GetPaginatedResult:
     def __init__(self) -> None:
         pass
 
-    def run(self, cursor_id, cursor_column, previous, query, schema, per_page=20):
+    def run(
+        self,
+        cursor_id: UUID | None,
+        cursor_column: datetime | str | None,
+        previous: bool | None,
+        query: Query,
+        schema: type[BaseModel],
+        per_page: int = 20,
+    ) -> PaginationResult:
         if cursor_column and cursor_id:
             page = ((cursor_column, cursor_id), previous)
         else:
@@ -34,7 +47,7 @@ class GetPaginatedResult:
             if query_result.paging.has_previous
             else None,
             results=[
-                object_to_dict(schema.from_orm(ta), format_date=True)
+                object_to_dict(schema.model_validate(ta), format_date=True)
                 for ta in query_result
             ],
         )

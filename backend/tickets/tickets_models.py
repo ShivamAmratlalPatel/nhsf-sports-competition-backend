@@ -40,7 +40,10 @@ class Ticket(Base):
     barcode = Column(String)
     checked_in = Column(Boolean, nullable=False, default=False, server_default="false")
     ticket_voided = Column(
-        Boolean, nullable=False, default=False, server_default="false",
+        Boolean,
+        nullable=False,
+        default=False,
+        server_default="false",
     )
     data = Column(pg.JSONB)
     update_data = Column(pg.JSONB)
@@ -62,3 +65,11 @@ class Ticket(Base):
     @property
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
+
+    @property
+    def ticket_type(self):
+        if self.player_id is not None:
+            return "player"
+        if self.spectator_id is not None:
+            return "spectator"
+        return "unknown"

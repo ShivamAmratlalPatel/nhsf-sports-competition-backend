@@ -1,6 +1,7 @@
+from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class CustomQuestion(BaseModel):
@@ -85,19 +86,31 @@ json_data = {
 
 class TicketRead(BaseModel):
     id: UUID
-    barcode: str
-    checked_in: str
-    created_at: int
-    custom_questions: list[dict]
-    description: str
-    email: str | None = None
-    event_id: str
-    first_name: str | None = None
-    full_name: str | None = None
-    last_name: str | None = None
-    order_id: str
-    source: str
-    status: str
-    ticket_type_id: str
-    updated_at: int
-    voided_at: int | None
+    first_name: str | None
+    last_name: str | None
+    email: str | None
+    chapter: str | None
+    original_chapter: str | None
+    morning_sport: str | None
+    afternoon_sport: str | None
+    emergency_contact_name: str | None
+    emergency_contact_number: str | None
+    emergency_contact_relationship: str | None
+    allergies_medical_conditions: str | None
+    order_id: str | None
+    ticket_id: str | None
+    barcode: str | None
+    checked_in: bool = False
+    ticket_voided: bool = False
+    player_id: UUID | None
+    spectator_id: UUID | None
+    created_date: datetime
+    is_deleted: bool = False
+    last_modified_date: datetime
+
+    full_name: str | None
+    ticket_type: str | None
+
+    model_config = ConfigDict(
+        from_attributes=True,
+    )
