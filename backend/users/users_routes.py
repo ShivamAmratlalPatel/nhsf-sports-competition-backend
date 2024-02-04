@@ -100,7 +100,8 @@ def post_user(user_create: UserCreate, db: Session = db_session) -> JSONResponse
     },
 )
 def post_user_chapter(
-    user_create: UserCreateChapter, db: Session = db_session,
+    user_create: UserCreateChapter,
+    db: Session = db_session,
 ) -> JSONResponse:
     """Create chapter user."""
     user_already_exists = (
@@ -121,6 +122,7 @@ def post_user_chapter(
         .filter(
             User.chapter_id == user_create.chapter_id,
         )
+        .filter(User.is_deleted.is_(False))
         .first()
     )
     if user_already_exists:
