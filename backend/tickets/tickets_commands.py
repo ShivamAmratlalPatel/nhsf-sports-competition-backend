@@ -165,7 +165,7 @@ def calculate_other_questions(payload: Payload) -> tuple[str, str, str, str, str
         (
             question.answer
             for question in payload.custom_questions
-            if question.question == "Emergency Contact Number"
+            if question.question == "Emergency Contact Phone Number"
         ),
         None,
     )
@@ -233,57 +233,67 @@ def create_ticket(payload: Payload, db: Session) -> JSONResponse:
         ),
         None,
     )
-    ticket = Ticket(
-        id=generate_uuid(),
-        first_name=payload.first_name,
-        last_name=payload.last_name,
-        email=payload.email.lower() if payload.email else None,
-        chapter=chapter_answer,
-        original_chapter=original_chapter,
-        morning_sport=morning_sport_answer,
-        afternoon_sport=afternoon_sport_answer,
-        emergency_contact_name=emergency_contact_name_answer,
-        emergency_contact_number=emergency_contact_number_answer,
-        emergency_contact_relationship=emergency_contact_relation_answer,
-        allergies_medical_conditions=allergies_medical_conditions_answer,
-        order_id=order_id,
-        ticket_id=ticket_id,
-        barcode=barcode,
-        checked_in=payload.checked_in == "true",
-        ticket_voided=payload.status != "valid",
-        data=object_to_dict(payload, format_date=True),
-    )
-    db.add(ticket)
-    db.commit()
-    if payload.ticket_type_id == TICKET_TAILOR_PLAYER_TICKET_TYPE_ID:
-        player = add_new_player_from_ticket_tailor(ticket, db)
 
-        ticket.player_id = player.id
-
-        db.add(ticket)
-        db.commit()
-
+    exisiting_ticket = db.query(Ticket).filter(Ticket.ticket_id == ticket_id).first()
+    if exisiting_ticket:
         return JSONResponse(
-            status_code=status.HTTP_201_CREATED,
-            content=object_to_dict(PlayerRead.model_validate(player), format_date=True),
+            status_code=status.HTTP_200_OK,
+            content=object_to_dict(exisiting_ticket, format_date=True),
         )
     else:
-        spectator = Spectator(
+        ticket = Ticket(
             id=generate_uuid(),
-            name=payload.full_name,
+            first_name=payload.first_name,
+            last_name=payload.last_name,
             email=payload.email.lower() if payload.email else None,
+            chapter=chapter_answer,
+            original_chapter=original_chapter,
+            morning_sport=morning_sport_answer,
+            afternoon_sport=afternoon_sport_answer,
+            emergency_contact_name=emergency_contact_name_answer,
+            emergency_contact_number=emergency_contact_number_answer,
+            emergency_contact_relationship=emergency_contact_relation_answer,
+            allergies_medical_conditions=allergies_medical_conditions_answer,
+            order_id=order_id,
+            ticket_id=ticket_id,
+            barcode=barcode,
+            checked_in=payload.checked_in == "true",
+            ticket_voided=payload.status != "valid",
+            data=object_to_dict(payload, format_date=True),
         )
-        ticket.spectator_id = spectator.id
-
-        db.add(spectator)
         db.add(ticket)
-
         db.commit()
+        if payload.ticket_type_id == TICKET_TAILOR_PLAYER_TICKET_TYPE_ID:
+            player = add_new_player_from_ticket_tailor(ticket, db)
 
-        return JSONResponse(
-            status_code=status.HTTP_201_CREATED,
-            content=object_to_dict(spectator, format_date=True),
-        )
+            ticket.player_id = player.id
+
+            db.add(ticket)
+            db.commit()
+
+            return JSONResponse(
+                status_code=status.HTTP_201_CREATED,
+                content=object_to_dict(
+                    PlayerRead.model_validate(player), format_date=True,
+                ),
+            )
+        else:
+            spectator = Spectator(
+                id=generate_uuid(),
+                name=payload.full_name,
+                email=payload.email.lower() if payload.email else None,
+            )
+            ticket.spectator_id = spectator.id
+
+            db.add(spectator)
+            db.add(ticket)
+
+            db.commit()
+
+            return JSONResponse(
+                status_code=status.HTTP_201_CREATED,
+                content=object_to_dict(spectator, format_date=True),
+            )
 
 
 def update_ticket(payload: Payload, db):

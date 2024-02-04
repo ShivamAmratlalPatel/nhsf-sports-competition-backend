@@ -233,6 +233,7 @@ def get_teams(
                     db.query(Team)
                     .filter(Team.chapter_id == chapter_id)
                     .filter(Team.is_deleted.is_(False))
+                    .order_by(Team.name)
                     .all()
                 )
             elif sport_id:
@@ -240,10 +241,16 @@ def get_teams(
                     db.query(Team)
                     .filter(Team.sport_id == sport_id)
                     .filter(Team.is_deleted.is_(False))
+                    .order_by(Team.name)
                     .all()
                 )
             else:
-                teams = db.query(Team).filter(Team.is_deleted.is_(False)).all()
+                teams = (
+                    db.query(Team)
+                    .filter(Team.is_deleted.is_(False))
+                    .order_by(Team.name)
+                    .all()
+                )
             return JSONResponse(
                 status_code=status.HTTP_200_OK,
                 content=[
@@ -258,6 +265,7 @@ def get_teams(
                     .filter(Team.chapter_id == chapter_id)
                     .filter(Team.is_deleted.is_(False))
                     .filter(Team.group.is_(None))
+                    .order_by(Team.name)
                     .all()
                 )
             elif sport_id:
@@ -266,6 +274,7 @@ def get_teams(
                     .filter(Team.sport_id == sport_id)
                     .filter(Team.is_deleted.is_(False))
                     .filter(Team.group.is_(None))
+                    .order_by(Team.name)
                     .all()
                 )
             else:
@@ -273,6 +282,7 @@ def get_teams(
                     db.query(Team)
                     .filter(Team.group.is_(None))
                     .filter(Team.is_deleted.is_(False))
+                    .order_by(Team.name)
                     .all()
                 )
 
@@ -286,6 +296,7 @@ def get_teams(
                         .filter(Team.chapter_id == chapter_id)
                         .filter(Team.is_deleted.is_(False))
                         .filter(Team.group == group)
+                        .order_by(Team.name)
                         .all()
                     )
                 elif sport_id:
@@ -294,6 +305,7 @@ def get_teams(
                         .filter(Team.sport_id == sport_id)
                         .filter(Team.is_deleted.is_(False))
                         .filter(Team.group == group)
+                        .order_by(Team.name)
                         .all()
                     )
                 else:
@@ -301,6 +313,7 @@ def get_teams(
                         db.query(Team)
                         .filter(Team.group == group)
                         .filter(Team.is_deleted.is_(False))
+                        .order_by(Team.name)
                         .all()
                     )
 
@@ -323,6 +336,7 @@ def get_teams(
                 db.query(Team)
                 .filter(Team.chapter_id == chapter_id)
                 .filter(Team.is_deleted.is_(False))
+                .order_by(Team.name)
                 .all()
             )
         elif sport_id:
@@ -330,10 +344,16 @@ def get_teams(
                 db.query(Team)
                 .filter(Team.sport_id == sport_id)
                 .filter(Team.is_deleted.is_(False))
+                .order_by(Team.name)
                 .all()
             )
         else:
-            teams = db.query(Team).filter(Team.is_deleted.is_(False)).all()
+            teams = (
+                db.query(Team)
+                .filter(Team.is_deleted.is_(False))
+                .order_by(Team.name)
+                .all()
+            )
 
         return JSONResponse(
             status_code=status.HTTP_200_OK,

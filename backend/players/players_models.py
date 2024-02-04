@@ -1,6 +1,7 @@
 """Players Database Models"""
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, String, func
 from sqlalchemy.dialects import postgresql as pg
+from sqlalchemy.orm import relationship
 
 from backend.database import Base
 from backend.utils import datetime_now, generate_uuid
@@ -41,3 +42,14 @@ class Player(Base):
         ForeignKey("teams.id", ondelete="CASCADE"),
     )
     cards = Column(pg.JSONB, nullable=False, default=[], server_default="[]")
+    tickets = relationship("Ticket")
+
+    @property
+    def has_ticket(self):
+        """Check if player has a ticket."""
+        output = False
+        for ticket in self.tickets:
+            if ticket.is_deleted is False:
+                output = True
+                break
+        return output
