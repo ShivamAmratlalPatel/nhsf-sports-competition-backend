@@ -77,6 +77,25 @@ def create_player(
     else:
         check_admin(current_user)
 
+    check_valid_sports(db, player_create)
+
+    player = Player(
+        id=generate_uuid(),
+        name=player_create.name,
+        morning_team_id=player_create.morning_team_id,
+        afternoon_team_id=player_create.afternoon_team_id,
+    )
+
+    db.add(player)
+    db.commit()
+
+    return JSONResponse(
+        status_code=status.HTTP_201_CREATED,
+        content=object_to_dict(PlayerRead.model_validate(player), format_date=True),
+    )
+
+
+def check_valid_sports(db: Session, player_create: PlayerCreate | PlayerUpdate) -> None:
     if player_create.morning_team_id is not None:
         morning_team: Team | None = db.get(Team, player_create.morning_team_id)
         if morning_team is None:
@@ -125,21 +144,6 @@ def create_player(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Afternoon sport not valid",
             )
-
-    player = Player(
-        id=generate_uuid(),
-        name=player_create.name,
-        morning_team_id=player_create.morning_team_id,
-        afternoon_team_id=player_create.afternoon_team_id,
-    )
-
-    db.add(player)
-    db.commit()
-
-    return JSONResponse(
-        status_code=status.HTTP_201_CREATED,
-        content=object_to_dict(PlayerRead.model_validate(player), format_date=True),
-    )
 
 
 @players_router.get(
@@ -465,6 +469,7 @@ def update_player(
     current_user: UserBase = current_user_instance,
 ) -> JSONResponse:
     """Update a player."""
+    print(player_update)
     player = db.query(Player).filter(Player.id == player_id).first()
 
     if not player:
@@ -495,6 +500,8 @@ def update_player(
             ) from e
     else:
         check_admin(current_user)
+
+    check_valid_sports(db, player_update)
 
     player.name = player_update.name
     player.morning_team_id = player_update.morning_team_id

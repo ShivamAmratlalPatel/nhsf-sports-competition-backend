@@ -1,4 +1,4 @@
-TRUNCATE chapters, league_tables, match_audit, matches, pitches, players, sports, teams, timetable, users, spectators, tickets;
+-- TRUNCATE chapters, league_tables, match_audit, matches, pitches, players, sports, teams, timetable, users, spectators, tickets;
 -- Insert into chapters table and store the ID in the temporary table
 INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('d49db23a-7ac3-4a1f-9dbc-952763f06d97', 'ARU', '2024-01-20 15:11:16.170134 +00:00', false, null, 'London Zone', 'ss3001@student.aru.ac.uk');
 INSERT INTO public.chapters (id, name, created_date, is_deleted, last_modified_date, zone, email) VALUES ('72f0206b-bfe8-410a-b1f5-06488f6cd6c5', 'Aston', '2024-01-20 15:11:16.170134 +00:00', false, null, 'Central Zone', 'Tisha34.tj@gmail.com');
