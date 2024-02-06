@@ -32,9 +32,12 @@ from backend.tickets.tickets_schemas import (
     Payload,
     TicketRead,
 )
+from backend.users.users_commands.check_admin import check_admin
+from backend.users.users_schemas import UserBase
 from backend.utils import object_to_dict
 
 db_session = Depends(get_db)
+current_user_instance = Depends(get_current_active_user)
 
 ticket_router = APIRouter()
 
@@ -263,8 +266,10 @@ def list_tickets(
     filter_by: str | None = None,
     sort_by: SortBy | None = SortBy.date_asc,
     db: Session = db_session,
+    current_user: UserBase = current_user_instance,
 ) -> PaginationResult:
     """Get all tickets."""
+    check_admin(current_user)
     pagination = GetPaginatedResult()
 
     filters = []
