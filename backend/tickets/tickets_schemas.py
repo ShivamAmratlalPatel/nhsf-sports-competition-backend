@@ -106,7 +106,7 @@ class TicketRead(BaseModel):
     spectator_id: UUID | None
     created_date: datetime
     is_deleted: bool = False
-    last_modified_date: datetime
+    last_modified_date: datetime | None = None
 
     full_name: str | None
     ticket_type: str | None
