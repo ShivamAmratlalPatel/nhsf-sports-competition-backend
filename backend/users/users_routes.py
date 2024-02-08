@@ -181,10 +181,14 @@ def get_me(
 
 
 @users_router.get("/users", tags=["users"])
-def get_all_users(db: Session = db_session):
+def get_all_users(
+    db: Session = db_session,
+    current_user: UserBase = current_user_instance,
+):
+    check_admin(current_user)
     users = db.query(User).all()
 
-    return [object_to_dict(UserBase.model_validate(user) for user in users)]
+    return [UserBase.model_validate(user) for user in users]
 
 
 @users_router.put("/users/edit", tags=["users"])
