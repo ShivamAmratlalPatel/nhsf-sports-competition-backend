@@ -10,7 +10,10 @@ from backend.helpers import get_db
 from backend.players.players_models import Player
 from backend.stats.stats_schemas import Stat
 from backend.teams.teams_models import Team
-from backend.utils import convert_list_to_list
+from backend.teams.teams_routes import check_team_valid
+from backend.teams.teams_schemas import TeamRead
+from backend.utils import convert_list_to_list, object_to_dict
+from fastapi import APIRouter, Depends, HTTPException
 
 stats_router = APIRouter()
 
@@ -74,4 +77,28 @@ def get_stats(chapter_id: UUID | None = None, db: Session = db_session) -> JSONR
             ],
             format_date=True,
         ),
+    )
+
+
+@stats_router.get("/invalid_teams")
+def get_invalid_teams(db: Session = db_session) -> JSONResponse:
+    teams: list[Team] = (
+        db.query(Team)
+        .filter(Team.is_deleted.is_(False))
+        .order_by(Team.name, Team.sport_id)
+        .all()
+    )
+
+    invalid_teams: list[Team] = []
+    for team in teams:
+        try:
+            check_team_valid(team.id, db)
+        except HTTPException:
+            invalid_teams.append(team)
+
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content=[
+            object_to_dict(TeamRead.model_validate(team)) for team in invalid_teams
+        ],
     )

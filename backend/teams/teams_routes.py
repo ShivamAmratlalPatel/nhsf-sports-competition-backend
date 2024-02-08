@@ -689,7 +689,7 @@ def check_team_valid(team_id: UUID, db: Session = db_session):
             status_code=status.HTTP_404_NOT_FOUND, detail="Sport not found"
         )
 
-    if team_sport.morning_sport:
+    if team_sport.morning_sport is True:
         afternoon_players: list[Player] = (
             db.query(Player)
             .filter(Player.afternoon_team_id == team.id)
@@ -700,12 +700,52 @@ def check_team_valid(team_id: UUID, db: Session = db_session):
         if afternoon_players:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Some players are listed as afternoon sport",
+                detail="Some players have this sport listed as a afternoon sport but this is a morning sport",
+            )
+        else:
+            morning_players: list[Player] = (
+                db.query(Player)
+                .filter(Player.morning_team_id == team.id)
+                .filter(Player.is_deleted.is_(False))
+                .all()
             )
 
-        number_of_morning_players: list[Player] = (
+            if len(morning_players) != team_sport.number_of_players:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Incorrect number of players",
+                )
+            else:
+                return JSONResponse(
+                    status_code=status.HTTP_204_NO_CONTENT, content=None
+                )
+    else:
+        morning_players: list[Player] = (
             db.query(Player)
             .filter(Player.morning_team_id == team.id)
             .filter(Player.is_deleted.is_(False))
             .all()
         )
+
+        if morning_players:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Some players have this sport listed as their morning sport however it's an afternoon sport",
+            )
+        else:
+            afternoon_players: list[Player] = (
+                db.query(Player)
+                .filter(Player.afternoon_team_id == team.id)
+                .filter(Player.is_deleted.is_(False))
+                .all()
+            )
+
+            if len(afternoon_players) != team_sport.number_of_players:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Incorrect number of players",
+                )
+            else:
+                return JSONResponse(
+                    status_code=status.HTTP_204_NO_CONTENT, content=None
+                )
