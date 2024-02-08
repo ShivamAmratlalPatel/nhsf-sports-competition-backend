@@ -1,6 +1,7 @@
 """Sports Schemas"""
 
 from datetime import datetime
+from enum import Enum
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict
@@ -64,3 +65,15 @@ class SportRead(SportBase):
             },
         },
     )
+
+
+class SportNameEnum(Enum):
+    """Sport Name Enum"""
+
+    football = "Football"
+    badminton = "Badminton"
+    netball = "Netball"
+    cricket = "Cricket"
+    kho = "Kho"
+    kabaddiw = "KabaddiW"
+    kabaddim = "KabaddiM"

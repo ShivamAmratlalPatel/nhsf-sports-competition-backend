@@ -33,6 +33,7 @@ from backend.tickets.tickets_schemas import (
     TicketRead,
 )
 from backend.users.users_commands.check_admin import check_admin
+from backend.users.users_commands.get_users import get_current_active_user
 from backend.users.users_schemas import UserBase
 from backend.utils import object_to_dict
 

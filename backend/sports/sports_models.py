@@ -1,5 +1,5 @@
 """Sports Database Models"""
-from sqlalchemy import Boolean, Column, DateTime, Float, String, func
+from sqlalchemy import Boolean, Column, DateTime, Float, String, func, Integer
 from sqlalchemy.dialects import postgresql as pg
 from sqlalchemy.orm import relationship
 
@@ -42,3 +42,5 @@ class Sport(Base):
     minutes_per_game = Column(Float)
     teams = relationship("Team", back_populates="sport")
     matches = relationship("Match", back_populates="sport")
+    number_of_players = Column(Integer)
+    morning_sport = Column(Boolean, nullable=False, default=True, server_default="true")

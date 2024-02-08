@@ -670,3 +670,42 @@ def change_chapter(
         status_code=status.HTTP_200_OK,
         content=object_to_dict(TeamRead.model_validate(old_team)),
     )
+
+
+@teams_router.get("/team/{team_id}/valid")
+def check_team_valid(team_id: UUID, db: Session = db_session):
+    """Check a team's valid"""
+    team: Team | None = db.get(Team, team_id)
+
+    if team is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Team not found"
+        )
+
+    team_sport: Sport | None = db.get(Sport, team.sport_id)
+
+    if team_sport is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Sport not found"
+        )
+
+    if team_sport.morning_sport:
+        afternoon_players: list[Player] = (
+            db.query(Player)
+            .filter(Player.afternoon_team_id == team.id)
+            .filter(Player.is_deleted.is_(False))
+            .all()
+        )
+
+        if afternoon_players:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Some players are listed as afternoon sport",
+            )
+
+        number_of_morning_players: list[Player] = (
+            db.query(Player)
+            .filter(Player.morning_team_id == team.id)
+            .filter(Player.is_deleted.is_(False))
+            .all()
+        )
