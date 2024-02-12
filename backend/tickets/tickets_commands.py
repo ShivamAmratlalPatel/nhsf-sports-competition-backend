@@ -32,7 +32,7 @@ def add_new_player_from_ticket_tailor(ticket: Ticket, db: Session) -> Player:
         )
         if chapter is not None:
             if ticket.morning_sport == "Kabaddi Womens":
-                morning_sport_answer = "KabaddiF"
+                morning_sport_answer = "KabaddiW"
             else:
                 morning_sport_answer = ticket.morning_sport
             if ticket.morning_sport == "None" or ticket.morning_sport is None:
@@ -274,7 +274,8 @@ def create_ticket(payload: Payload, db: Session) -> JSONResponse:
             return JSONResponse(
                 status_code=status.HTTP_201_CREATED,
                 content=object_to_dict(
-                    PlayerRead.model_validate(player), format_date=True,
+                    PlayerRead.model_validate(player),
+                    format_date=True,
                 ),
             )
         else:
