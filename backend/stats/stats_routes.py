@@ -106,6 +106,17 @@ def get_invalid_teams(db: Session = db_session) -> JSONResponse:
     )
 
 
+def get_status(number_of_signed_up_players, number_of_players, number_of_subs):
+    if number_of_signed_up_players > number_of_players + number_of_subs:
+        return "Too many players"
+    elif number_of_signed_up_players == number_of_players + number_of_subs:
+        return "Complete"
+    elif number_of_signed_up_players > number_of_players:
+        return "Missing subs"
+    else:
+        return "Incomplete"
+
+
 @stats_router.get("/team_numbers")
 def get_team_numbers(db: Session = db_session):
     team_numbers = (
@@ -143,6 +154,7 @@ def get_team_numbers(db: Session = db_session):
                     "number_of_signed_up_players": row[2],
                     "number_of_players": row[3],
                     "number_of_subs": row[4],
+                    "status": get_status(row[2], row[3], row[4]),
                 }
                 for row in team_numbers
             ],
