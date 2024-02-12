@@ -112,8 +112,11 @@ def get_team_numbers(db: Session = db_session):
         .select_from(Team)
         .outerjoin(
             Player,
-            (Player.morning_team_id == Team.id)
-            | (Player.afternoon_team_id == Team.id) & Player.is_deleted.is_(False),
+            (
+                (Player.morning_team_id == Team.id)
+                | (Player.afternoon_team_id == Team.id)
+            )
+            & Player.is_deleted.is_(False),
             full=True,
         )
         .filter(Team.is_deleted.is_(False))
