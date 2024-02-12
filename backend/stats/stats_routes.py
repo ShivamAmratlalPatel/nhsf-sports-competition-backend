@@ -6,6 +6,7 @@ from sqlalchemy import func
 from sqlalchemy.orm import Session
 from starlette import status
 
+from backend.chapters.chapters_models import Chapter
 from backend.helpers import get_db
 from backend.players.players_models import Player
 from backend.stats.stats_schemas import Stat
@@ -111,10 +112,11 @@ def get_team_numbers(db: Session = db_session):
         .select_from(Team)
         .outerjoin(
             Player,
-            (Player.morning_team_id == Team.id) | (Player.afternoon_team_id == Team.id),
+            (Player.morning_team_id == Team.id)
+            | (Player.afternoon_team_id == Team.id) & Player.is_deleted.is_(False),
+            full=True,
         )
         .filter(Team.is_deleted.is_(False))
-        .filter(Player.is_deleted.is_(False))
         .group_by(Team.id)
         .order_by(Team.name, Team.internal_name)
         .all()
