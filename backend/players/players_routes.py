@@ -438,6 +438,8 @@ def get_team_players(team_id: UUID, db: Session = db_session) -> list[dict]:
             ),
         )
         .filter(Player.is_deleted.is_(False))
+        .order_by(Player.name)
+        .all()
     )
 
     team_players: list[dict] = [
