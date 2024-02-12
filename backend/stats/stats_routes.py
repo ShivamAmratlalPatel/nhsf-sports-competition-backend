@@ -1,8 +1,8 @@
 """Endpoints for stats"""
 from uuid import UUID
 
-from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from starlette import status
 
@@ -101,4 +101,36 @@ def get_invalid_teams(db: Session = db_session) -> JSONResponse:
         content=[
             object_to_dict(TeamRead.model_validate(team)) for team in invalid_teams
         ],
+    )
+
+
+@stats_router.get("/team_numbers")
+def get_team_numbers(db: Session = db_session):
+    team_numbers = (
+        db.query(Team.name, Team.internal_name, func.count(Player.id))
+        .select_from(Team)
+        .outerjoin(
+            Player,
+            (Player.morning_team_id == Team.id) | (Player.afternoon_team_id == Team.id),
+        )
+        .filter(Team.is_deleted.is_(False))
+        .filter(Player.is_deleted.is_(False))
+        .group_by(Team.id)
+        .order_by(Team.name, Team.internal_name)
+        .all()
+    )
+
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content=convert_list_to_list(
+            [
+                {
+                    "name": row[0],
+                    "internal_name": row[1],
+                    "number_of_players": row[2],
+                }
+                for row in team_numbers
+            ],
+            format_date=True,
+        ),
     )
