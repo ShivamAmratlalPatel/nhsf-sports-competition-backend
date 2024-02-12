@@ -9,6 +9,7 @@ from starlette import status
 from backend.chapters.chapters_models import Chapter
 from backend.helpers import get_db
 from backend.players.players_models import Player
+from backend.sports.sports_models import Sport
 from backend.stats.stats_schemas import Stat
 from backend.teams.teams_models import Team
 from backend.teams.teams_routes import check_team_valid
@@ -108,7 +109,13 @@ def get_invalid_teams(db: Session = db_session) -> JSONResponse:
 @stats_router.get("/team_numbers")
 def get_team_numbers(db: Session = db_session):
     team_numbers = (
-        db.query(Team.name, Team.internal_name, func.count(Player.id))
+        db.query(
+            Team.name,
+            Team.internal_name,
+            func.count(Player.id).label("number_of_signed_up_players"),
+            Sport.number_of_players,
+            Sport.number_of_subs,
+        )
         .select_from(Team)
         .outerjoin(
             Player,
@@ -119,8 +126,9 @@ def get_team_numbers(db: Session = db_session):
             & Player.is_deleted.is_(False),
             full=True,
         )
+        .join(Sport, Team.sport_id == Sport.id)
         .filter(Team.is_deleted.is_(False))
-        .group_by(Team.id)
+        .group_by(Team.id, Sport.id)
         .order_by(Team.name, Team.internal_name)
         .all()
     )
@@ -132,7 +140,9 @@ def get_team_numbers(db: Session = db_session):
                 {
                     "name": row[0],
                     "internal_name": row[1],
-                    "number_of_players": row[2],
+                    "number_of_signed_up_players": row[2],
+                    "number_of_players": row[3],
+                    "number_of_subs": row[4],
                 }
                 for row in team_numbers
             ],

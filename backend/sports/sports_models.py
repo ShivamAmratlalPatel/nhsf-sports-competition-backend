@@ -43,4 +43,5 @@ class Sport(Base):
     teams = relationship("Team", back_populates="sport")
     matches = relationship("Match", back_populates="sport")
     number_of_players = Column(Integer)
+    number_of_subs = Column(Integer)
     morning_sport = Column(Boolean, nullable=False, default=True, server_default="true")
