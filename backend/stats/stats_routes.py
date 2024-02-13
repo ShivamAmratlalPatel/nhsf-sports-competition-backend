@@ -111,7 +111,7 @@ def get_status(number_of_signed_up_players, number_of_players, number_of_subs):
         return "Too many players"
     elif number_of_signed_up_players == number_of_players + number_of_subs:
         return "Complete"
-    elif number_of_signed_up_players > number_of_players:
+    elif number_of_signed_up_players >= number_of_players:
         return "Missing subs"
     else:
         return "Incomplete"
