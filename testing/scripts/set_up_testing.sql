@@ -61,10 +61,6 @@ INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_dat
 INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date, quarter_finals, semi_finals, start_time, minutes_per_game, number_of_players, morning_sport) VALUES ('5d231a25-d15a-4881-a004-9b9ddfa4b988', 'Kho', '2024-01-25 00:50:47.858564 +00:00', false, null, false, true, '2024-02-17 13:30:00.201000 +00:00', 10, 12, true);
 INSERT INTO public.sports (id, name, created_date, is_deleted, last_modified_date, quarter_finals, semi_finals, start_time, minutes_per_game, number_of_players, morning_sport) VALUES ('7e90575b-5b04-4a12-9279-f7124a5f737c', 'Netball', '2024-01-25 00:50:47.826239 +00:00', false, null, false, true, '2024-02-17 10:10:00.201000 +00:00', 12, 10, true);
 
--- Insert into pitches table and store the ID in the temporary table
-INSERT INTO public.pitches (id, name, created_date, is_deleted, last_modified_date, sport_id)
-VALUES ('b6faa095-b64f-4bca-a9e3-d9795b530f21', 'Football Pitch 1', '2023-09-14 23:26:38.610667 +00:00', false, null,
-        '7dac42d7-e397-4efa-b70a-0232cacd4c4f');
 
 
 INSERT INTO public.users (id, username, email, hashed_password, created_date, is_deleted, last_modified_date,
