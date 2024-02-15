@@ -1,5 +1,6 @@
 from fastapi import HTTPException
 from fastapi.responses import JSONResponse
+from sqlalchemy import or_
 from sqlalchemy.orm import Session
 from starlette import status
 
@@ -20,6 +21,7 @@ from backend.utils import generate_uuid, object_to_dict
 
 
 def add_new_player_from_ticket_tailor(ticket: Ticket, db: Session) -> Player:
+    chapter = None
     if ticket.chapter is None:
         morning_team_id = None
         afternoon_team_id = None
@@ -107,21 +109,57 @@ def add_new_player_from_ticket_tailor(ticket: Ticket, db: Session) -> Player:
             morning_team_id = None
             afternoon_team_id = None
 
-    player = (
-        db.query(Player)
-        .filter(Player.name == ticket.full_name)
-        .filter(Player.is_deleted.is_(False))
-        .first()
-    )
-
-    if player:
-        player.name = ticket.full_name
-        player.email = ticket.email
-        player.morning_team_id = morning_team_id
-        player.afternoon_team_id = afternoon_team_id
+    if morning_team_id is None and afternoon_team_id is None:
+        error = Error(
+            id=generate_uuid(),
+            error=f"Chapter not found for {ticket.full_name}",
+            data=object_to_dict(ticket, format_date=True),
+        )
+        db.add(error)
+        db.commit()
+        player = Player(
+            id=generate_uuid(),
+            name=ticket.full_name,
+            email=ticket.email,
+            morning_team_id=morning_team_id,
+            afternoon_team_id=afternoon_team_id,
+        )
         db.add(player)
         db.commit()
         return player
+    elif chapter is not None:
+        player = (
+            db.query(Player)
+            .filter(Player.name == ticket.full_name)
+            .filter(
+                or_(
+                    Player.morning_team_id == morning_team_id,
+                    Player.afternoon_team_id == afternoon_team_id,
+                )
+            )
+            .filter(Player.is_deleted.is_(False))
+            .first()
+        )
+
+        if player:
+            player.name = ticket.full_name
+            player.email = ticket.email
+            player.morning_team_id = morning_team_id
+            player.afternoon_team_id = afternoon_team_id
+            db.add(player)
+            db.commit()
+            return player
+        else:
+            player = Player(
+                id=generate_uuid(),
+                name=ticket.full_name,
+                email=ticket.email,
+                morning_team_id=morning_team_id,
+                afternoon_team_id=afternoon_team_id,
+            )
+            db.add(player)
+            db.commit()
+            return player
     else:
         player = Player(
             id=generate_uuid(),
