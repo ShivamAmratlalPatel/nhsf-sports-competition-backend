@@ -73,6 +73,7 @@ class MatchRead(MatchBase):
     last_modified_date: datetime | None = None
     is_deleted: bool
     pitch: Any | None = None
+    group: int | None = None
     model_config = ConfigDict(
         from_attributes=True,
         json_schema_extra={

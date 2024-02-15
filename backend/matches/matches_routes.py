@@ -282,6 +282,14 @@ def get_schedule(
         Match.stage_id == 0,
     ]
 
+    if team_id:
+        filters.append(
+            or_(
+                Match.home_team_id == team_id,
+                Match.away_team_id == team_id,
+            ),
+        )
+
     played_matches: list[Match] = (
         db.query(Match)
         .filter(*filters)
@@ -337,61 +345,33 @@ def get_schedule(
     if not teams or teams == []:
         return JSONResponse(status_code=200, content=[])
 
-    sport = db.get(Sport, sport_id)
+    pitches: list[Pitch] = (
+        db.query(Pitch)
+        .filter(Pitch.sport_id == sport_id)
+        .filter(Pitch.is_deleted.is_(False))
+        .order_by(Pitch.name)
+        .all()
+    )
 
-    if sport.name == "Football":
-        pitches: list[Pitch] = (
-            db.query(Pitch)
-            .filter(Pitch.sport_id == sport_id)
-            .filter(Pitch.is_deleted.is_(False))
-            .order_by(Pitch.name)
-            .all()
+    max_pitches = len(pitches)
+
+    if max_pitches == 0:
+        return JSONResponse(
+            status_code=200,
+            content=[
+                [object_to_dict(MatchRead.model_validate(match)) for match in matches],
+            ],
         )
-        max_pitches = len(pitches)
-        if max_pitches == 0:
-            return JSONResponse(
-                status_code=200,
-                content=[
-                    [
-                        object_to_dict(MatchRead.model_validate(match))
-                        for match in matches
-                    ],
-                ],
-            )
 
-        output = []
-        for i in range(max_pitches):
-            output.append(
-                [
-                    object_to_dict(MatchRead.model_validate(match))
-                    for match in matches
-                    if match.pitch_id == pitches[i].id
-                ],
-            )
-
-    else:
-        try:
-            max_groups = max([team.group for team in teams]) + 1
-        except TypeError:
-            return JSONResponse(
-                status_code=status.HTTP_200_OK,
-                content=[
-                    [
-                        object_to_dict(MatchRead.model_validate(match))
-                        for match in matches
-                    ],
-                ],
-            )
-
-        output = []
-        for i in range(max_groups):
-            output.append(
-                [
-                    object_to_dict(MatchRead.model_validate(match))
-                    for match in matches
-                    if get_group_from_match(db, match) == i
-                ],
-            )
+    output = []
+    for i in range(max_pitches):
+        output.append(
+            [
+                object_to_dict(MatchRead.model_validate(match))
+                for match in matches
+                if match.pitch_id == pitches[i].id
+            ],
+        )
 
     return JSONResponse(
         status_code=status.HTTP_200_OK,

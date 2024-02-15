@@ -64,6 +64,11 @@ class Match(Base):
     sport = relationship("Sport", back_populates="matches")
     pitch = relationship("Pitch", back_populates="matches")
     stage = relationship("Stage")
+    home_team = relationship("Team", foreign_keys=[home_team_id])
+
+    @property
+    def group(self):
+        return self.home_team.group
 
 
 class MatchAudit(Base):
