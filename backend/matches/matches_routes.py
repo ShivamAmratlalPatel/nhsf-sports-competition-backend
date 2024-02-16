@@ -16,6 +16,7 @@ from backend.matches.matches_schemas import (
     MatchRead,
     MatchUpdate,
     ScoreDetails,
+    KnockoutSave,
 )
 from backend.matches.mathes_commands.generate_schedule import (
     check_groups_not_already_assigned,
@@ -817,5 +818,150 @@ def reset_matches(
         team.group = None
         db.add(team)
         db.commit()
+
+    return JSONResponse(status_code=status.HTTP_204_NO_CONTENT, content={})
+
+
+@matches_router.put(
+    "/knockout/{sport_id}",
+    tags=["matches"],
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+def save_knockout(
+    sport_id: UUID,
+    knockout_save: KnockoutSave,
+    db: Session = db_session,
+    current_user: UserBase = current_user_instance,
+) -> JSONResponse:
+    """Save knockout matches."""
+    check_admin(current_user)
+
+    sport: Sport = db.get(Sport, sport_id)
+
+    if sport is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Sport not found",
+        )
+
+    teams = knockout_save.teams
+
+    if len(teams) not in [2, 4, 8, 16]:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid number of teams for knockout",
+        )
+
+    team_1 = teams[0]
+    team_2 = teams[1]
+    team_3 = teams[2] if len(teams) > 2 else None
+    team_4 = teams[3] if len(teams) > 3 else None
+    team_5 = teams[4] if len(teams) > 4 else None
+    team_6 = teams[5] if len(teams) > 5 else None
+    team_7 = teams[6] if len(teams) > 6 else None
+    team_8 = teams[7] if len(teams) > 7 else None
+
+    if team_3 is None:
+        final = Match(
+            id=generate_uuid(),
+            sport_id=sport_id,
+            stage_id=7,
+            home_team_id=team_1,
+            away_team_id=team_2,
+        )
+        db.add(final)
+        db.commit()
+
+        sport.quarter_finals = False
+        sport.semi_finals = False
+        db.add(sport)
+        db.commit()
+    elif team_5 is None:
+        sf1 = Match(
+            id=generate_uuid(),
+            sport_id=sport_id,
+            stage_id=5,
+            home_team_id=team_1,
+            away_team_id=team_2,
+        )
+        sf2 = Match(
+            id=generate_uuid(),
+            sport_id=sport_id,
+            stage_id=6,
+            home_team_id=team_3,
+            away_team_id=team_4,
+        )
+        db.add(sf1)
+        db.add(sf2)
+        db.commit()
+
+        sport.quarter_finals = False
+        sport.semi_finals = True
+        db.add(sport)
+        db.commit()
+
+    else:
+        qf1 = Match(
+            id=generate_uuid(),
+            sport_id=sport_id,
+            stage_id=1,
+            home_team_id=team_1,
+            away_team_id=team_8,
+        )
+        qf2 = Match(
+            id=generate_uuid(),
+            sport_id=sport_id,
+            stage_id=2,
+            home_team_id=team_2,
+            away_team_id=team_7,
+        )
+        qf3 = Match(
+            id=generate_uuid(),
+            sport_id=sport_id,
+            stage_id=3,
+            home_team_id=team_3,
+            away_team_id=team_6,
+        )
+        qf4 = Match(
+            id=generate_uuid(),
+            sport_id=sport_id,
+            stage_id=4,
+            home_team_id=team_4,
+            away_team_id=team_5,
+        )
+        db.add(qf1)
+        db.add(qf2)
+        db.add(qf3)
+        db.add(qf4)
+        db.commit()
+
+        sport.quarter_finals = True
+        sport.semi_finals = False
+        db.add(sport)
+        db.commit()
+
+    return JSONResponse(status_code=status.HTTP_204_NO_CONTENT, content={})
+
+
+@matches_router.get("reset_knockout/{sport_id}", tags=["matches"])
+def reset_knockout(sport_id: UUID, db: Session = db_session) -> JSONResponse:
+    """Reset knockout matches."""
+    matches = (
+        db.query(Match)
+        .filter(Match.sport_id == sport_id)
+        .filter(Match.stage_id.in_([1, 2, 3, 4, 5, 6, 7]))
+        .all()
+    )
+
+    for match in matches:
+        db.delete(match)
+        db.commit()
+
+    sport = db.get(Sport, sport_id)
+
+    sport.quarter_finals = False
+    sport.semi_finals = False
+    db.add(sport)
+    db.commit()
 
     return JSONResponse(status_code=status.HTTP_204_NO_CONTENT, content={})

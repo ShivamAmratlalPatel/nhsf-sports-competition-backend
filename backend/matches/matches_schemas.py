@@ -141,3 +141,7 @@ class ScoreDetails(BaseModel):
             raise ValueError(msg)
 
         return self
+
+
+class KnockoutSave(BaseModel):
+    teams: list[UUID]

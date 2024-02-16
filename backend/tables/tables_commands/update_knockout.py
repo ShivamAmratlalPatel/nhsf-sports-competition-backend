@@ -63,6 +63,40 @@ def update_knockout_for_match(match: Match, db: Session) -> None:
                 )
             db.add(semi_final)
             db.commit()
+    elif match.stage_id == 2 or match.stage_id == 4:
+        other_match = (
+            db.query(Match)
+            .filter(Match.stage_id == match.stage_id - 1)
+            .filter(Match.sport_id == match.sport_id)
+            .filter(Match.is_deleted.is_(False))
+            .first()
+        )
+        if is_match_played(other_match):
+            semi_final_stage = 5 if match.stage_id == 2 else 6
+            semi_final = (
+                db.query(Match)
+                .filter(Match.stage_id == semi_final_stage)
+                .filter(Match.sport_id == match.sport_id)
+                .filter(Match.is_deleted.is_(False))
+                .first()
+            )
+
+            semi_final_2_home_team_id = find_winner(other_match)
+            semi_final_2_away_team_id = find_winner(match)
+
+            if semi_final:
+                semi_final.is_deleted = True
+            else:
+                semi_final = Match(
+                    id=generate_uuid(),
+                    sport_id=match.sport_id,
+                    stage_id=semi_final_stage,
+                    home_team_id=semi_final_2_home_team_id,
+                    away_team_id=semi_final_2_away_team_id,
+                )
+            db.add(semi_final)
+            db.commit()
+
     elif match.stage_id == 5 or match.stage_id == 6:
         other_semi_final_id = 5 if match.stage_id == 6 else 6
         other_match = (
