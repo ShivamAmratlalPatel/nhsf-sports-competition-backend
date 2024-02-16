@@ -311,10 +311,15 @@ def get_ticket(
     db: Session = db_session,
 ) -> JSONResponse:
     """Get a ticket."""
-    if isinstance(ticket_id, str):
-        ticket = db.query(Ticket).filter(Ticket.barcode == ticket_id).first()
-    else:
+    try:
+        ticket_id = UUID(ticket_id)
+    except ValueError:
+        pass
+
+    if isinstance(ticket_id, UUID):
         ticket = db.get(Ticket, ticket_id)
+    else:
+        ticket = db.query(Ticket).filter(Ticket.barcode == ticket_id).first()
 
     if ticket is None:
         if ticket is None:
