@@ -307,17 +307,21 @@ def list_tickets(
 
 @ticket_router.get("/tickets/{ticket_id}", tags=["tickets"])
 def get_ticket(
-    ticket_id: UUID,
+    ticket_id: UUID | str,
     db: Session = db_session,
 ) -> JSONResponse:
     """Get a ticket."""
-    ticket = db.get(Ticket, ticket_id)
+    if isinstance(ticket_id, str):
+        ticket = db.query(Ticket).filter(Ticket.barcode == ticket_id).first()
+    else:
+        ticket = db.get(Ticket, ticket_id)
 
     if ticket is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Ticket not found",
-        )
+        if ticket is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Ticket not found",
+            )
 
     return JSONResponse(
         status_code=status.HTTP_200_OK,
