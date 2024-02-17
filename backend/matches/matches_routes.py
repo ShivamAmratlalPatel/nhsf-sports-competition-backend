@@ -965,26 +965,3 @@ def reset_knockout(sport_id: UUID, db: Session = db_session) -> JSONResponse:
     db.commit()
 
     return JSONResponse(status_code=status.HTTP_204_NO_CONTENT, content={})
-
-
-@matches_router.get("/match/{match_id}/reset_score", tags=["matches"])
-def reset_score(match_id: UUID, db: Session = db_session) -> JSONResponse:
-    match = db.get(Match, match_id)
-    if match is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Match not found",
-        )
-
-    match.home_score = None
-    match.away_score = None
-    match.home_score = None
-    match.home_penalties = None
-    match.away_penalties = None
-    db.add(match)
-    db.commit()
-
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content=object_to_dict(MatchRead.model_validate(match)),
-    )
