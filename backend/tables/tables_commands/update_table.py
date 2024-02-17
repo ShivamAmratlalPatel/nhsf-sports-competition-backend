@@ -22,6 +22,7 @@ def update_table_for_team(team_id: UUID, db: Session) -> None:
         db.query(Match)
         .filter(or_(Match.home_team_id == team_id, Match.away_team_id == team_id))
         .filter(Match.home_score.is_not(None))
+        .filter(Match.is_deleted.is_(False))
         .count()
     )
     won = (
@@ -50,6 +51,7 @@ def update_table_for_team(team_id: UUID, db: Session) -> None:
                 ),
             ),
         )
+        .filter(Match.is_deleted.is_(False))
         .count()
     )
 
@@ -79,6 +81,7 @@ def update_table_for_team(team_id: UUID, db: Session) -> None:
                 ),
             ),
         )
+        .filter(Match.is_deleted.is_(False))
         .count()
     )
 
@@ -89,6 +92,7 @@ def update_table_for_team(team_id: UUID, db: Session) -> None:
             float(row[0])
             for row in db.query(Match.home_score)
             .filter(Match.home_team_id == team_id)
+            .filter(Match.is_deleted.is_(False))
             .all()
             if row[0] is not None
         ],
@@ -97,6 +101,7 @@ def update_table_for_team(team_id: UUID, db: Session) -> None:
             float(row[0])
             for row in db.query(Match.away_score)
             .filter(Match.away_team_id == team_id)
+            .filter(Match.is_deleted.is_(False))
             .all()
             if row[0] is not None
         ],
@@ -107,6 +112,7 @@ def update_table_for_team(team_id: UUID, db: Session) -> None:
             float(row[0])
             for row in db.query(Match.home_score)
             .filter(Match.away_team_id == team_id)
+            .filter(Match.is_deleted.is_(False))
             .all()
             if row[0] is not None
         ],
@@ -115,13 +121,17 @@ def update_table_for_team(team_id: UUID, db: Session) -> None:
             float(row[0])
             for row in db.query(Match.away_score)
             .filter(Match.home_team_id == team_id)
+            .filter(Match.is_deleted.is_(False))
             .all()
             if row[0] is not None
         ],
     )
 
     table_entry: LeagueTable | None = (
-        db.query(LeagueTable).filter(LeagueTable.team_id == team_id).first()
+        db.query(LeagueTable)
+        .filter(LeagueTable.team_id == team_id)
+        .filter(LeagueTable.is_deleted.is_(False))
+        .first()
     )
 
     if table_entry:
