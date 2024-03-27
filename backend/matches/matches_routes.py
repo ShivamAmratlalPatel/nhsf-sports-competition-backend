@@ -77,6 +77,7 @@ def create_match(
     """Create a match."""
     check_admin(current_user)
     match = Match(**match_details.model_dump())
+    match.id = generate_uuid()
     db.add(match)
     try:
         db.commit()

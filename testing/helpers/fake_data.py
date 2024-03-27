@@ -125,6 +125,13 @@ def fake_sport_name() -> str:
     )
 
 
+def fake_stage_name() -> str:
+    """Return a fake stage."""
+    return choice(
+        ["Group Stage", "Quarter Final", "Semi Final", "Final"],
+    )
+
+
 def fake_sport() -> dict:
     """Return a fake sport."""
     return {

@@ -21,6 +21,7 @@ from backend.teams.teams_routes import teams_router
 from .config import CORS_ORIGINS
 from .middleware import ContentSizeLimitMiddleware
 from .spectators.spectators_routes import spectator_router
+from .stages.stages_routes import stages_router
 from .stats.stats_routes import stats_router
 from .tables.tables_routes import tables_router
 from .tickets.tickets_routes import ticket_router
@@ -76,6 +77,7 @@ app.include_router(pitches_router)
 app.include_router(players_router)
 app.include_router(spectator_router)
 app.include_router(sports_router)
+app.include_router(stages_router)
 app.include_router(stats_router)
 app.include_router(tables_router)
 app.include_router(teams_router)
