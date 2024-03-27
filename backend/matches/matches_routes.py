@@ -248,7 +248,8 @@ def delete_match(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Match not found",
         )
-    db.delete(match)
+    match.is_deleted = True
+    db.add(match)
     db.commit()
 
     return JSONResponse(status_code=status.HTTP_204_NO_CONTENT, content={})
