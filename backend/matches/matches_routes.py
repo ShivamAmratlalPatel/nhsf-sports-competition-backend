@@ -424,8 +424,6 @@ def log_score(
 
     if match.stage_id == 0:
         update_table_for_match(match, db)
-    else:
-        update_knockout_for_match(match, db)
 
     return JSONResponse(
         status_code=200,
