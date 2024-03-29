@@ -13,6 +13,7 @@ from backend.helpers import get_db
 from backend.matches.matches_models import Match
 from backend.players.players_models import Player
 from backend.sports.sports_models import Sport
+from backend.tables.tables_models import LeagueTable
 from backend.teams.teams_models import Team
 from backend.teams.teams_schemas import (
     TeamCreate,
@@ -468,6 +469,15 @@ def delete_team(
     for match in matches:
         match.is_deleted = True
         db.add(match)
+        db.commit()
+
+    league_table: list[LeagueTable] = (
+        db.query(LeagueTable).filter(LeagueTable.team_id == team_id).all()
+    )
+
+    for table in league_table:
+        table.is_deleted = True
+        db.add(table)
         db.commit()
 
     return JSONResponse(status_code=status.HTTP_204_NO_CONTENT, content={})
