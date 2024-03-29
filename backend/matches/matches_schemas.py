@@ -99,6 +99,7 @@ class KnockoutRead(BaseModel):
     away_team_score: float | None = None
     home_team_penalties: float | None = None
     away_team_penalties: float | None = None
+    pitch: Any | None = None
     model_config = ConfigDict(
         from_attributes=True,
     )

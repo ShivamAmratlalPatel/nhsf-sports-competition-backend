@@ -13,9 +13,29 @@ class StagesEnum(str, Enum):
     """Enum for the stages of the tournament."""
 
     group_stage = 0
-    quarter_final = 1
-    semi_final = 2
-    final = 3
+    round_of_16_1 = 1
+    round_of_16_2 = 2
+    round_of_16_3 = 3
+    round_of_16_4 = 4
+    round_of_16_5 = 5
+    round_of_16_6 = 6
+    round_of_16_7 = 7
+    round_of_16_8 = 8
+    round_of_16_9 = 9
+    round_of_16_10 = 10
+    round_of_16_11 = 11
+    round_of_16_12 = 12
+    round_of_16_13 = 13
+    round_of_16_14 = 14
+    round_of_16_15 = 15
+    round_of_16_16 = 16
+    quarter_final_1 = 17
+    quarter_final_2 = 18
+    quarter_final_3 = 19
+    quarter_final_4 = 20
+    semi_final_1 = 21
+    semi_final_2 = 22
+    final = 23
     __slots__ = ()
 
 

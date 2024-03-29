@@ -128,7 +128,7 @@ def get_stages(
     db: Session = db_session,
 ) -> JSONResponse:
     """Get all stages."""
-    stages = db.query(Stage).order_by(Stage.name).all()
+    stages = db.query(Stage).order_by(Stage.id).all()
     if not stages:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
