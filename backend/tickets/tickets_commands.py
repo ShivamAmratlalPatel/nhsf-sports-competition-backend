@@ -5,10 +5,7 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 from backend.chapters.chapters_models import Chapter
-from backend.config import (
-    TICKET_TAILOR_PLAYER_TICKET_TYPE_ID,
-    TICKET_TAILOR_EVENT_ID,
-)
+from backend.config import TICKET_TAILOR_EVENT_ID, TICKET_TAILOR_PLAYER_TICKET_TYPE_ID
 from backend.errors.errors_models import Error
 from backend.players.players_models import Player
 from backend.players.players_schemas import PlayerRead
@@ -135,7 +132,7 @@ def add_new_player_from_ticket_tailor(ticket: Ticket, db: Session) -> Player:
                 or_(
                     Player.morning_team_id == morning_team_id,
                     Player.afternoon_team_id == afternoon_team_id,
-                )
+                ),
             )
             .filter(Player.is_deleted.is_(False))
             .first()

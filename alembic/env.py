@@ -6,8 +6,8 @@ from sqlalchemy import engine_from_config, pool
 
 from alembic import context
 from backend.chapters.chapters_models import *
-from backend.errors.errors_models import *
 from backend.database import Base
+from backend.errors.errors_models import *
 from backend.matches.matches_models import *
 from backend.pitches.pitches_models import *
 from backend.players.players_models import *

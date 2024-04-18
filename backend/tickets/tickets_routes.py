@@ -18,12 +18,12 @@ from backend.config import (
 from backend.helpers import get_db
 from backend.players.players_models import Player
 from backend.players.players_schemas import PlayerRead
-from backend.schemas import SortBy, PaginationResult
+from backend.schemas import PaginationResult, SortBy
 from backend.spectators.spectators_models import Spectator
 from backend.spectators.spectators_schemas import SpectatorRead
 from backend.tickets.tickets_commands import (
-    log_new_tickets,
     create_ticket,
+    log_new_tickets,
     update_ticket,
 )
 from backend.tickets.tickets_models import Ticket
@@ -36,6 +36,7 @@ from backend.users.users_commands.check_admin import check_admin
 from backend.users.users_commands.get_users import get_current_active_user
 from backend.users.users_schemas import UserBase
 from backend.utils import object_to_dict
+import contextlib
 
 db_session = Depends(get_db)
 current_user_instance = Depends(get_current_active_user)
@@ -311,22 +312,20 @@ def get_ticket(
     db: Session = db_session,
 ) -> JSONResponse:
     """Get a ticket."""
-    try:
+    with contextlib.suppress(ValueError):
         ticket_id = UUID(ticket_id)
-    except ValueError:
-        pass
+
 
     if isinstance(ticket_id, UUID):
         ticket = db.get(Ticket, ticket_id)
     else:
         ticket = db.query(Ticket).filter(Ticket.barcode == ticket_id).first()
 
-    if ticket is None:
-        if ticket is None:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Ticket not found",
-            )
+    if ticket is None and ticket is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Ticket not found",
+        )
 
     return JSONResponse(
         status_code=status.HTTP_200_OK,

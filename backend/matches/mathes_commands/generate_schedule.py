@@ -7,12 +7,12 @@ from sqlalchemy.orm import Session
 
 from backend.matches.matches_models import Match
 from backend.matches.mathes_commands.x_in_a_group import (
-    two_in_a_group_schedule,
-    three_in_a_group_schedule,
-    four_in_a_group_schedule,
     five_in_a_group_schedule,
-    six_in_a_group_schedule,
+    four_in_a_group_schedule,
     seven_in_a_group_schedule,
+    six_in_a_group_schedule,
+    three_in_a_group_schedule,
+    two_in_a_group_schedule,
 )
 from backend.pitches.pitches_models import Pitch
 from backend.teams.teams_models import Team

@@ -689,14 +689,14 @@ def check_team_valid(team_id: UUID, db: Session = db_session):
 
     if team is None:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Team not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Team not found",
         )
 
     team_sport: Sport | None = db.get(Sport, team.sport_id)
 
     if team_sport is None:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Sport not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Sport not found",
         )
 
     if team_sport.morning_sport is True:
@@ -727,7 +727,7 @@ def check_team_valid(team_id: UUID, db: Session = db_session):
                 )
             else:
                 return JSONResponse(
-                    status_code=status.HTTP_204_NO_CONTENT, content=None
+                    status_code=status.HTTP_204_NO_CONTENT, content=None,
                 )
     else:
         morning_players: list[Player] = (
@@ -757,5 +757,5 @@ def check_team_valid(team_id: UUID, db: Session = db_session):
                 )
             else:
                 return JSONResponse(
-                    status_code=status.HTTP_204_NO_CONTENT, content=None
+                    status_code=status.HTTP_204_NO_CONTENT, content=None,
                 )

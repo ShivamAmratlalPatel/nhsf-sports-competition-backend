@@ -1,5 +1,5 @@
 """Sports Database Models"""
-from sqlalchemy import Boolean, Column, DateTime, Float, String, func, Integer
+from sqlalchemy import Boolean, Column, DateTime, Float, Integer, String, func
 from sqlalchemy.dialects import postgresql as pg
 from sqlalchemy.orm import relationship
 

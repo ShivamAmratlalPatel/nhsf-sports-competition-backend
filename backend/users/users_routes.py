@@ -18,7 +18,7 @@ from backend.users.users_commands.password_token_commands import get_password_ha
 from backend.users.users_commands.tokens import create_access_token
 from backend.users.users_models import User, UserType
 from backend.users.users_schemas import UserBase, UserCreate, UserCreateChapter
-from backend.utils import generate_uuid, object_to_dict
+from backend.utils import generate_uuid
 
 db_session = Depends(get_db)
 current_user_instance = Depends(get_current_active_user)
