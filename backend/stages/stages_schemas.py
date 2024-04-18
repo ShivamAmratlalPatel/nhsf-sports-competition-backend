@@ -1,12 +1,12 @@
 """Schemas for the stages module."""
 
-from testing.fixtures.database import session, session_factory  # noqa: F401
 from datetime import datetime
 from enum import Enum
 
 from pydantic import BaseModel, ConfigDict
 
 from backend.utils import datetime_now, generate_uuid
+from testing.fixtures.database import session, session_factory  # noqa: F401
 
 
 class StagesEnum(str, Enum):

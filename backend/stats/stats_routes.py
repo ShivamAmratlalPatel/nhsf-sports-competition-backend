@@ -1,12 +1,12 @@
 """Endpoints for stats"""
 from uuid import UUID
 
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 from starlette import status
 
-from backend.chapters.chapters_models import Chapter
 from backend.helpers import get_db
 from backend.players.players_models import Player
 from backend.sports.sports_models import Sport
@@ -15,7 +15,6 @@ from backend.teams.teams_models import Team
 from backend.teams.teams_routes import check_team_valid
 from backend.teams.teams_schemas import TeamRead
 from backend.utils import convert_list_to_list, object_to_dict
-from fastapi import APIRouter, Depends, HTTPException
 
 stats_router = APIRouter()
 

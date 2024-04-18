@@ -26,7 +26,7 @@ from backend.users.users_commands.chapter_user import verify_chapter_user
 from backend.users.users_commands.check_admin import check_admin
 from backend.users.users_commands.get_users import get_current_active_user
 from backend.users.users_schemas import UserBase
-from backend.utils import convert_list_to_list, object_to_dict, generate_uuid
+from backend.utils import convert_list_to_list, generate_uuid, object_to_dict
 
 players_router = APIRouter()
 current_user_instance = Depends(get_current_active_user)

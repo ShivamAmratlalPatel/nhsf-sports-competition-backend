@@ -49,31 +49,6 @@ def upgrade() -> None:
     )
     op.create_index(op.f("ix_sports_id"), "sports", ["id"], unique=False)
 
-    # add netball, badminton, football, kho, kabaddi
-    op.bulk_insert(
-        sports,
-        [
-            {
-                "name": "Netball",
-            },
-            {
-                "name": "Badminton",
-            },
-            {
-                "name": "Football",
-            },
-            {
-                "name": "Kho",
-            },
-            {
-                "name": "Kabaddi (Mens)",
-            },
-            {
-                "name": "Kabaddi (Womens)",
-            },
-        ],
-    )
-
     # ### end Alembic commands ###
 
 

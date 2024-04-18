@@ -12,11 +12,11 @@ from backend.helpers import get_db
 from backend.matches.matches_models import Match, MatchAudit
 from backend.matches.matches_schemas import (
     KnockoutRead,
+    KnockoutSave,
     MatchCreate,
     MatchRead,
     MatchUpdate,
     ScoreDetails,
-    KnockoutSave,
 )
 from backend.matches.mathes_commands.generate_schedule import (
     check_groups_not_already_assigned,
@@ -34,7 +34,6 @@ from backend.matches.mathes_commands.get_team_from_match import (
 from backend.pitches.pitches_models import Pitch
 from backend.sports.sports_models import Sport
 from backend.stages.stages_schemas import StagesEnum
-from backend.tables.tables_commands.update_knockout import update_knockout_for_match
 from backend.tables.tables_commands.update_table import update_table_for_match
 from backend.tables.tables_models import LeagueTable
 from backend.teams.teams_models import Team
@@ -441,7 +440,7 @@ def get_knockout_matches(
     db: Session = db_session,
 ) -> JSONResponse:
     """Get knockout matches."""
-    sport: Sport = db.get(Sport, sport_id)
+    db.get(Sport, sport_id)
 
     r161 = (
         db.query(Match)
@@ -633,7 +632,7 @@ def get_knockout_matches(
 
     resp = []
 
-    for i, match in enumerate(matches):
+    for _i, match in enumerate(matches):
         if match is not None:
             home_team: Team = get_home_team_from_match(db, match)
             away_team: Team = get_away_team_from_match(db, match)

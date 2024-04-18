@@ -1,4 +1,5 @@
-from datetime import timedelta, datetime
+from datetime import datetime, timedelta
+from typing import TYPE_CHECKING
 from uuid import UUID
 
 from fastapi import HTTPException
@@ -9,7 +10,6 @@ from backend.pitches.pitches_models import Pitch
 from backend.stages.stages_schemas import StagesEnum
 from backend.teams.teams_models import Team
 from backend.utils import generate_uuid
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from backend.sports.sports_models import Sport

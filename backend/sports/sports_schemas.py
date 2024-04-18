@@ -24,6 +24,11 @@ class SportBase(BaseModel):
 class SportCreate(SportBase):
     """Sport create schema."""
 
+    start_time: datetime
+    minutes_per_game: int
+    number_of_players: int
+    number_of_subs: int
+
     model_config = ConfigDict(
         json_schema_extra={
             "example": {
@@ -53,6 +58,10 @@ class SportRead(SportBase):
     created_date: datetime
     last_modified_date: datetime | None = None
     is_deleted: bool
+    start_time: datetime | None = None
+    minutes_per_game: int | None = None
+    number_of_players: int | None = None
+    number_of_subs: int | None = None
     model_config = ConfigDict(
         from_attributes=True,
         json_schema_extra={
