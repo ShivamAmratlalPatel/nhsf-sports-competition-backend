@@ -165,3 +165,5 @@ gha-creds-*.json
 
 /.env.dev
 /.idea/.gitignore
+/.env.lzsz
+/.env.nzcz
