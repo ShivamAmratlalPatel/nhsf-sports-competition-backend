@@ -13,6 +13,7 @@ from backend.matches.mathes_commands.x_in_a_group import (
     six_in_a_group_schedule,
     three_in_a_group_schedule,
     two_in_a_group_schedule,
+    eight_in_a_group_schedule,
 )
 from backend.pitches.pitches_models import Pitch
 from backend.teams.teams_models import Team
@@ -90,10 +91,16 @@ def generate_schedule_for_group(
                                     pitches[group % number_of_pitches],
                                 )
                             except HTTPException:
-                                raise HTTPException(
-                                    status_code=400,
-                                    detail="Cannot generate schedule for group",
-                                )
+                                try:
+                                    matches = eight_in_a_group_schedule(
+                                        group_teams,
+                                        pitches[group % number_of_pitches],
+                                    )
+                                except HTTPException:
+                                    raise HTTPException(
+                                        status_code=400,
+                                        detail="Cannot generate a schedule for this group",
+                                    )
         # endregion
         for match in matches:
             db.add(match)
