@@ -92,7 +92,7 @@ class TeamRead(TeamBase):
     @model_validator(mode="after")
     def calculate_admin_name(self: "TeamRead") -> "TeamRead":
         """Calculate admin name."""
-        if " " in self.name:
+        if " " == self.name[-2]:
             self.admin_name = f"{self.internal_name} {self.name.split(' ')[-1]}"
         else:
             self.admin_name = self.internal_name
