@@ -33,7 +33,6 @@ from backend.matches.mathes_commands.get_team_from_match import (
 )
 from backend.pitches.pitches_models import Pitch
 from backend.sports.sports_models import Sport
-from backend.stages.stages_schemas import StagesEnum
 from backend.tables.tables_commands.update_table import update_table_for_match
 from backend.tables.tables_models import LeagueTable
 from backend.teams.teams_models import Team
@@ -442,193 +441,16 @@ def get_knockout_matches(
     """Get knockout matches."""
     db.get(Sport, sport_id)
 
-    r161 = (
+    matches = (
         db.query(Match)
         .filter(Match.sport_id == sport_id)
-        .filter(Match.stage_id == StagesEnum.round_of_16_1.value)
         .filter(Match.is_deleted.is_(False))
-        .first()
+        .filter(Match.stage_id.is_not(None))
+        .filter(Match.stage_id != 0)
+        .order_by(Match.stage_id)
+        .order_by(Match.time)
+        .all()
     )
-    r162 = (
-        db.query(Match)
-        .filter(Match.sport_id == sport_id)
-        .filter(Match.stage_id == StagesEnum.round_of_16_2.value)
-        .filter(Match.is_deleted.is_(False))
-        .first()
-    )
-    r163 = (
-        db.query(Match)
-        .filter(Match.sport_id == sport_id)
-        .filter(Match.stage_id == StagesEnum.round_of_16_3.value)
-        .filter(Match.is_deleted.is_(False))
-        .first()
-    )
-    r164 = (
-        db.query(Match)
-        .filter(Match.sport_id == sport_id)
-        .filter(Match.stage_id == StagesEnum.round_of_16_4.value)
-        .filter(Match.is_deleted.is_(False))
-        .first()
-    )
-    r165 = (
-        db.query(Match)
-        .filter(Match.sport_id == sport_id)
-        .filter(Match.stage_id == StagesEnum.round_of_16_5.value)
-        .filter(Match.is_deleted.is_(False))
-        .first()
-    )
-    r166 = (
-        db.query(Match)
-        .filter(Match.sport_id == sport_id)
-        .filter(Match.stage_id == StagesEnum.round_of_16_6.value)
-        .filter(Match.is_deleted.is_(False))
-        .first()
-    )
-    r167 = (
-        db.query(Match)
-        .filter(Match.sport_id == sport_id)
-        .filter(Match.stage_id == StagesEnum.round_of_16_7.value)
-        .filter(Match.is_deleted.is_(False))
-        .first()
-    )
-    r168 = (
-        db.query(Match)
-        .filter(Match.sport_id == sport_id)
-        .filter(Match.stage_id == StagesEnum.round_of_16_8.value)
-        .filter(Match.is_deleted.is_(False))
-        .first()
-    )
-    r169 = (
-        db.query(Match)
-        .filter(Match.sport_id == sport_id)
-        .filter(Match.stage_id == StagesEnum.round_of_16_9.value)
-        .filter(Match.is_deleted.is_(False))
-        .first()
-    )
-    r1610 = (
-        db.query(Match)
-        .filter(Match.sport_id == sport_id)
-        .filter(Match.stage_id == StagesEnum.round_of_16_10.value)
-        .filter(Match.is_deleted.is_(False))
-        .first()
-    )
-    r1611 = (
-        db.query(Match)
-        .filter(Match.sport_id == sport_id)
-        .filter(Match.stage_id == StagesEnum.round_of_16_11.value)
-        .filter(Match.is_deleted.is_(False))
-        .first()
-    )
-    r1612 = (
-        db.query(Match)
-        .filter(Match.sport_id == sport_id)
-        .filter(Match.stage_id == StagesEnum.round_of_16_12.value)
-        .filter(Match.is_deleted.is_(False))
-        .first()
-    )
-    r1613 = (
-        db.query(Match)
-        .filter(Match.sport_id == sport_id)
-        .filter(Match.stage_id == StagesEnum.round_of_16_13.value)
-        .filter(Match.is_deleted.is_(False))
-        .first()
-    )
-    r1614 = (
-        db.query(Match)
-        .filter(Match.sport_id == sport_id)
-        .filter(Match.stage_id == StagesEnum.round_of_16_14.value)
-        .filter(Match.is_deleted.is_(False))
-        .first()
-    )
-    r1615 = (
-        db.query(Match)
-        .filter(Match.sport_id == sport_id)
-        .filter(Match.stage_id == StagesEnum.round_of_16_15.value)
-        .filter(Match.is_deleted.is_(False))
-        .first()
-    )
-    r1616 = (
-        db.query(Match)
-        .filter(Match.sport_id == sport_id)
-        .filter(Match.stage_id == StagesEnum.round_of_16_16.value)
-        .filter(Match.is_deleted.is_(False))
-        .first()
-    )
-    qf1 = (
-        db.query(Match)
-        .filter(Match.sport_id == sport_id)
-        .filter(Match.stage_id == StagesEnum.quarter_final_1.value)
-        .filter(Match.is_deleted.is_(False))
-        .first()
-    )
-    qf2 = (
-        db.query(Match)
-        .filter(Match.sport_id == sport_id)
-        .filter(Match.stage_id == StagesEnum.quarter_final_2.value)
-        .filter(Match.is_deleted.is_(False))
-        .first()
-    )
-    qf3 = (
-        db.query(Match)
-        .filter(Match.sport_id == sport_id)
-        .filter(Match.stage_id == StagesEnum.quarter_final_3.value)
-        .filter(Match.is_deleted.is_(False))
-        .first()
-    )
-    qf4 = (
-        db.query(Match)
-        .filter(Match.sport_id == sport_id)
-        .filter(Match.stage_id == StagesEnum.quarter_final_4.value)
-        .filter(Match.is_deleted.is_(False))
-        .first()
-    )
-    sf1 = (
-        db.query(Match)
-        .filter(Match.sport_id == sport_id)
-        .filter(Match.stage_id == StagesEnum.semi_final_1.value)
-        .filter(Match.is_deleted.is_(False))
-        .first()
-    )
-    sf2 = (
-        db.query(Match)
-        .filter(Match.sport_id == sport_id)
-        .filter(Match.stage_id == StagesEnum.semi_final_2.value)
-        .filter(Match.is_deleted.is_(False))
-        .first()
-    )
-    final = (
-        db.query(Match)
-        .filter(Match.sport_id == sport_id)
-        .filter(Match.stage_id == StagesEnum.final.value)
-        .filter(Match.is_deleted.is_(False))
-        .first()
-    )
-
-    matches: list[Match] = [
-        r161,
-        r162,
-        r163,
-        r164,
-        r165,
-        r166,
-        r167,
-        r168,
-        r169,
-        r1610,
-        r1611,
-        r1612,
-        r1613,
-        r1614,
-        r1615,
-        r1616,
-        qf1,
-        qf2,
-        qf3,
-        qf4,
-        sf1,
-        sf2,
-        final,
-    ]
 
     resp = []
 
