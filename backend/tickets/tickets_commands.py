@@ -293,6 +293,7 @@ def create_ticket(payload: Payload, db: Session) -> JSONResponse:
             id=generate_uuid(),
             first_name=payload.first_name,
             last_name=payload.last_name,
+            created_date=datetime_now(),
             email=payload.email.lower() if payload.email else None,
             chapter=chapter_answer,
             original_chapter=original_chapter,
@@ -403,6 +404,7 @@ def update_ticket(payload: Payload, db):
     ticket.checked_in = payload.checked_in == "true"
     ticket.ticket_voided = payload.status != "valid"
     ticket.update_data = object_to_dict(payload, format_date=True)
+    ticket.last_modified_date = datetime_now()
     if payload.ticket_type_id == TICKET_TAILOR_PLAYER_TICKET_TYPE_ID:
         if ticket.player_id is None:
             player = add_new_player_from_ticket_tailor(ticket, db)
