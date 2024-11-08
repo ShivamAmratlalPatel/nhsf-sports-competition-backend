@@ -17,7 +17,7 @@ from backend.sports.sports_models import Sport
 from backend.teams.teams_models import Team
 from backend.tickets.tickets_models import Ticket
 from backend.tickets.tickets_schemas import Payload
-from backend.utils import generate_uuid, object_to_dict
+from backend.utils import generate_uuid, object_to_dict, datetime_now
 
 
 def add_new_player_from_ticket_tailor(ticket: Ticket, db: Session) -> Player:
@@ -63,6 +63,7 @@ def add_new_player_from_ticket_tailor(ticket: Ticket, db: Session) -> Player:
                         id=generate_uuid(),
                         error=f"Morning team not found for {ticket.full_name}",
                         data=object_to_dict(ticket, format_date=True),
+                        created_date=datetime_now(),
                     )
                     db.add(error)
                     db.commit()
@@ -103,6 +104,7 @@ def add_new_player_from_ticket_tailor(ticket: Ticket, db: Session) -> Player:
                         id=generate_uuid(),
                         error=f"Afternoon team not found for {ticket.full_name}",
                         data=object_to_dict(ticket, format_date=True),
+                        created_date=datetime_now(),
                     )
                     db.add(error)
                     db.commit()
@@ -127,6 +129,7 @@ def add_new_player_from_ticket_tailor(ticket: Ticket, db: Session) -> Player:
             email=ticket.email,
             morning_team_id=morning_team_id,
             afternoon_team_id=afternoon_team_id,
+            created_date=datetime_now(),
         )
         db.add(player)
         db.commit()
@@ -150,6 +153,7 @@ def add_new_player_from_ticket_tailor(ticket: Ticket, db: Session) -> Player:
             player.email = ticket.email
             player.morning_team_id = morning_team_id
             player.afternoon_team_id = afternoon_team_id
+            player.last_modified_date = datetime_now()
             db.add(player)
             db.commit()
             return player
@@ -160,6 +164,7 @@ def add_new_player_from_ticket_tailor(ticket: Ticket, db: Session) -> Player:
                 email=ticket.email,
                 morning_team_id=morning_team_id,
                 afternoon_team_id=afternoon_team_id,
+                created_date=datetime_now(),
             )
             db.add(player)
             db.commit()
@@ -171,6 +176,7 @@ def add_new_player_from_ticket_tailor(ticket: Ticket, db: Session) -> Player:
             email=ticket.email,
             morning_team_id=morning_team_id,
             afternoon_team_id=afternoon_team_id,
+            created_date=datetime_now(),
         )
         db.add(player)
         db.commit()
@@ -438,6 +444,7 @@ def update_ticket(payload: Payload, db):
                 id=generate_uuid(),
                 name=payload.full_name,
                 email=payload.email.lower() if payload.email else None,
+                created_date=datetime_now(),
             )
 
         db.add(spectator)
