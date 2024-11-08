@@ -33,7 +33,7 @@ def add_new_player_from_ticket_tailor(ticket: Ticket, db: Session) -> Player:
             .first()
         )
         if chapter is not None:
-            if ticket.morning_sport == "Kabaddi Womens":
+            if ticket.morning_sport == "Kabaddi (Women)":
                 morning_sport_answer = "KabaddiW"
             else:
                 morning_sport_answer = ticket.morning_sport
@@ -69,8 +69,12 @@ def add_new_player_from_ticket_tailor(ticket: Ticket, db: Session) -> Player:
                     morning_team_id = None
                 else:
                     morning_team_id = morning_team.id
-            if ticket.afternoon_sport == "Kabaddi Mens":
+            if ticket.afternoon_sport == "Kabaddi (Mens)":
                 afternoon_sport_answer = "KabaddiM"
+            elif ticket.afternoon_sport == "Kabaddi (Womens)":
+                afternoon_sport_answer = "KabaddiW"
+            elif ticket.afternoon_sport == "Kho-Kho":
+                afternoon_sport_answer = "Kho"
             else:
                 afternoon_sport_answer = ticket.afternoon_sport
             if ticket.afternoon_sport == "None" or ticket.afternoon_sport is None:
@@ -179,7 +183,7 @@ def calculate_other_questions(payload: Payload) -> tuple[str, str, str, str, str
             question.answer
             for question in payload.custom_questions
             if question.question
-            == "If you are playing for another university/school, please write your university here"
+            == "If you are playing for another university/school, please write down who you are representing"
         ),
         None,
     )
@@ -251,7 +255,7 @@ def create_ticket(payload: Payload, db: Session) -> JSONResponse:
         (
             question.answer
             for question in payload.custom_questions
-            if question.question == "Which University/School are you playing for?"
+            if question.question == "Which University/School are you representing?"
         ),
         None,
     )
@@ -356,7 +360,7 @@ def update_ticket(payload: Payload, db):
         (
             question.answer
             for question in payload.custom_questions
-            if question.question == "Which University/School are you playing for?"
+            if question.question == "Which University/School are you representing?"
         ),
         None,
     )
