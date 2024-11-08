@@ -71,9 +71,9 @@ def add_new_player_from_ticket_tailor(ticket: Ticket, db: Session) -> Player:
                 else:
                     morning_team_id = morning_team.id
             if ticket.afternoon_sport == "Kabaddi (Mens)":
-                afternoon_sport_answer = "KabaddiM"
+                afternoon_sport_answer = "Kabaddi (Mens)"
             elif ticket.afternoon_sport == "Kabaddi (Womens)":
-                afternoon_sport_answer = "KabaddiW"
+                afternoon_sport_answer = "Kabaddi (Womens)"
             elif ticket.afternoon_sport == "Kho-Kho":
                 afternoon_sport_answer = "Kho"
             else:
@@ -90,7 +90,7 @@ def add_new_player_from_ticket_tailor(ticket: Ticket, db: Session) -> Player:
                 if afternoon_sport is None:
                     raise HTTPException(
                         status_code=status.HTTP_400_BAD_REQUEST,
-                        detail="Afternoon sport not found",
+                        detail=f"Afternoon sport not found for {ticket.full_name}",
                     )
                 afternoon_team: Team | None = (
                     db.query(Team)
