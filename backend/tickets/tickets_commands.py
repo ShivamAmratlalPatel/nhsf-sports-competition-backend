@@ -247,6 +247,10 @@ def log_new_tickets(db: Session, tickets: list[dict]) -> None:
 
 
 def create_ticket(payload: Payload, db: Session) -> JSONResponse:
+    if payload.event_id != TICKET_TAILOR_EVENT_ID:
+        return JSONResponse(
+                status_code=status.HTTP_201_CREATED
+            )
     barcode = payload.barcode
     ticket_id = payload.id
     order_id = payload.order_id
@@ -347,6 +351,10 @@ def create_ticket(payload: Payload, db: Session) -> JSONResponse:
 
 
 def update_ticket(payload: Payload, db):
+    if payload.event_id != TICKET_TAILOR_EVENT_ID:
+        return JSONResponse(
+                status_code=status.HTTP_201_CREATED
+            )
     barcode = payload.barcode
     ticket_id = payload.id
     order_id = payload.order_id
