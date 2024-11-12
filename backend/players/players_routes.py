@@ -113,8 +113,6 @@ def check_valid_sports(db: Session, player_create: PlayerCreate | PlayerUpdate) 
             "Netball",
             "Badminton",
             "Football",
-            "KabaddiW",
-            "Cricket",
         }:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -139,7 +137,7 @@ def check_valid_sports(db: Session, player_create: PlayerCreate | PlayerUpdate) 
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Afternoon sport not found",
             )
-        if afternoon_sport.name not in {"Kho", "KabaddiM"}:
+        if afternoon_sport.name not in {"Kho", "Kabaddi (Women)", "Kabaddi (Men)"}:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Afternoon sport not valid",

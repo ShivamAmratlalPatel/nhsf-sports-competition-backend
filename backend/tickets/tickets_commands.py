@@ -70,10 +70,10 @@ def add_new_player_from_ticket_tailor(ticket: Ticket, db: Session) -> Player:
                     morning_team_id = None
                 else:
                     morning_team_id = morning_team.id
-            if ticket.afternoon_sport == "Kabaddi (Mens)":
-                afternoon_sport_answer = "Kabaddi (Mens)"
-            elif ticket.afternoon_sport == "Kabaddi (Womens)":
-                afternoon_sport_answer = "Kabaddi (Womens)"
+            if ticket.afternoon_sport == "Kabaddi (Men)":
+                afternoon_sport_answer = "Kabaddi (Men)"
+            elif ticket.afternoon_sport == "Kabaddi (Women)":
+                afternoon_sport_answer = "Kabaddi (Women)"
             elif ticket.afternoon_sport == "Kho-Kho":
                 afternoon_sport_answer = "Kho"
             else:
