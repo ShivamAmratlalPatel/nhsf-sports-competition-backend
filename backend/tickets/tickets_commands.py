@@ -70,9 +70,9 @@ def add_new_player_from_ticket_tailor(ticket: Ticket, db: Session) -> Player:
                     morning_team_id = None
                 else:
                     morning_team_id = morning_team.id
-            if ticket.afternoon_sport == "Kabaddi (Men)":
+            if ticket.afternoon_sport == "Kabbadi (Men)":
                 afternoon_sport_answer = "Kabaddi (Men)"
-            elif ticket.afternoon_sport == "Kabaddi (Women)":
+            elif ticket.afternoon_sport == "Kabbadi (Women)":
                 afternoon_sport_answer = "Kabaddi (Women)"
             elif ticket.afternoon_sport == "Kho-Kho":
                 afternoon_sport_answer = "Kho"
@@ -247,6 +247,10 @@ def log_new_tickets(db: Session, tickets: list[dict]) -> None:
 
 
 def create_ticket(payload: Payload, db: Session) -> JSONResponse:
+    if payload.event_id != TICKET_TAILOR_EVENT_ID:
+        return JSONResponse(
+                status_code=status.HTTP_201_CREATED
+            )
     barcode = payload.barcode
     ticket_id = payload.id
     order_id = payload.order_id
@@ -347,6 +351,10 @@ def create_ticket(payload: Payload, db: Session) -> JSONResponse:
 
 
 def update_ticket(payload: Payload, db):
+    if payload.event_id != TICKET_TAILOR_EVENT_ID:
+        return JSONResponse(
+                status_code=status.HTTP_201_CREATED
+            )
     barcode = payload.barcode
     ticket_id = payload.id
     order_id = payload.order_id
