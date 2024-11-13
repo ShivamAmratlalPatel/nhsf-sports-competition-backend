@@ -17,7 +17,7 @@ from backend.sports.sports_models import Sport
 from backend.teams.teams_models import Team
 from backend.tickets.tickets_models import Ticket
 from backend.tickets.tickets_schemas import Payload
-from backend.utils import generate_uuid, object_to_dict
+from backend.utils import generate_uuid, object_to_dict, datetime_now
 
 
 def add_new_player_from_ticket_tailor(ticket: Ticket, db: Session) -> Player:
@@ -33,7 +33,7 @@ def add_new_player_from_ticket_tailor(ticket: Ticket, db: Session) -> Player:
             .first()
         )
         if chapter is not None:
-            if ticket.morning_sport == "Kabaddi Womens":
+            if ticket.morning_sport == "Kabaddi (Women)":
                 morning_sport_answer = "KabaddiW"
             else:
                 morning_sport_answer = ticket.morning_sport
@@ -63,14 +63,19 @@ def add_new_player_from_ticket_tailor(ticket: Ticket, db: Session) -> Player:
                         id=generate_uuid(),
                         error=f"Morning team not found for {ticket.full_name}",
                         data=object_to_dict(ticket, format_date=True),
+                        created_date=datetime_now(),
                     )
                     db.add(error)
                     db.commit()
                     morning_team_id = None
                 else:
                     morning_team_id = morning_team.id
-            if ticket.afternoon_sport == "Kabaddi Mens":
-                afternoon_sport_answer = "KabaddiM"
+            if ticket.afternoon_sport == "Kabbadi (Men)":
+                afternoon_sport_answer = "Kabaddi (Men)"
+            elif ticket.afternoon_sport == "Kabbadi (Women)":
+                afternoon_sport_answer = "Kabaddi (Women)"
+            elif ticket.afternoon_sport == "Kho-Kho":
+                afternoon_sport_answer = "Kho"
             else:
                 afternoon_sport_answer = ticket.afternoon_sport
             if ticket.afternoon_sport == "None" or ticket.afternoon_sport is None:
@@ -85,7 +90,7 @@ def add_new_player_from_ticket_tailor(ticket: Ticket, db: Session) -> Player:
                 if afternoon_sport is None:
                     raise HTTPException(
                         status_code=status.HTTP_400_BAD_REQUEST,
-                        detail="Afternoon sport not found",
+                        detail=f"Afternoon sport not found for {ticket.full_name}",
                     )
                 afternoon_team: Team | None = (
                     db.query(Team)
@@ -99,6 +104,7 @@ def add_new_player_from_ticket_tailor(ticket: Ticket, db: Session) -> Player:
                         id=generate_uuid(),
                         error=f"Afternoon team not found for {ticket.full_name}",
                         data=object_to_dict(ticket, format_date=True),
+                        created_date=datetime_now(),
                     )
                     db.add(error)
                     db.commit()
@@ -123,6 +129,7 @@ def add_new_player_from_ticket_tailor(ticket: Ticket, db: Session) -> Player:
             email=ticket.email,
             morning_team_id=morning_team_id,
             afternoon_team_id=afternoon_team_id,
+            created_date=datetime_now(),
         )
         db.add(player)
         db.commit()
@@ -146,6 +153,7 @@ def add_new_player_from_ticket_tailor(ticket: Ticket, db: Session) -> Player:
             player.email = ticket.email
             player.morning_team_id = morning_team_id
             player.afternoon_team_id = afternoon_team_id
+            player.last_modified_date = datetime_now()
             db.add(player)
             db.commit()
             return player
@@ -156,6 +164,7 @@ def add_new_player_from_ticket_tailor(ticket: Ticket, db: Session) -> Player:
                 email=ticket.email,
                 morning_team_id=morning_team_id,
                 afternoon_team_id=afternoon_team_id,
+                created_date=datetime_now(),
             )
             db.add(player)
             db.commit()
@@ -167,6 +176,7 @@ def add_new_player_from_ticket_tailor(ticket: Ticket, db: Session) -> Player:
             email=ticket.email,
             morning_team_id=morning_team_id,
             afternoon_team_id=afternoon_team_id,
+            created_date=datetime_now(),
         )
         db.add(player)
         db.commit()
@@ -179,7 +189,7 @@ def calculate_other_questions(payload: Payload) -> tuple[str, str, str, str, str
             question.answer
             for question in payload.custom_questions
             if question.question
-            == "If you are playing for another university/school, please write your university here"
+            == "If you are playing for another university/school, please write down who you are representing"
         ),
         None,
     )
@@ -237,6 +247,8 @@ def log_new_tickets(db: Session, tickets: list[dict]) -> None:
 
 
 def create_ticket(payload: Payload, db: Session) -> JSONResponse:
+    if payload.event_id != TICKET_TAILOR_EVENT_ID:
+        return JSONResponse(status_code=status.HTTP_201_CREATED)
     barcode = payload.barcode
     ticket_id = payload.id
     order_id = payload.order_id
@@ -251,7 +263,7 @@ def create_ticket(payload: Payload, db: Session) -> JSONResponse:
         (
             question.answer
             for question in payload.custom_questions
-            if question.question == "Which University/School are you playing for?"
+            if question.question == "Which University/School are you representing?"
         ),
         None,
     )
@@ -283,6 +295,7 @@ def create_ticket(payload: Payload, db: Session) -> JSONResponse:
             id=generate_uuid(),
             first_name=payload.first_name,
             last_name=payload.last_name,
+            created_date=datetime_now(),
             email=payload.email.lower() if payload.email else None,
             chapter=chapter_answer,
             original_chapter=original_chapter,
@@ -336,6 +349,8 @@ def create_ticket(payload: Payload, db: Session) -> JSONResponse:
 
 
 def update_ticket(payload: Payload, db):
+    if payload.event_id != TICKET_TAILOR_EVENT_ID:
+        return JSONResponse(status_code=status.HTTP_201_CREATED)
     barcode = payload.barcode
     ticket_id = payload.id
     order_id = payload.order_id
@@ -356,7 +371,7 @@ def update_ticket(payload: Payload, db):
         (
             question.answer
             for question in payload.custom_questions
-            if question.question == "Which University/School are you playing for?"
+            if question.question == "Which University/School are you representing?"
         ),
         None,
     )
@@ -393,6 +408,7 @@ def update_ticket(payload: Payload, db):
     ticket.checked_in = payload.checked_in == "true"
     ticket.ticket_voided = payload.status != "valid"
     ticket.update_data = object_to_dict(payload, format_date=True)
+    ticket.last_modified_date = datetime_now()
     if payload.ticket_type_id == TICKET_TAILOR_PLAYER_TICKET_TYPE_ID:
         if ticket.player_id is None:
             player = add_new_player_from_ticket_tailor(ticket, db)
@@ -434,6 +450,7 @@ def update_ticket(payload: Payload, db):
                 id=generate_uuid(),
                 name=payload.full_name,
                 email=payload.email.lower() if payload.email else None,
+                created_date=datetime_now(),
             )
 
         db.add(spectator)
